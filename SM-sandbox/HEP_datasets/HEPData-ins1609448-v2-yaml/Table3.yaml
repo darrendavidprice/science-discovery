@@ -1,0 +1,121 @@
+dependent_variables:
+- header: {name: 'measured $R^\text{miss}$'}
+  qualifiers:
+  - {name: PHASE SPACE, value: VBF}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - asymerror: {minus: -0.27, plus: 0.27}
+      label: stat
+    - asymerror: {minus: -0.44, plus: 0.44}
+      label: sys
+    value: 7.86
+  - errors:
+    - asymerror: {minus: -0.19, plus: 0.36}
+      label: stat
+    - asymerror: {minus: -0.38, plus: 0.38}
+      label: sys
+    value: 7.15
+  - errors:
+    - asymerror: {minus: -0.24, plus: 0.44}
+      label: stat
+    - asymerror: {minus: -0.39, plus: 0.4}
+      label: sys
+    value: 6.93
+  - errors:
+    - asymerror: {minus: -0.41, plus: 0.78}
+      label: stat
+    - asymerror: {minus: -0.52, plus: 0.52}
+      label: sys
+    value: 7.05
+  - errors:
+    - asymerror: {minus: -1.18, plus: 2.61}
+      label: stat
+    - asymerror: {minus: -0.83, plus: 1.07}
+      label: sys
+    value: 7.46
+- header: {name: 'expected $R^\text{miss}$'}
+  qualifiers:
+  - {name: PHASE SPACE, value: VBF}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.06}
+    - {label: 'sys,theory', symerror: 0.05}
+    value: 7.09
+  - errors:
+    - {label: stat, symerror: 0.09}
+    - {label: 'sys,theory', symerror: 0.05}
+    value: 7.09
+  - errors:
+    - {label: stat, symerror: 0.11}
+    - {label: 'sys,theory', symerror: 0.04}
+    value: 7.0
+  - errors:
+    - {label: stat, symerror: 0.15}
+    - {label: 'sys,theory', symerror: 0.04}
+    value: 7.06
+  - errors:
+    - {label: stat, symerror: 0.43}
+    - {label: 'sys,theory', symerror: 0.19}
+    value: 7.11
+- header: {name: '$\text{d}\sigma / \text{d} m_\text{jj} $ (SM prediction for numerator)',
+    units: FB GEV**-1}
+  qualifiers:
+  - {name: PHASE SPACE, value: VBF}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.0373}
+    - {label: 'sys,theory', symerror: 0.9642}
+    value: 8.834
+  - errors:
+    - {label: stat, symerror: 0.023}
+    - {label: 'sys,theory', symerror: 0.39815}
+    value: 3.69915
+  - errors:
+    - {label: stat, symerror: 0.0096}
+    - {label: 'sys,theory', symerror: 0.1247}
+    value: 1.207625
+  - errors:
+    - {label: stat, symerror: 0.00219}
+    - {label: 'sys,theory', symerror: 0.01942}
+    value: 0.1994
+  - errors:
+    - {label: stat, symerror: 0.00041}
+    - {label: 'sys,theory', symerror: 0.001435}
+    value: 0.014085
+- header: {name: '$\text{d}\sigma / \text{d} m_\text{jj} $ (SM prediction for denominator)',
+    units: FB GEV**-1}
+  qualifiers:
+  - {name: PHASE SPACE, value: VBF}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.0064}
+    - {label: 'sys,theory', symerror: 0.15905}
+    value: 1.24525
+  - errors:
+    - {label: stat, symerror: 0.004}
+    - {label: 'sys,theory', symerror: 0.0633}
+    value: 0.5215
+  - errors:
+    - {label: stat, symerror: 0.00175}
+    - {label: 'sys,theory', symerror: 0.019275}
+    value: 0.17255
+  - errors:
+    - {label: stat, symerror: 0.00042}
+    - {label: 'sys,theory', symerror: 0.00285}
+    value: 0.02824
+  - errors:
+    - {label: stat, symerror: 7.0e-05}
+    - {label: 'sys,theory', symerror: 0.000185}
+    value: 0.00198
+independent_variables:
+- header: {name: '$m_\text{jj}$', units: GEV}
+  values:
+  - {high: 400.0, low: 200.0}
+  - {high: 600.0, low: 400.0}
+  - {high: 1000.0, low: 600.0}
+  - {high: 2000.0, low: 1000.0}
+  - {high: 4000.0, low: 2000.0}

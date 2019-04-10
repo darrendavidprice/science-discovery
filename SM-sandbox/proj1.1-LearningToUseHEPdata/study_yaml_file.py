@@ -22,14 +22,14 @@ if __name__ == "__main__" :
 			msg.info("study_yaml.py","no submission.yaml file found in directory {0}... I will open all available yaml files".format(in_str))
 			HEPData_hlp.load_all_yaml_files ( dataset , in_str )
 	else :
-		if is_yaml_file == False :
+		if HEPData_hlp.is_yaml_file(in_str) == False :
 			msg.fatal("study_yaml.py","{0} doesn't seem to be a yaml file or a directory... I don't know what to do with it".format(in_str))
-		if is_submission_file(in_str) :
+		if HEPData_hlp.is_submission_file(in_str) :
 			msg.info("study_yaml.py","{0} is a submission.yaml file... I will use this to steer the directory".format(in_str))
 			HEPData_hlp.load_submission_file ( dataset , in_str )
 		else :
 			msg.info("study_yaml.py","Interpreting {0} as a yaml file... I will use it as my only input".format(in_str))
-			HEPData_hlp.load_yaml_file ( in_str )
+			HEPData_hlp.load_yaml_file ( dataset , in_str )
 
 
 

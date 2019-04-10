@@ -1,0 +1,159 @@
+dependent_variables:
+- header: {name: 'measured $R^\text{miss}$'}
+  qualifiers:
+  - {name: PHASE SPACE, value: $\geq 1$ JET}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - asymerror: {minus: -0.13, plus: 0.13}
+      label: stat
+    - asymerror: {minus: -0.4, plus: 0.4}
+      label: sys
+    value: 7.71
+  - errors:
+    - asymerror: {minus: -0.1, plus: 0.21}
+      label: stat
+    - asymerror: {minus: -0.39, plus: 0.4}
+      label: sys
+    value: 8.12
+  - errors:
+    - asymerror: {minus: -0.14, plus: 0.27}
+      label: stat
+    - asymerror: {minus: -0.37, plus: 0.36}
+      label: sys
+    value: 7.21
+  - errors:
+    - asymerror: {minus: -0.13, plus: 0.27}
+      label: stat
+    - asymerror: {minus: -0.33, plus: 0.34}
+      label: sys
+    value: 6.74
+  - errors:
+    - asymerror: {minus: -0.28, plus: 0.54}
+      label: stat
+    - asymerror: {minus: -0.37, plus: 0.38}
+      label: sys
+    value: 6.12
+  - errors:
+    - asymerror: {minus: -0.64, plus: 1.52}
+      label: stat
+    - asymerror: {minus: -0.44, plus: 0.44}
+      label: sys
+    value: 6.74
+  - errors:
+    - asymerror: {minus: -1.4, plus: 3.64}
+      label: stat
+    - asymerror: {minus: -1.15, plus: 1.18}
+      label: sys
+    value: 4.4
+- header: {name: 'expected $R^\text{miss}$'}
+  qualifiers:
+  - {name: PHASE SPACE, value: $\geq 1$ JET}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.04}
+    - {label: 'sys,theory', symerror: 0.04}
+    value: 7.44
+  - errors:
+    - {label: stat, symerror: 0.05}
+    - {label: 'sys,theory', symerror: 0.04}
+    value: 7.03
+  - errors:
+    - {label: stat, symerror: 0.03}
+    - {label: 'sys,theory', symerror: 0.04}
+    value: 6.73
+  - errors:
+    - {label: stat, symerror: 0.03}
+    - {label: 'sys,theory', symerror: 0.06}
+    value: 6.48
+  - errors:
+    - {label: stat, symerror: 0.04}
+    - {label: 'sys,theory', symerror: 0.1}
+    value: 6.18
+  - errors:
+    - {label: stat, symerror: 0.07}
+    - {label: 'sys,theory', symerror: 0.12}
+    value: 5.94
+  - errors:
+    - {label: stat, symerror: 0.16}
+    - {label: 'sys,theory', symerror: 0.2}
+    value: 5.83
+- header: {name: '$\text{d}\sigma / \text{d} p_\text{T}^\text{miss} $ (SM prediction
+      for numerator)', units: FB GEV**-1}
+  qualifiers:
+  - {name: PHASE SPACE, value: $\geq 1$ JET}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.4244}
+    - {label: 'sys,theory', symerror: 20.2892}
+    value: 155.9274
+  - errors:
+    - {label: stat, symerror: 0.23}
+    - {label: 'sys,theory', symerror: 9.6452}
+    value: 62.7598
+  - errors:
+    - {label: stat, symerror: 0.0556}
+    - {label: 'sys,theory', symerror: 4.9558}
+    value: 27.4166
+  - errors:
+    - {label: stat, symerror: 0.01786667}
+    - {label: 'sys,theory', symerror: 1.359333}
+    value: 7.725133
+  - errors:
+    - {label: stat, symerror: 0.0018}
+    - {label: 'sys,theory', symerror: 0.207}
+    value: 1.05525
+  - errors:
+    - {label: stat, symerror: 0.0005}
+    - {label: 'sys,theory', symerror: 0.02256667}
+    value: 0.1259667
+  - errors:
+    - {label: stat, symerror: 5.0e-05}
+    - {label: 'sys,theory', symerror: 0.001925}
+    value: 0.0108
+- header: {name: '$\text{d}\sigma / \text{d} p_\text{T}^\text{miss} $ (SM prediction
+      for denominator)', units: FB GEV**-1}
+  qualifiers:
+  - {name: PHASE SPACE, value: $\geq 1$ JET}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.0724}
+    - {label: 'sys,theory', symerror: 3.0752}
+    value: 20.9644
+  - errors:
+    - {label: stat, symerror: 0.0392}
+    - {label: 'sys,theory', symerror: 1.4612}
+    value: 8.93
+  - errors:
+    - {label: stat, symerror: 0.0108}
+    - {label: 'sys,theory', symerror: 0.756}
+    value: 4.0748
+  - errors:
+    - {label: stat, symerror: 0.003333333}
+    - {label: 'sys,theory', symerror: 0.2110667}
+    value: 1.1924
+  - errors:
+    - {label: stat, symerror: 0.00065}
+    - {label: 'sys,theory', symerror: 0.0324}
+    value: 0.1708
+  - errors:
+    - {label: stat, symerror: 0.0003333333}
+    - {label: 'sys,theory', symerror: 0.0039}
+    value: 0.0212
+  - errors:
+    - {label: stat, symerror: 2.5e-05}
+    - {label: 'sys,theory', symerror: 0.000325}
+    value: 0.00185
+independent_variables:
+- header: {name: '$p_\text{T}^\text{miss}$', units: GEV}
+  values:
+  - {high: 250.0, low: 200.0}
+  - {high: 300.0, low: 250.0}
+  - {high: 350.0, low: 300.0}
+  - {high: 500.0, low: 350.0}
+  - {high: 700.0, low: 500.0}
+  - {high: 1000.0, low: 700.0}
+  - {high: 1400.0, low: 1000.0}

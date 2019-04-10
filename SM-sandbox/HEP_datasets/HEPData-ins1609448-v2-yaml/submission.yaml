@@ -1,0 +1,168 @@
+additional_resources:
+- {description: web page with auxiliary material, location: 'https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/EXOT-2016-03/'}
+- {description: Rivet analysis, location: 'http://rivet.hepforge.org/analyses#ATLAS_2017_I1609448'}
+comment: "CERN-LHC. Observables sensitive to the anomalous production of events containing
+  hadronic jets and missing momentum in the plane transverse to the proton beams at
+  the Large Hadron Collider are presented. The observables are defined as a ratio
+  of cross sections, for events containing jets and large missing transverse momentum
+  to events containing jets and a pair of charged leptons from the decay of a $Z/\\gamma^\\ast$
+  boson. This definition minimises experimental and theoretical systematic uncertainties
+  in the measurements. This ratio is measured differentially with respect to a number
+  of kinematic properties of the hadronic system in two phase-space regions; one inclusive
+  single-jet region and one region sensitive to vector-boson-fusion topologies. The
+  data are found to be in agreement with the Standard Model predictions and used to
+  constrain a variety of theoretical models for dark-matter production, including
+  simplified models, effective field theory models, and invisible decays of the Higgs
+  boson. The measurements use 3.2 fb${}^{-1}$ of proton-proton collision data recorded
+  by the ATLAS experiment at a centre-of-mass energy of 13 TeV and are fully corrected
+  for detector effects, meaning that the data can be used to constrain new-physics
+  models beyond those shown in this paper.\n\nNumerator and denominator ($\\geq 1$
+  jet):\n- $p_\\text{T}^\\text{miss} > 200$ GeV\n- no additional electron or muon
+  with $p_\\text{T}$(lepton)>7 GeV and |$\\eta$(lepton)|<2.5\n- |$y$(jet)|<4.5 and
+  $p_\\text{T}$(jet)>25 GeV\n- $\\Delta\\phi$(jet,$p_\\text{T}^\\text{miss}$) > 0.4
+  for the four leading jets with $p_\\text{T}$(jet)>30 GeV\n- leading $p_\\text{T}$(jet)>120
+  GeV and |$\\eta$(jet)|<2.4 \n\nNumerator and denominator (VBF):\n- $p_\\text{T}^\\text{miss}
+  > 200$ GeV\n- no additional electron or muon with $p_\\text{T}$(lepton)>7 GeV and
+  |$\\eta$(lepton)|<2.5\n- |$y$(jet)|<4.5 and $p_\\text{T}$(jet)>25 GeV\n- $\\Delta\\phi$(jet,$p_\\text{T}^\\text{miss}$)
+  > 0.4 for the four leading jets with $p_\\text{T}$(jet)>30 GeV\n- leading pT(jet)>80
+  GeV and subleading pT(jet)>50 GeV\n- $m_\\text{jj}$>200 GeV\n- no additional jets
+  with $p_\\text{T}$(jet)>25 GeV inside rapidity interval\n\nDenominator only ($\\geq
+  1$ jet and VBF):\n- leading $p_\\text{T}$(lepton)>80 GeV and |$\\eta$(lepton)|<2.5\n-
+  subleading $p_\\text{T}$(lepton)>7 GeV and |$\\eta$(lepton)|<2.5\n- 66 GeV $< m_{\\ell\\ell}<$
+  116 GeV\n- $\\Delta R$(jet,lepton)>0.5, otherwise jet is removed\n"
+hepdata_doi: 10.17182/hepdata.78366.v2
+---
+data_file: Table1.yaml
+description: Measured and expected $R^\text{miss}$ as a function of $p_\text{T}^\text{miss}$
+  in the $\geq 1$ jet phase space. The fiducial SM predictions for the numerator and
+  the denominator are also given.
+keywords:
+- name: reactions
+  values: [P P --> MET + J X, P P --> LEPTON+ LEPTON- J X]
+- name: observables
+  values: [PTMISS]
+- name: cmenergies
+  values: [13000.0]
+- name: phrases
+  values: [Dark Matter, Fiducial Cross Section Ratio, Rmiss, Cross Section, Proton-Proton
+      Scattering, Z Production, Invisible Z, Monojet, VBF, Invisible Higgs]
+location: Data from F4
+name: Table 1
+table_doi: 10.17182/hepdata.78366.v2/t1
+---
+data_file: Table2.yaml
+description: Measured and expected $R^\text{miss}$ as a function of $p_\text{T}^\text{miss}$
+  in the VBF phase space. The fiducial SM predictions for the numerator and the denominator
+  are also given.
+keywords:
+- name: reactions
+  values: [P P --> MET + J J X, P P --> LEPTON+ LEPTON- J J X]
+- name: observables
+  values: [PTMISS]
+- name: cmenergies
+  values: [13000.0]
+- name: phrases
+  values: [Dark Matter, Fiducial Cross Section Ratio, Rmiss, Cross Section, Proton-Proton
+      Scattering, Z Production, Invisible Z, Monojet, VBF, Invisible Higgs]
+location: Data from F4
+name: Table 2
+table_doi: 10.17182/hepdata.78366.v2/t2
+---
+data_file: Table3.yaml
+description: Measured and expected $R^\text{miss}$ as a function of $M_\text{jj}$
+  in the VBF phase space. The fiducial SM predictions for the numerator and the denominator
+  are also given.
+keywords:
+- name: reactions
+  values: [P P --> MET + J J X, P P --> LEPTON+ LEPTON- J J X]
+- name: observables
+  values: [MJJ]
+- name: cmenergies
+  values: [13000.0]
+- name: phrases
+  values: [Dark Matter, Fiducial Cross Section Ratio, Rmiss, Cross Section, Proton-Proton
+      Scattering, Z Production, Invisible Z, Monojet, VBF, Invisible Higgs]
+location: Data from F4
+name: Table 3
+table_doi: 10.17182/hepdata.78366.v2/t3
+---
+data_file: Table4.yaml
+description: Measured and expected $R^\text{miss}$ as a function of $\Delta\phi_\text{jj}$
+  in the VBF phase space. The fiducial SM predictions for the numerator and the denominator
+  are also given.
+keywords:
+- name: reactions
+  values: [P P --> MET + J J X, P P --> LEPTON+ LEPTON- J J X]
+- name: observables
+  values: [DPHIJJ]
+- name: cmenergies
+  values: [13000.0]
+- name: phrases
+  values: [Dark Matter, Fiducial Cross Section Ratio, Rmiss, Cross Section, Proton-Proton
+      Scattering, Z Production, Invisible Z, Monojet, VBF, Invisible Higgs]
+location: Data from F4
+name: Table 4
+table_doi: 10.17182/hepdata.78366.v2/t4
+---
+data_file: Table5.yaml
+description: Statistical-only correlation matrix for all four measured distributions.
+  <br> <br> Bins labelled 1-7 correspond to the $p_\text{T}^\text{miss}$ distribution
+  in the $\geq 1$ jet phase space. <br> Bins labelled 8-13 correspond to the $p_\text{T}^\text{miss}$
+  distribution in the VBF phase space. <br> Bins labelled 14-18 correspond to the
+  $M_\text{jj}$ distribution in the VBF phase space. <br> Bins labelled 19-24 correspond
+  to the $\Delta\phi_\text{jj}$ distribution in the VBF  phase space.
+keywords:
+- name: reactions
+  values: [P P --> MET + J J X, P P --> LEPTON+ LEPTON- J J X]
+- name: observables
+  values: [PTMISS, MJJ, DPHIJJ]
+- name: cmenergies
+  values: [13000.0]
+- name: phrases
+  values: [Dark Matter, Fiducial Cross Section Ratio, Rmiss, Cross Section, Proton-Proton
+      Scattering, Z Production, Invisible Z, Monojet, VBF, Invisible Higgs]
+location: Data from AUX
+name: Table 5
+table_doi: 10.17182/hepdata.78366.v2/t5
+---
+data_file: Table6.yaml
+description: Statistical-only covariance matrix for all four measured distributions.
+  <br> <br> Bins labelled 1-7 correspond to the $p_\text{T}^\text{miss}$ distribution
+  in the $\geq 1$ jet phase space. <br> Bins labelled 8-13 correspond to the $p_\text{T}^\text{miss}$
+  distribution in the VBF phase space. <br> Bins labelled 14-18 correspond to the
+  $M_\text{jj}$ distribution in the VBF phase space. <br> Bins labelled 19-24 correspond
+  to the $\Delta\phi_\text{jj}$ distribution in the VBF  phase space.
+keywords:
+- name: reactions
+  values: [P P --> MET + J J X, P P --> LEPTON+ LEPTON- J J X]
+- name: observables
+  values: [PTMISS, MJJ, DPHIJJ]
+- name: cmenergies
+  values: [13000.0]
+- name: phrases
+  values: [Dark Matter, Fiducial Cross Section Ratio, Rmiss, Cross Section, Proton-Proton
+      Scattering, Z Production, Invisible Z, Monojet, VBF, Invisible Higgs]
+location: Data from AUX
+name: Table 6
+table_doi: 10.17182/hepdata.78366.v2/t6
+---
+data_file: Table7.yaml
+description: Systematic covariance matrix for all four measured distributions. <br>
+  <br> Bins labelled 1-7 correspond to the $p_\text{T}^\text{miss}$ distribution in
+  the $\geq 1$ jet phase space. <br> Bins labelled 8-13 correspond to the $p_\text{T}^\text{miss}$
+  distribution in the VBF phase space. <br> Bins labelled 14-18 correspond to the
+  $M_\text{jj}$ distribution in the VBF phase space. <br> Bins labelled 19-24 correspond
+  to the $\Delta\phi_\text{jj}$ distribution in the VBF  phase space.
+keywords:
+- name: reactions
+  values: [P P --> MET + J J X, P P --> LEPTON+ LEPTON- J J X]
+- name: observables
+  values: [PTMISS, MJJ, DPHIJJ]
+- name: cmenergies
+  values: [13000.0]
+- name: phrases
+  values: [Dark Matter, Fiducial Cross Section Ratio, Rmiss, Cross Section, Proton-Proton
+      Scattering, Z Production, Invisible Z, Monojet, VBF, Invisible Higgs]
+location: Data from AUX
+name: Table 7
+table_doi: 10.17182/hepdata.78366.v2/t7

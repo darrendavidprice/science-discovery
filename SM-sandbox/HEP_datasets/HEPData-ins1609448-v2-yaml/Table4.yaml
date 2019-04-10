@@ -1,0 +1,140 @@
+dependent_variables:
+- header: {name: 'measured $R^\text{miss}$'}
+  qualifiers:
+  - {name: PHASE SPACE, value: VBF}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - asymerror: {minus: -0.46, plus: 0.46}
+      label: stat
+    - asymerror: {minus: -0.36, plus: 0.35}
+      label: sys
+    value: 6.35
+  - errors:
+    - asymerror: {minus: -0.25, plus: 0.48}
+      label: stat
+    - asymerror: {minus: -0.41, plus: 0.44}
+      label: sys
+    value: 6.98
+  - errors:
+    - asymerror: {minus: -0.22, plus: 0.45}
+      label: stat
+    - asymerror: {minus: -0.38, plus: 0.39}
+      label: sys
+    value: 7.91
+  - errors:
+    - asymerror: {minus: -0.19, plus: 0.36}
+      label: stat
+    - asymerror: {minus: -0.39, plus: 0.39}
+      label: sys
+    value: 7.11
+  - errors:
+    - asymerror: {minus: -0.25, plus: 0.47}
+      label: stat
+    - asymerror: {minus: -0.57, plus: 0.57}
+      label: sys
+    value: 8.21
+  - errors:
+    - asymerror: {minus: -0.33, plus: 0.59}
+      label: stat
+    - asymerror: {minus: -0.94, plus: 0.96}
+      label: sys
+    value: 7.29
+- header: {name: 'expected $R^\text{miss}$'}
+  qualifiers:
+  - {name: PHASE SPACE, value: VBF}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.12}
+    - {label: 'sys,theory', symerror: 0.06}
+    value: 6.6
+  - errors:
+    - {label: stat, symerror: 0.12}
+    - {label: 'sys,theory', symerror: 0.13}
+    value: 6.88
+  - errors:
+    - {label: stat, symerror: 0.1}
+    - {label: 'sys,theory', symerror: 0.04}
+    value: 6.94
+  - errors:
+    - {label: stat, symerror: 0.09}
+    - {label: 'sys,theory', symerror: 0.02}
+    value: 7.1
+  - errors:
+    - {label: stat, symerror: 0.1}
+    - {label: 'sys,theory', symerror: 0.03}
+    value: 7.18
+  - errors:
+    - {label: stat, symerror: 0.14}
+    - {label: 'sys,theory', symerror: 0.08}
+    value: 8.03
+- header: {name: '$\text{d}\sigma / \text{d} \Delta\phi_\text{jj} $ (SM prediction
+      for numerator)', units: FB RAD**-1}
+  qualifiers:
+  - {name: PHASE SPACE, value: VBF}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - {label: stat, symerror: 6.11155}
+    - {label: 'sys,theory', symerror: 60.63803}
+    value: 630.2154
+  - errors:
+    - {label: stat, symerror: 6.37893}
+    - {label: 'sys,theory', symerror: 69.46158}
+    value: 717.7251
+  - errors:
+    - {label: stat, symerror: 7.906818}
+    - {label: 'sys,theory', symerror: 114.3815}
+    value: 1066.16
+  - errors:
+    - {label: stat, symerror: 9.148226}
+    - {label: 'sys,theory', symerror: 163.6176}
+    value: 1409.075
+  - errors:
+    - {label: stat, symerror: 8.919043}
+    - {label: 'sys,theory', symerror: 147.613}
+    value: 1297.081
+  - errors:
+    - {label: stat, symerror: 6.703606}
+    - {label: 'sys,theory', symerror: 69.53798}
+    value: 703.4394
+- header: {name: '$\text{d}\sigma / \text{d} \Delta\phi_\text{jj} $ (SM prediction
+      for denominator)', units: FB RAD**-1}
+  qualifiers:
+  - {name: PHASE SPACE, value: VBF}
+  - {name: SQRT(S), units: GEV, value: 13000}
+  values:
+  - errors:
+    - {label: stat, symerror: 1.126817}
+    - {label: 'sys,theory', symerror: 10.17955}
+    value: 95.41657
+  - errors:
+    - {label: stat, symerror: 1.241409}
+    - {label: 'sys,theory', symerror: 12.08941}
+    value: 104.3547
+  - errors:
+    - {label: stat, symerror: 1.336902}
+    - {label: 'sys,theory', symerror: 19.0222}
+    value: 153.6673
+  - errors:
+    - {label: stat, symerror: 1.566085}
+    - {label: 'sys,theory', symerror: 26.60434}
+    value: 198.4726
+  - errors:
+    - {label: stat, symerror: 1.566085}
+    - {label: 'sys,theory', symerror: 23.1284}
+    value: 180.7491
+  - errors:
+    - {label: stat, symerror: 1.012225}
+    - {label: 'sys,theory', symerror: 9.377409}
+    value: 87.60525
+independent_variables:
+- header: {name: '$\Delta\phi_\text{jj}$', units: RAD}
+  values:
+  - {high: 0.5235988, low: 0.0}
+  - {high: 1.047198, low: 0.5235988}
+  - {high: 1.570796, low: 1.047198}
+  - {high: 2.094395, low: 1.570796}
+  - {high: 2.617994, low: 2.094395}
+  - {high: 3.141593, low: 2.617994}
