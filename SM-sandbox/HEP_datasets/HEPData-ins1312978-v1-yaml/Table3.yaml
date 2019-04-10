@@ -1,0 +1,52 @@
+dependent_variables:
+- header: {name: SIGNAL STRENGTH}
+  qualifiers:
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GeV, value: '7000.0'}
+  - {name: SQRT(S), units: GeV, value: '8000.0'}
+  values:
+  - errors:
+    - asymerror: {minus: -0.23, plus: 0.234}
+      label: stat
+    - asymerror: {minus: -0.114, plus: 0.158}
+      label: sys
+    value: 1.167
+  - errors:
+    - asymerror: {minus: -0.322, plus: 0.324}
+      label: stat
+    - asymerror: {minus: -0.146, plus: 0.232}
+      label: sys
+    value: 1.322
+  - errors:
+    - asymerror: {minus: -0.633, plus: 0.721}
+      label: stat
+    - asymerror: {minus: -0.29, plus: 0.297}
+      label: sys
+    value: 0.782
+  - errors:
+    - asymerror: {minus: -1.47, plus: 1.63}
+      label: stat
+    - asymerror: {minus: -0.16, plus: 0.37}
+      label: sys
+    value: 0.97
+  - errors:
+    - asymerror: {minus: -0.13, plus: 3.63}
+      label: stat
+    - asymerror: {minus: 0.0, plus: 0.72}
+      label: sys
+    value: 0.13
+  - errors:
+    - asymerror: {minus: -1.76, plus: 2.62}
+      label: stat
+    - asymerror: {minus: -0.4, plus: 0.78}
+      label: sys
+    value: 1.55
+independent_variables:
+- header: {name: HIGGS BOSON PRODUCTION MODE}
+  values:
+  - {value: COMBINED}
+  - {value: GGF}
+  - {value: VBF}
+  - {value: WH}
+  - {value: ZH}
+  - {value: TTH}

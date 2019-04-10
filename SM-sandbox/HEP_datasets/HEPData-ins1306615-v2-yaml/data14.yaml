@@ -1,0 +1,104 @@
+dependent_variables:
+- header: {name: D(SIG)/DPTTHRUST(2GAMMA), units: FB*GEV**-1}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.646}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.014}
+    - {label: 'sys,fit', symerror: 0.031}
+    - {label: 'sys,lumi', symerror: 0.012}
+    - {label: 'sys,PID', symerror: 0.004}
+    - {label: 'sys,iso', symerror: 0.004}
+    - {label: 'sys,trig', symerror: 0.002}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.004, plus: 0.015}
+      label: sys,gen_model
+    value: 0.44
+  - errors:
+    - {label: stat, symerror: 0.461}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.015}
+    - {label: 'sys,fit', symerror: 0.094}
+    - {label: 'sys,lumi', symerror: 0.045}
+    - {label: 'sys,PID', symerror: 0.016}
+    - {label: 'sys,iso', symerror: 0.016}
+    - {label: 'sys,trig', symerror: 0.008}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.026, plus: 0.052}
+      label: sys,gen_model
+    value: 1.597
+  - errors:
+    - {label: stat, symerror: 0.335}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.015}
+    - {label: 'sys,fit', symerror: 0.038}
+    - {label: 'sys,lumi', symerror: 0.018}
+    - {label: 'sys,PID', symerror: 0.007}
+    - {label: 'sys,iso', symerror: 0.007}
+    - {label: 'sys,trig', symerror: 0.003}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.005, plus: 0.022}
+      label: sys,gen_model
+    value: 0.652
+  - errors:
+    - {label: stat, symerror: 0.263}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.013}
+    - {label: 'sys,fit', symerror: 0.035}
+    - {label: 'sys,lumi', symerror: 0.016}
+    - {label: 'sys,PID', symerror: 0.006}
+    - {label: 'sys,iso', symerror: 0.006}
+    - {label: 'sys,trig', symerror: 0.003}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.008, plus: 0.018}
+      label: sys,gen_model
+    value: 0.569
+  - errors:
+    - {label: stat, symerror: 0.132}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.018}
+    - {label: 'sys,fit', symerror: 0.007}
+    - {label: 'sys,lumi', symerror: 0.002}
+    - {label: 'sys,PID', symerror: 0.001}
+    - {label: 'sys,iso', symerror: 0.001}
+    - {label: 'sys,trig', symerror: 0.0}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.001, plus: 0.003}
+      label: sys,gen_model
+    value: 0.087
+  - errors:
+    - {label: stat, symerror: 0.0973}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.0104}
+    - {label: 'sys,fit', symerror: 0.0207}
+    - {label: 'sys,lumi', symerror: 0.0098}
+    - {label: 'sys,PID', symerror: 0.0035}
+    - {label: 'sys,iso', symerror: 0.0035}
+    - {label: 'sys,trig', symerror: 0.0018}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.0038, plus: 0.0086}
+      label: sys,gen_model
+    value: 0.3504
+  - errors:
+    - {label: stat, symerror: 0.0174}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.0021}
+    - {label: 'sys,fit', symerror: 0.0004}
+    - {label: 'sys,lumi', symerror: 0.0001}
+    - {label: 'sys,PID', symerror: 0.0}
+    - {label: 'sys,iso', symerror: 0.0}
+    - {label: 'sys,trig', symerror: 0.0}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.0, plus: 0.0001}
+      label: sys,gen_model
+    value: 0.0034
+independent_variables:
+- header: {name: PTTHRUST(2GAMMA), units: GEV}
+  values:
+  - {high: 10.0, low: 0.0}
+  - {high: 20.0, low: 10.0}
+  - {high: 30.0, low: 20.0}
+  - {high: 40.0, low: 30.0}
+  - {high: 60.0, low: 40.0}
+  - {high: 80.0, low: 60.0}
+  - {high: 150.0, low: 80.0}

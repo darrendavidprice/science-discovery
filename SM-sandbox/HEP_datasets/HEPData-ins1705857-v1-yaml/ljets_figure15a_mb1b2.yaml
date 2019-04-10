@@ -1,0 +1,39 @@
+dependent_variables:
+- header: {name: 1/SIG*D(SIG)/DM, units: GEV**-1}
+  qualifiers:
+  - {name: '', value: ''}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.00022473}
+    - {label: sys, symerror: 0.00028106}
+    value: 0.00153375
+  - errors:
+    - {label: stat, symerror: 0.00039287}
+    - {label: sys, symerror: 0.00096702}
+    value: 0.00316662
+  - errors:
+    - {label: stat, symerror: 0.00035787}
+    - {label: sys, symerror: 0.000439}
+    value: 0.00332614
+  - errors:
+    - {label: stat, symerror: 0.00025196}
+    - {label: sys, symerror: 0.00031937}
+    value: 0.00210459
+  - errors:
+    - {label: stat, symerror: 0.00018599}
+    - {label: sys, symerror: 0.00039282}
+    value: 0.00147791
+  - errors:
+    - {label: stat, symerror: 5.69e-06}
+    - {label: sys, symerror: 1.275e-05}
+    value: 5.485e-05
+independent_variables:
+- header: {name: Mb1b2, units: GEV}
+  values:
+  - {high: 125, low: 20}
+  - {high: 175, low: 125}
+  - {high: 230, low: 175}
+  - {high: 295, low: 230}
+  - {high: 390, low: 295}
+  - {high: 4410, low: 390}
+name: ljets_figure15a_mb1b2.yaml

@@ -1,0 +1,62 @@
+additional_resources:
+- {description: web page with auxiliary material, location: 'https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HIGG-2013-08/'}
+comment: |
+  A measurement of the production processes of the recently discovered Higgs boson is performed in the two-photon final state using 5.4 fb-1 of proton-proton collisions data at sqrt(s)=7 TeV and 20.3 fb-1 at sqrt(s)=8 TeV collected by the ATLAS detector at the Large Hadron Collider.
+dateupdated: 06/10/2015 15:51:40
+hepdata_doi: 10.17182/hepdata.69473.v1
+modifications:
+- {action: Encoded, date: 03 NOV 2014, who: H. Yang (ATLAS)}
+record_ids:
+- {id: 1312978, type: inspire}
+- {id: 6380, type: red}
+---
+data_file: Table1.yaml
+description: |
+  The signal strength for a Higgs boson of mass mH = 125.4 GeV decaying via H->gammagamma as measured in the individual analysis categories, and the combined signal strength, for the combination of the 7 TeV and 8 TeV data. The VH dilepton category is not shown because with only two events in the combined sample, the fit results are not meaningful.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [SIG]
+- name: phrases
+  values: [Inclusive, Higgs, Integrated Cross Section, Cross Section, Proton-Proton
+      Scattering]
+- name: cmenergies
+  values: [7000.0-8000.0]
+location: Data from Fig. 17
+name: Table 1
+table_doi: 10.17182/hepdata.69473.v1/t1
+---
+data_file: Table2.yaml
+description: |
+  The signal strength for a Higgs boson of mass mH = 125.4 GeV decaying via H->gammagamma as measured in groups of categories sensitive to individual production modes, and the combined signal strength, for the combination of the 7 TeV and 8 TeV data.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [SIG]
+- name: phrases
+  values: [Inclusive, Higgs, Integrated Cross Section, Cross Section, Proton-Proton
+      Scattering]
+- name: cmenergies
+  values: [7000.0-8000.0]
+location: Data from Fig. 18
+name: Table 2
+table_doi: 10.17182/hepdata.69473.v1/t2
+---
+data_file: Table3.yaml
+description: |
+  Measured signal strengths, for a Higgs boson of mass mH = 125.4 GeV decaying via H->gammagamma, of the different Higgs boson production modes and the combined signal strength mu obtained with the combination of the 7 TeV and 8 TeV data.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [SIG]
+- name: phrases
+  values: [Inclusive, Higgs, Integrated Cross Section, Cross Section, Proton-Proton
+      Scattering]
+- name: cmenergies
+  values: [7000.0-8000.0]
+location: Data from Fig. 19
+name: Table 3
+table_doi: 10.17182/hepdata.69473.v1/t3

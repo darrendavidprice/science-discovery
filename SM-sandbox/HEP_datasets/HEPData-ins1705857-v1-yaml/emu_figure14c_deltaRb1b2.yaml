@@ -1,0 +1,34 @@
+dependent_variables:
+- header: {name: 1/SIG*D(SIG)/DDR, units: ''}
+  qualifiers:
+  - {name: '', value: ''}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.0085}
+    - {label: sys, symerror: 0.0105}
+    value: 0.127
+  - errors:
+    - {label: stat, symerror: 0.0146}
+    - {label: sys, symerror: 0.0319}
+    value: 0.1987
+  - errors:
+    - {label: stat, symerror: 0.0173}
+    - {label: sys, symerror: 0.0463}
+    value: 0.299
+  - errors:
+    - {label: stat, symerror: 0.0218}
+    - {label: sys, symerror: 0.0525}
+    value: 0.4691
+  - errors:
+    - {label: stat, symerror: 0.0027}
+    - {label: sys, symerror: 0.004}
+    value: 0.0774
+independent_variables:
+- header: {name: DRb1b2, units: ''}
+  values:
+  - {high: 1.3, low: 0.4}
+  - {high: 1.8, low: 1.3}
+  - {high: 2.3, low: 1.8}
+  - {high: 2.8, low: 2.3}
+  - {high: 8, low: 2.8}
+name: emu_figure14c_deltaRb1b2.yaml

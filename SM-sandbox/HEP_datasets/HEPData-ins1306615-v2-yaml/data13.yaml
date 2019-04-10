@@ -1,0 +1,183 @@
+dependent_variables:
+- header: {name: D(SIG)/DDPHI(2JET), units: FB*RAD**-1}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors:
+    - {label: stat, symerror: 1.04}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.11}
+    - {label: 'sys,fit', symerror: 0.13}
+    - {label: 'sys,lumi', symerror: 0.05}
+    - {label: 'sys,PID', symerror: 0.02}
+    - {label: 'sys,iso', symerror: 0.04}
+    - {label: 'sys,trig', symerror: 0.01}
+    - asymerror: {minus: 0.02, plus: -0.02}
+      label: sys,pileup
+    - asymerror: {minus: 0.05, plus: -0.05}
+      label: sys,JER
+    - asymerror: {minus: 0.02, plus: -0.02}
+      label: sys,jes_base1
+    - asymerror: {minus: -0.04, plus: 0.05}
+      label: sys,jes_base2
+    - asymerror: {minus: 0.04, plus: -0.04}
+      label: sys,jes_base3
+    - {label: 'sys,jes_base4', symerror: 0.01}
+    - {label: 'sys,jes_base5', symerror: 0.0}
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,jes_base6
+    - asymerror: {minus: 0.07, plus: -0.07}
+      label: sys,jes_fwd_model
+    - {label: 'sys,jes_highpt', symerror: 0.0}
+    - {label: 'sys,jes_nonclosure', symerror: 0.0}
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,jes_pu_npv
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,jes_pu_mu
+    - {label: 'sys,jes_pu_pt', symerror: 0.0}
+    - asymerror: {minus: 0.04, plus: -0.03}
+      label: sys,jes_pu_rho
+    - asymerror: {minus: 0.14, plus: -0.12}
+      label: sys,jes_flav_comp
+    - asymerror: {minus: 0.07, plus: -0.07}
+      label: sys,jes_flav_resp
+    - asymerror: {minus: -0.01, plus: 0.0}
+      label: sys,JVF
+    - asymerror: {minus: -0.09, plus: 0.05}
+      label: sys,gen_model
+    value: 1.93
+  - errors:
+    - {label: stat, symerror: 1.27}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.11}
+    - {label: 'sys,fit', symerror: 0.1}
+    - {label: 'sys,lumi', symerror: 0.04}
+    - {label: 'sys,PID', symerror: 0.01}
+    - {label: 'sys,iso', symerror: 0.03}
+    - {label: 'sys,trig', symerror: 0.01}
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,pileup
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,JER
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,jes_base1
+    - {label: 'sys,jes_base2', symerror: 0.03}
+    - asymerror: {minus: 0.02, plus: -0.02}
+      label: sys,jes_base3
+    - {label: 'sys,jes_base4', symerror: 0.01}
+    - {label: 'sys,jes_base5', symerror: 0.0}
+    - asymerror: {minus: 0.01, plus: 0.0}
+      label: sys,jes_base6
+    - asymerror: {minus: 0.05, plus: -0.05}
+      label: sys,jes_fwd_model
+    - {label: 'sys,jes_highpt', symerror: 0.0}
+    - {label: 'sys,jes_nonclosure', symerror: 0.0}
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,jes_pu_npv
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,jes_pu_mu
+    - {label: 'sys,jes_pu_pt', symerror: 0.0}
+    - asymerror: {minus: 0.02, plus: -0.02}
+      label: sys,jes_pu_rho
+    - asymerror: {minus: 0.08, plus: -0.07}
+      label: sys,jes_flav_comp
+    - asymerror: {minus: 0.04, plus: -0.04}
+      label: sys,jes_flav_resp
+    - {label: 'sys,JVF', symerror: 0.0}
+    - {label: 'sys,gen_model', symerror: 0.03}
+    value: 1.25
+  - errors:
+    - {label: stat, symerror: 2.57}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.15}
+    - {label: 'sys,fit', symerror: 0.2}
+    - {label: 'sys,lumi', symerror: 0.06}
+    - {label: 'sys,PID', symerror: 0.02}
+    - {label: 'sys,iso', symerror: 0.04}
+    - {label: 'sys,trig', symerror: 0.01}
+    - asymerror: {minus: 0.03, plus: -0.03}
+      label: sys,pileup
+    - asymerror: {minus: 0.02, plus: -0.02}
+      label: sys,JER
+    - asymerror: {minus: 0.02, plus: -0.02}
+      label: sys,jes_base1
+    - asymerror: {minus: -0.04, plus: 0.05}
+      label: sys,jes_base2
+    - asymerror: {minus: 0.04, plus: -0.04}
+      label: sys,jes_base3
+    - {label: 'sys,jes_base4', symerror: 0.01}
+    - asymerror: {minus: -0.0, plus: -0.01}
+      label: sys,jes_base5
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,jes_base6
+    - asymerror: {minus: 0.09, plus: -0.08}
+      label: sys,jes_fwd_model
+    - {label: 'sys,jes_highpt', symerror: 0.0}
+    - {label: 'sys,jes_nonclosure', symerror: 0.0}
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,jes_pu_npv
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,jes_pu_mu
+    - {label: 'sys,jes_pu_pt', symerror: 0.0}
+    - asymerror: {minus: 0.04, plus: -0.04}
+      label: sys,jes_pu_rho
+    - asymerror: {minus: 0.14, plus: -0.12}
+      label: sys,jes_flav_comp
+    - asymerror: {minus: 0.07, plus: -0.07}
+      label: sys,jes_flav_resp
+    - asymerror: {minus: -0.01, plus: 0.0}
+      label: sys,JVF
+    - {label: 'sys,gen_model', symerror: 0.08}
+    value: 2.16
+  - errors:
+    - {label: stat, symerror: 3.15}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.21}
+    - {label: 'sys,fit', symerror: 0.71}
+    - {label: 'sys,lumi', symerror: 0.27}
+    - {label: 'sys,PID', symerror: 0.1}
+    - {label: 'sys,iso', symerror: 0.19}
+    - {label: 'sys,trig', symerror: 0.05}
+    - asymerror: {minus: 0.48, plus: -0.48}
+      label: sys,pileup
+    - asymerror: {minus: 0.18, plus: -0.18}
+      label: sys,JER
+    - asymerror: {minus: 0.08, plus: -0.07}
+      label: sys,jes_base1
+    - {label: 'sys,jes_base2', symerror: 0.2}
+    - asymerror: {minus: 0.17, plus: -0.17}
+      label: sys,jes_base3
+    - {label: 'sys,jes_base4', symerror: 0.06}
+    - asymerror: {minus: 0.03, plus: -0.02}
+      label: sys,jes_base5
+    - asymerror: {minus: 0.04, plus: -0.04}
+      label: sys,jes_base6
+    - asymerror: {minus: 0.4, plus: -0.38}
+      label: sys,jes_fwd_model
+    - {label: 'sys,jes_highpt', symerror: 0.0}
+    - {label: 'sys,jes_nonclosure', symerror: 0.0}
+    - asymerror: {minus: 0.06, plus: -0.07}
+      label: sys,jes_pu_npv
+    - asymerror: {minus: 0.06, plus: -0.07}
+      label: sys,jes_pu_mu
+    - asymerror: {minus: 0.01, plus: -0.01}
+      label: sys,jes_pu_pt
+    - asymerror: {minus: 0.16, plus: -0.16}
+      label: sys,jes_pu_rho
+    - asymerror: {minus: 0.62, plus: -0.57}
+      label: sys,jes_flav_comp
+    - asymerror: {minus: 0.32, plus: -0.31}
+      label: sys,jes_flav_resp
+    - asymerror: {minus: -0.03, plus: 0.02}
+      label: sys,JVF
+    - asymerror: {minus: -0.48, plus: 0.79}
+      label: sys,gen_model
+    value: 9.58
+independent_variables:
+- header: {name: DPHI(2JET), units: RAD}
+  values:
+  - {high: 1.05, low: 0.0}
+  - {high: 2.09, low: 1.05}
+  - {high: 2.62, low: 2.09}
+  - {high: 3.14, low: 2.62}

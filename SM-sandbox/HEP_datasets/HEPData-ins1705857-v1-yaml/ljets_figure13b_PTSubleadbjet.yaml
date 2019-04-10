@@ -1,0 +1,29 @@
+dependent_variables:
+- header: {name: 1/SIG*D(SIG)/DPT, units: GEV**-1}
+  qualifiers:
+  - {name: '', value: ''}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.0007119}
+    - {label: sys, symerror: 0.00119777}
+    value: 0.00736113
+  - errors:
+    - {label: stat, symerror: 0.00089349}
+    - {label: sys, symerror: 0.00107316}
+    value: 0.00989454
+  - errors:
+    - {label: stat, symerror: 0.00064126}
+    - {label: sys, symerror: 0.00082211}
+    value: 0.0068352
+  - errors:
+    - {label: stat, symerror: 1.791e-05}
+    - {label: sys, symerror: 2.974e-05}
+    value: 0.00019312
+independent_variables:
+- header: {name: PTb2, units: GEV}
+  values:
+  - {high: 65, low: 25}
+  - {high: 85, low: 65}
+  - {high: 120, low: 85}
+  - {high: 1510, low: 120}
+name: ljets_figure13b_PTSubleadbjet.yaml

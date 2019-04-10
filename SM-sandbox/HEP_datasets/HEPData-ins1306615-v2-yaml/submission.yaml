@@ -1,0 +1,618 @@
+additional_resources:
+- {description: web page with auxiliary material, location: 'https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/HIGG-2013-10/'}
+comment: Measurements of cross sections and differential distributions for Higgs production
+  in the diphoton channel are presented based on 20.3 fb-1 proton-proton collisions
+  at sqrt(s) = 8 TeV.
+hepdata_doi: 10.17182/hepdata.65179.v2
+record_ids:
+- {id: 1306615, type: inspire}
+- {id: 1746319, type: cds}
+- {id: 6240, type: durham}
+---
+additional_resources: []
+data_file: data1.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of transverse momentum of diphoton system. Each systematic uncertainty
+  sources is fully uncorrelated with the other sources and fully correlated across
+  bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DPT]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 4a
+name: Table 1
+table_doi: 10.17182/hepdata.65179.v2/t1
+---
+additional_resources: []
+data_file: data2.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of absolute rapidity of diphoton system. Each systematic uncertainty
+  sources is fully uncorrelated with the other sources and fully correlated across
+  bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DYRAP]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 4b
+name: Table 2
+table_doi: 10.17182/hepdata.65179.v2/t2
+---
+additional_resources: []
+data_file: data3.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of multiplicity of jets with transverse momentum pT(jet) > 30 GeV. Each
+  systematic uncertainty sources is fully uncorrelated with the other sources and
+  fully correlated across bins, except for the background modelling systematics for
+  which an uncorrelated treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [SIG]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 5a
+name: Table 3
+table_doi: 10.17182/hepdata.65179.v2/t3
+---
+additional_resources: []
+data_file: data4.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of multiplicity of jets with transverse momentum pT(jet) > 30 GeV. Each
+  systematic uncertainty sources is fully uncorrelated with the other sources and
+  fully correlated across bins, except for the background modelling systematics for
+  which an uncorrelated treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [SIG]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 5b
+name: Table 4
+table_doi: 10.17182/hepdata.65179.v2/t4
+---
+additional_resources: []
+data_file: data5.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of transverse momentum of the leading jet. Each systematic uncertainty
+  sources is fully uncorrelated with the other sources and fully correlated across
+  bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DPT]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 6a
+name: Table 5
+table_doi: 10.17182/hepdata.65179.v2/t5
+---
+additional_resources: []
+data_file: data6.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of absolute rapidity of the leading jet. Each systematic uncertainty
+  sources is fully uncorrelated with the other sources and fully correlated across
+  bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DYRAP]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 6b
+name: Table 6
+table_doi: 10.17182/hepdata.65179.v2/t6
+---
+additional_resources: []
+data_file: data7.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of scalar transverse momentum sum of all jets. Each systematic uncertainty
+  sources is fully uncorrelated with the other sources and fully correlated across
+  bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DHT]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 6c
+name: Table 7
+table_doi: 10.17182/hepdata.65179.v2/t7
+---
+additional_resources: []
+data_file: data8.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of transverse momentum of second leading jet. Each systematic uncertainty
+  sources is fully uncorrelated with the other sources and fully correlated across
+  bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DPT]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 6d
+name: Table 8
+table_doi: 10.17182/hepdata.65179.v2/t8
+---
+additional_resources: []
+data_file: data9.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of rapidity separation of leading two jets. Each systematic uncertainty
+  sources is fully uncorrelated with the other sources and fully correlated across
+  bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DYRAP]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 7a
+name: Table 9
+table_doi: 10.17182/hepdata.65179.v2/t9
+---
+additional_resources: []
+data_file: data10.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of azimuthal angle between diphoton and dijet systems. Each systematic
+  uncertainty sources is fully uncorrelated with the other sources and fully correlated
+  across bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DPHI]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 7b
+name: Table 10
+table_doi: 10.17182/hepdata.65179.v2/t10
+---
+additional_resources: []
+data_file: data11.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of cosine of the decay angle in the Collins-Soper frame. Each systematic
+  uncertainty sources is fully uncorrelated with the other sources and fully correlated
+  across bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DTHETA]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 8a
+name: Table 11
+table_doi: 10.17182/hepdata.65179.v2/t11
+---
+additional_resources: []
+data_file: data12.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of cosine of the decay angle in the Collins-Soper frame. Each systematic
+  uncertainty sources is fully uncorrelated with the other sources and fully correlated
+  across bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DTHETA]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 8a
+name: Table 12
+table_doi: 10.17182/hepdata.65179.v2/t12
+---
+additional_resources: []
+data_file: data13.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of azimuthal angle between the two leading jets. Each systematic uncertainty
+  sources is fully uncorrelated with the other sources and fully correlated across
+  bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DPHI]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 8b
+name: Table 13
+table_doi: 10.17182/hepdata.65179.v2/t13
+---
+additional_resources: []
+data_file: data14.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of diphoton thrust pT. Each systematic uncertainty sources is fully uncorrelated
+  with the other sources and fully correlated across bins, except for the background
+  modelling systematics for which an uncorrelated treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DPT]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 10a
+name: Table 14
+table_doi: 10.17182/hepdata.65179.v2/t14
+---
+additional_resources: []
+data_file: data15.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of rapidity separation of the two photons. Each systematic uncertainty
+  sources is fully uncorrelated with the other sources and fully correlated across
+  bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DYRAP]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 10b
+name: Table 15
+table_doi: 10.17182/hepdata.65179.v2/t15
+---
+additional_resources: []
+data_file: data16.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of tau of highest-tau jet (see paper for description). Each systematic
+  uncertainty sources is fully uncorrelated with the other sources and fully correlated
+  across bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DTHRUST]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 11a
+name: Table 16
+table_doi: 10.17182/hepdata.65179.v2/t16
+---
+additional_resources: []
+data_file: data17.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of scalar sum of tau for all jets (see paper for description). Each systematic
+  uncertainty sources is fully uncorrelated with the other sources and fully correlated
+  across bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DTHRUST]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 11b
+name: Table 17
+table_doi: 10.17182/hepdata.65179.v2/t17
+---
+additional_resources: []
+data_file: data18.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of absolute rapidity of second leading jet. Each systematic uncertainty
+  sources is fully uncorrelated with the other sources and fully correlated across
+  bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DYRAP]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 12a
+name: Table 18
+table_doi: 10.17182/hepdata.65179.v2/t18
+---
+additional_resources: []
+data_file: data19.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of transverse momentum of third leading jet. Each systematic uncertainty
+  sources is fully uncorrelated with the other sources and fully correlated across
+  bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DPT]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 12b
+name: Table 19
+table_doi: 10.17182/hepdata.65179.v2/t19
+---
+additional_resources: []
+data_file: data20.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of dijet invariant mass. Each systematic uncertainty sources is fully
+  uncorrelated with the other sources and fully correlated across bins, except for
+  the background modelling systematics for which an uncorrelated treatment across
+  bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DM]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 12c
+name: Table 20
+table_doi: 10.17182/hepdata.65179.v2/t20
+---
+additional_resources: []
+data_file: data21.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of transverse momentum of the combined diphoton and dijet system. Each
+  systematic uncertainty sources is fully uncorrelated with the other sources and
+  fully correlated across bins, except for the background modelling systematics for
+  which an uncorrelated treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DPT]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Fig. 12d
+name: Table 21
+table_doi: 10.17182/hepdata.65179.v2/t21
+---
+additional_resources: []
+data_file: data22.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of cosine of the decay angle in the Collins-Soper frame in bins of diphoton
+  transverse momentum. Each systematic uncertainty sources is fully uncorrelated with
+  the other sources and fully correlated across bins, except for the background modelling
+  systematics for which an uncorrelated treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DTHETA]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Aux. Fig. 1a
+name: Table 22
+table_doi: 10.17182/hepdata.65179.v2/t22
+---
+additional_resources: []
+data_file: data23.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of diphoton transverse momentum in jet multiplicity bins. Each systematic
+  uncertainty sources is fully uncorrelated with the other sources and fully correlated
+  across bins, except for the background modelling systematics for which an uncorrelated
+  treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DPT]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Aux. Fig. 1b
+name: Table 23
+table_doi: 10.17182/hepdata.65179.v2/t23
+---
+additional_resources: []
+data_file: data24.yaml
+data_license: {description: null, name: null, url: null}
+description: Measured differential cross section with associated uncertainties as
+  a function of leading jet transverse momentum for exclusive one-jet events. Each
+  systematic uncertainty sources is fully uncorrelated with the other sources and
+  fully correlated across bins, except for the background modelling systematics for
+  which an uncorrelated treatment across bins is more appropriate.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [DSIG/DPT]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Aux. Fig. 1c
+name: Table 24
+table_doi: 10.17182/hepdata.65179.v2/t24
+---
+additional_resources: []
+data_file: data25.yaml
+data_license: {description: null, name: null, url: null}
+description: Diphoton kinematic acceptances in percent for gluon fusion for each
+  fiducial region/variable bin studied in this paper, defined as the probability to
+  fulfil the diphoton kinematic criteria pT(2gam) < 0.35 (0.25) for the leading (subleading)
+  photon and |eta(gam)|<2.37. The factors are evaluated using the POWHEG event generator
+  with MPI modelling and hadronisation turned off. Consistent results for the diphoton
+  variables are obtained by HRes 2.2. Uncertainties are taken from PDF variations.
+  QCD scale varaitions have a negligible impact on these factors.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [EFF]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Tab. 7
+name: Table 25
+table_doi: 10.17182/hepdata.65179.v2/t25
+---
+additional_resources: []
+data_file: data26.yaml
+data_license: {description: null, name: null, url: null}
+description: Isolation efficiencies in percent for gluon fusion H -> 2gam for each
+  fiducial region/variable bin measured in this analysis. The isolation efficiency
+  is defined as the probability for both photons to fulfil the isolation criteria
+  (ETiso < 14 GeV as described in the text) for events that pass the diphoton kinematic
+  criteria. Uncertainties are assigned in the same way as for the non-perturbative
+  correction factors by varying the fragmentation and underlying event modelling.
+  These factors can be multiplied by the kinematic acceptance factors (see table~
+  ef{tab:fid_acceptance}) to extrapolate an inclusive gluon fusion Higgs prediction
+  to the fiducial volume used in this analysis.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [EFF]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Tab. 8
+name: Table 26
+table_doi: 10.17182/hepdata.65179.v2/t26
+---
+additional_resources: []
+data_file: data27.yaml
+data_license: {description: null, name: null, url: null}
+description: Non-perturbative correction factors in percent accounting for the impact
+  of hadronisation and the underlying event activity for all measured variables and
+  fiducial regions. Uncertainties are evaluated by deriving these factors using different
+  generators and tunes as described in the text.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [EFF]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Tab. 9
+name: Table 27
+table_doi: 10.17182/hepdata.65179.v2/t27
+---
+additional_resources: []
+data_file: data28.yaml
+data_license: {description: null, name: null, url: null}
+description: Fiducial cross sections in fb from WH, ZH and ttH combined, in each variable
+  bin and fiducial region.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [SIG]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Tab. 10
+name: Table 28
+table_doi: 10.17182/hepdata.65179.v2/t28
+---
+additional_resources: []
+data_file: data29.yaml
+data_license: {description: null, name: null, url: null}
+description: Statistical bin-to-bin correlations between the 24 bins used in the analysis
+  described in Phys.Lett. B753 (2016) 69-85 (arXiv:1508.02507). See Figure 3 of this
+  paper for the bins used.
+keywords:
+- name: reactions
+  values: [P P --> HIGGS X]
+- name: observables
+  values: [EFFICIENCY]
+- name: phrases
+  values: []
+- name: cmenergies
+  values: [8000.0]
+location: Data from Figure 1 and Figure 3 of Phys.Lett. B753 (2016) 69-85 (arXiv:1508.02507).
+name: Table 29
+table_doi: 10.17182/hepdata.65179.v2/t29

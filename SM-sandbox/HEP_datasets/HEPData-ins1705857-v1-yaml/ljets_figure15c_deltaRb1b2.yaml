@@ -1,0 +1,44 @@
+dependent_variables:
+- header: {name: 1/SIG*D(SIG)/DDR, units: ''}
+  qualifiers:
+  - {name: '', value: ''}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.02098}
+    - {label: sys, symerror: 0.02382}
+    value: 0.1375
+  - errors:
+    - {label: stat, symerror: 0.02814}
+    - {label: sys, symerror: 0.02211}
+    value: 0.15983
+  - errors:
+    - {label: stat, symerror: 0.04838}
+    - {label: sys, symerror: 0.0615}
+    value: 0.30694
+  - errors:
+    - {label: stat, symerror: 0.06077}
+    - {label: sys, symerror: 0.06987}
+    value: 0.36976
+  - errors:
+    - {label: stat, symerror: 0.08176}
+    - {label: sys, symerror: 0.17154}
+    value: 0.63985
+  - errors:
+    - {label: stat, symerror: 0.07171}
+    - {label: sys, symerror: 0.09298}
+    value: 0.49874
+  - errors:
+    - {label: stat, symerror: 0.00907}
+    - {label: sys, symerror: 0.01191}
+    value: 0.09527
+independent_variables:
+- header: {name: DRb1b2, units: ''}
+  values:
+  - {high: 1.25, low: 0.35}
+  - {high: 1.85, low: 1.25}
+  - {high: 2.25, low: 1.85}
+  - {high: 2.55, low: 2.25}
+  - {high: 2.8, low: 2.55}
+  - {high: 3.05, low: 2.8}
+  - {high: 5.8, low: 3.05}
+name: ljets_figure15c_deltaRb1b2.yaml

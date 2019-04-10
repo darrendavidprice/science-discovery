@@ -1,0 +1,117 @@
+dependent_variables:
+- header: {name: D(SIG)/DPT(2GAMMA), units: FB*GEV**-1}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.307}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.061}
+    - {label: 'sys,fit', symerror: 0.007}
+    - {label: 'sys,lumi', symerror: 0.002}
+    - {label: 'sys,PID', symerror: 0.001}
+    - {label: 'sys,iso', symerror: 0.001}
+    - {label: 'sys,trig', symerror: 0.0}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.001, plus: 0.002}
+      label: sys,gen_model
+    value: 0.073
+  - errors:
+    - {label: stat, symerror: 0.394}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.072}
+    - {label: 'sys,fit', symerror: 0.072}
+    - {label: 'sys,lumi', symerror: 0.037}
+    - {label: 'sys,PID', symerror: 0.013}
+    - {label: 'sys,iso', symerror: 0.013}
+    - {label: 'sys,trig', symerror: 0.007}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.019, plus: 0.037}
+      label: sys,gen_model
+    value: 1.315
+  - errors:
+    - {label: stat, symerror: 0.317}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.064}
+    - {label: 'sys,fit', symerror: 0.038}
+    - {label: 'sys,lumi', symerror: 0.019}
+    - {label: 'sys,PID', symerror: 0.007}
+    - {label: 'sys,iso', symerror: 0.007}
+    - {label: 'sys,trig', symerror: 0.003}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.004, plus: 0.021}
+      label: sys,gen_model
+    value: 0.682
+  - errors:
+    - {label: stat, symerror: 0.269}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.042}
+    - {label: 'sys,fit', symerror: 0.044}
+    - {label: 'sys,lumi', symerror: 0.022}
+    - {label: 'sys,PID', symerror: 0.008}
+    - {label: 'sys,iso', symerror: 0.008}
+    - {label: 'sys,trig', symerror: 0.004}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.009, plus: 0.027}
+      label: sys,gen_model
+    value: 0.788
+  - errors:
+    - {label: stat, symerror: 0.225}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.031}
+    - {label: 'sys,fit', symerror: 0.023}
+    - {label: 'sys,lumi', symerror: 0.011}
+    - {label: 'sys,PID', symerror: 0.004}
+    - {label: 'sys,iso', symerror: 0.004}
+    - {label: 'sys,trig', symerror: 0.002}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.002, plus: 0.014}
+      label: sys,gen_model
+    value: 0.379
+  - errors:
+    - {label: stat, symerror: 0.122}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.017}
+    - {label: 'sys,fit', symerror: 0.016}
+    - {label: 'sys,lumi', symerror: 0.007}
+    - {label: 'sys,PID', symerror: 0.003}
+    - {label: 'sys,iso', symerror: 0.003}
+    - {label: 'sys,trig', symerror: 0.001}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.001, plus: 0.009}
+      label: sys,gen_model
+    value: 0.253
+  - errors:
+    - {label: stat, symerror: 0.0855}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.0059}
+    - {label: 'sys,fit', symerror: 0.0111}
+    - {label: 'sys,lumi', symerror: 0.005}
+    - {label: 'sys,PID', symerror: 0.0018}
+    - {label: 'sys,iso', symerror: 0.0018}
+    - {label: 'sys,trig', symerror: 0.0009}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.0008, plus: 0.0062}
+      label: sys,gen_model
+    value: 0.1797
+  - errors:
+    - {label: stat, symerror: 0.0155}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.0014}
+    - {label: 'sys,fit', symerror: 0.0012}
+    - {label: 'sys,lumi', symerror: 0.0005}
+    - {label: 'sys,PID', symerror: 0.0002}
+    - {label: 'sys,iso', symerror: 0.0002}
+    - {label: 'sys,trig', symerror: 0.0001}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.0001, plus: 0.0006}
+      label: sys,gen_model
+    value: 0.0193
+independent_variables:
+- header: {name: PT(2GAMMA), units: GEV}
+  values:
+  - {high: 20.0, low: 0.0}
+  - {high: 30.0, low: 20.0}
+  - {high: 40.0, low: 30.0}
+  - {high: 50.0, low: 40.0}
+  - {high: 60.0, low: 50.0}
+  - {high: 80.0, low: 60.0}
+  - {high: 100.0, low: 80.0}
+  - {high: 200.0, low: 100.0}

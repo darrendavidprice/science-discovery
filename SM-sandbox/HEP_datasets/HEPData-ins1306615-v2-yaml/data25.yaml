@@ -1,0 +1,539 @@
+dependent_variables:
+- header: {name: KINEMATIC ACCEPTANCE, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '1.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors:
+    - {symerror: 0.9}
+    value: 62.6
+  - errors:
+    - {symerror: 0.7}
+    value: 61.1
+  - errors:
+    - {symerror: 0.6}
+    value: 61.9
+  - errors:
+    - {symerror: 0.6}
+    value: 63.8
+  - errors:
+    - {symerror: 0.5}
+    value: 55.0
+  - errors:
+    - {symerror: 0.6}
+    value: 61.2
+  - errors:
+    - {symerror: 1.0}
+    value: 63.6
+  - errors:
+    - {symerror: 0.9}
+    value: 62.9
+  - errors:
+    - {symerror: 0.6}
+    value: 61.5
+  - errors:
+    - {symerror: 0.5}
+    value: 61.1
+  - errors:
+    - {symerror: 0.7}
+    value: 60.8
+  - errors:
+    - {symerror: 0.6}
+    value: 61.0
+  - errors:
+    - {symerror: 0.6}
+    value: 62.1
+  - errors:
+    - {symerror: 0.5}
+    value: 54.4
+  - errors:
+    - {symerror: 0.6}
+    value: 60.3
+  - errors:
+    - {symerror: 0.6}
+    value: 57.5
+  - errors:
+    - {symerror: 1.0}
+    value: 59.5
+  - errors:
+    - {symerror: 1.0}
+    value: 63.0
+  - errors:
+    - {symerror: 1.0}
+    value: 63.6
+  - errors:
+    - {symerror: 1.0}
+    value: 63.6
+  - errors:
+    - {symerror: 0.7}
+    value: 73.9
+  - errors:
+    - {symerror: 1.1}
+    value: 62.1
+- header: {name: KINEMATIC ACCEPTANCE, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '2.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 0.6}
+    value: 62.2
+  - errors:
+    - {symerror: 0.7}
+    value: 60.8
+  - errors:
+    - {symerror: 0.6}
+    value: 60.7
+  - errors:
+    - {symerror: 0.7}
+    value: 61.5
+  - errors:
+    - {symerror: 0.6}
+    value: 61.6
+  - errors:
+    - {symerror: 0.6}
+    value: 60.1
+  - errors:
+    - {symerror: 0.6}
+    value: 62.7
+  - errors:
+    - {symerror: 0.6}
+    value: 62.0
+  - errors:
+    - {symerror: 0.8}
+    value: 79.6
+  - errors:
+    - {symerror: 0.6}
+    value: 62.3
+  - errors:
+    - {symerror: 0.7}
+    value: 65.7
+  - errors:
+    - {symerror: 0.7}
+    value: 61.5
+  - errors:
+    - {symerror: 0.7}
+    value: 61.3
+  - errors:
+    - {symerror: 0.8}
+    value: 60.7
+  - errors:
+    - {symerror: 0.8}
+    value: 60.9
+  - errors:
+    - {symerror: 0.7}
+    value: 74.0
+  - errors:
+    - {symerror: 1.0}
+    value: 64.9
+- header: {name: KINEMATIC ACCEPTANCE, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '3.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 0.6}
+    value: 68.9
+  - errors:
+    - {symerror: 0.6}
+    value: 61.2
+  - errors:
+    - {symerror: 0.6}
+    value: 64.3
+  - errors:
+    - {symerror: 0.7}
+    value: 60.2
+  - errors:
+    - {symerror: 0.6}
+    value: 63.1
+  - errors:
+    - {symerror: 0.6}
+    value: 62.9
+  - errors:
+    - {symerror: 0.6}
+    value: 64.2
+  - errors:
+    - {symerror: 0.6}
+    value: 60.1
+  - errors:
+    - {symerror: 0.7}
+    value: 66.7
+  - errors:
+    - {symerror: 0.6}
+    value: 63.3
+  - errors:
+    - {symerror: 0.6}
+    value: 61.5
+  - errors:
+    - {symerror: 0.6}
+    value: 59.7
+  - errors:
+    - {symerror: 0.6}
+    value: 59.8
+  - errors:
+    - {symerror: 0.7}
+    value: 59.8
+  - errors:
+    - {symerror: 0.7}
+    value: 60.1
+  - errors:
+    - {symerror: 0.6}
+    value: 74.2
+  - errors:
+    - {symerror: 0.9}
+    value: 64.1
+- header: {name: KINEMATIC ACCEPTANCE, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '4.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 0.6}
+    value: 63.8
+  - errors:
+    - {symerror: 0.6}
+    value: 67.8
+  - errors:
+    - {symerror: 0.7}
+    value: 60.1
+  - errors:
+    - {symerror: 0.6}
+    value: 63.4
+  - errors:
+    - {symerror: 0.6}
+    value: 67.5
+  - errors:
+    - {symerror: 0.6}
+    value: 62.6
+  - errors:
+    - {symerror: 0.5}
+    value: 60.9
+  - errors:
+    - {symerror: 0.4}
+    value: 42.5
+  - errors:
+    - {symerror: 0.6}
+    value: 67.4
+  - errors:
+    - {symerror: 0.5}
+    value: 60.8
+  - errors:
+    - {symerror: 0.6}
+    value: 61.8
+  - errors:
+    - {symerror: 0.5}
+    value: 60.5
+  - errors:
+    - {symerror: 0.6}
+    value: 59.6
+  - errors:
+    - {symerror: 0.6}
+    value: 59.3
+  - errors:
+    - {symerror: 0.6}
+    value: 73.9
+  - errors:
+    - {symerror: 0.8}
+    value: 62.8
+- header: {name: KINEMATIC ACCEPTANCE, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '5.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 0.6}
+    value: 67.3
+  - errors:
+    - {symerror: 0.5}
+    value: 60.5
+  - errors:
+    - {symerror: 0.6}
+    value: 63.8
+  - errors:
+    - {symerror: 0.6}
+    value: 69.9
+  - errors:
+    - {symerror: 0.7}
+    value: 61.7
+- header: {name: KINEMATIC ACCEPTANCE, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '6.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 0.5}
+    value: 38.8
+  - errors:
+    - {symerror: 0.7}
+    value: 60.1
+- header: {name: KINEMATIC ACCEPTANCE, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '7.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 0.7}
+    value: 60.2
+- header: {name: KINEMATIC ACCEPTANCE, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '8.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 0.5}
+    value: 59.9
+independent_variables:
+- header: {name: VARIABLE / REGION}
+  values:
+  - {value: DIPHOTON BASELINE}
+  - {value: MULT(JET) >= 1}
+  - {value: MULT(JET) >= 2}
+  - {value: MULT(JET) >= 3}
+  - {value: VBF ENHANCED}
+  - {value: PT(JET3)}
+  - {value: 'MULT(JET,PT>30 GEV)'}
+  - {value: 'MULT(JET,PT>50 GEV)'}
+  - {value: YRAP(JET1)}
+  - {value: YRAP(JET2)}
+  - {value: PT(JET2)}
+  - {value: M(2JET)}
+  - {value: DELTAYRAP(2JET)}
+  - {value: DPHI(2JET)}
+  - {value: PT(2GAMMA2JET)}
+  - {value: 'DPHI(2GAMMA,2JET)'}
+  - {value: TAUJET}
+  - {value: SUM(TAUJET)}
+  - {value: PT(JET1)}
+  - {value: HT}
+  - {value: YRAP(2GAMMA)}
+  - {value: PT(2GAMMA)}

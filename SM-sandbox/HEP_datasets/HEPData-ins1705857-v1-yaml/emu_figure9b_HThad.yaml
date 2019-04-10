@@ -1,0 +1,29 @@
+dependent_variables:
+- header: {name: 1/SIG*D(SIG)/DHThad, units: GEV**-1}
+  qualifiers:
+  - {name: '', value: ''}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.00011773}
+    - {label: sys, symerror: 0.00035811}
+    value: 0.00233601
+  - errors:
+    - {label: stat, symerror: 0.00011994}
+    - {label: sys, symerror: 0.00011911}
+    value: 0.00275723
+  - errors:
+    - {label: stat, symerror: 5.001e-05}
+    - {label: sys, symerror: 0.00010035}
+    value: 0.00112885
+  - errors:
+    - {label: stat, symerror: 4.6e-06}
+    - {label: sys, symerror: 1.758e-05}
+    value: 5.795e-05
+independent_variables:
+- header: {name: HThad, units: GEV}
+  values:
+  - {high: 225, low: 100}
+  - {high: 350, low: 225}
+  - {high: 600, low: 350}
+  - {high: 2000, low: 600}
+name: emu_figure9b_HThad.yaml

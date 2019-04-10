@@ -1,0 +1,29 @@
+dependent_variables:
+- header: {name: SIG, units: FB}
+  qualifiers:
+  - {name: '', value: ''}
+  values:
+  - errors:
+    - {label: stat, symerror: 5}
+    - {label: sys, symerror: 24}
+    value: 181
+  - errors:
+    - {label: stat, symerror: 3}
+    - {label: sys, symerror: 7}
+    value: 27
+  - errors:
+    - {label: stat, symerror: 40}
+    - {label: sys, symerror: 690}
+    value: 2450
+  - errors:
+    - {label: stat, symerror: 11}
+    - {label: sys, symerror: 61}
+    value: 359
+independent_variables:
+- header: {name: Selection, units: ''}
+  values:
+  - {high: 1.5, low: 0.5}
+  - {high: 2.5, low: 1.5}
+  - {high: 3.5, low: 2.5}
+  - {high: 4.5, low: 3.5}
+name: fid_xsec_figure7.yaml

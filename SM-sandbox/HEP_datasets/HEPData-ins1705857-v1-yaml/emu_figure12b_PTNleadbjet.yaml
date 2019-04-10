@@ -1,0 +1,29 @@
+dependent_variables:
+- header: {name: 1/SIG*D(SIG)/DPT, units: GEV**-1}
+  qualifiers:
+  - {name: '', value: ''}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.00061334}
+    - {label: sys, symerror: 0.00172098}
+    value: 0.0100878
+  - errors:
+    - {label: stat, symerror: 0.00042596}
+    - {label: sys, symerror: 0.00056227}
+    value: 0.0113589
+  - errors:
+    - {label: stat, symerror: 0.00020802}
+    - {label: sys, symerror: 0.00041527}
+    value: 0.00388104
+  - errors:
+    - {label: stat, symerror: 7.58e-06}
+    - {label: sys, symerror: 2.311e-05}
+    value: 7.128e-05
+independent_variables:
+- header: {name: PTb2, units: GEV}
+  values:
+  - {high: 50, low: 25}
+  - {high: 90, low: 50}
+  - {high: 150, low: 90}
+  - {high: 1000, low: 150}
+name: emu_figure12b_PTNleadbjet.yaml

@@ -1,0 +1,143 @@
+dependent_variables:
+- header: {name: D(SIG)/DCOS(THETA*), units: FB}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors:
+    - {label: stat, symerror: 28.7}
+    - {label: 'sys,bkg_model_uncorr', symerror: 4.3}
+    - {label: 'sys,fit', symerror: 1.9}
+    - {label: 'sys,lumi', symerror: 0.9}
+    - {label: 'sys,PID', symerror: 0.3}
+    - {label: 'sys,iso', symerror: 0.3}
+    - {label: 'sys,trig', symerror: 0.2}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.3, plus: 1.7}
+      label: sys,gen_model
+    value: 33.0
+  - errors:
+    - {label: stat, symerror: 29.6}
+    - {label: 'sys,bkg_model_uncorr', symerror: 3.2}
+    - {label: 'sys,fit', symerror: 2.1}
+    - {label: 'sys,lumi', symerror: 1.2}
+    - {label: 'sys,PID', symerror: 0.4}
+    - {label: 'sys,iso', symerror: 0.4}
+    - {label: 'sys,trig', symerror: 0.2}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.0, plus: 2.7}
+      label: sys,gen_model
+    value: 44.0
+  - errors:
+    - {label: stat, symerror: 30.9}
+    - {label: 'sys,bkg_model_uncorr', symerror: 2.8}
+    - {label: 'sys,fit', symerror: 4.7}
+    - {label: 'sys,lumi', symerror: 2.6}
+    - {label: 'sys,PID', symerror: 0.9}
+    - {label: 'sys,iso', symerror: 0.9}
+    - {label: 'sys,trig', symerror: 0.5}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -1.1, plus: 5.3}
+      label: sys,gen_model
+    value: 91.9
+  - errors:
+    - {label: stat, symerror: 30.9}
+    - {label: 'sys,bkg_model_uncorr', symerror: 3.0}
+    - {label: 'sys,fit', symerror: 2.5}
+    - {label: 'sys,lumi', symerror: 1.3}
+    - {label: 'sys,PID', symerror: 0.4}
+    - {label: 'sys,iso', symerror: 0.4}
+    - {label: 'sys,trig', symerror: 0.2}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.4, plus: 2.6}
+      label: sys,gen_model
+    value: 44.7
+  - errors:
+    - {label: stat, symerror: 32.3}
+    - {label: 'sys,bkg_model_uncorr', symerror: 4.5}
+    - {label: 'sys,fit', symerror: 0.6}
+    - {label: 'sys,lumi', symerror: 0.2}
+    - {label: 'sys,PID', symerror: 0.1}
+    - {label: 'sys,iso', symerror: 0.1}
+    - {label: 'sys,trig', symerror: 0.0}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.1, plus: 0.2}
+      label: sys,gen_model
+    value: 8.4
+  - errors:
+    - {label: stat, symerror: 35.4}
+    - {label: 'sys,bkg_model_uncorr', symerror: 4.5}
+    - {label: 'sys,fit', symerror: 4.2}
+    - {label: 'sys,lumi', symerror: 1.9}
+    - {label: 'sys,PID', symerror: 0.7}
+    - {label: 'sys,iso', symerror: 0.7}
+    - {label: 'sys,trig', symerror: 0.3}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -1.0, plus: 0.3}
+      label: sys,gen_model
+    value: 69.5
+  - errors:
+    - {label: stat, symerror: 38.6}
+    - {label: 'sys,bkg_model_uncorr', symerror: 8.4}
+    - {label: 'sys,fit', symerror: 1.4}
+    - {label: 'sys,lumi', symerror: 0.7}
+    - {label: 'sys,PID', symerror: 0.3}
+    - {label: 'sys,iso', symerror: 0.3}
+    - {label: 'sys,trig', symerror: 0.1}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.5, plus: 0.1}
+      label: sys,gen_model
+    value: 26.1
+  - errors:
+    - {label: stat, symerror: 38.9}
+    - {label: 'sys,bkg_model_uncorr', symerror: 7.2}
+    - {label: 'sys,fit', symerror: 6.3}
+    - {label: 'sys,lumi', symerror: 2.5}
+    - {label: 'sys,PID', symerror: 0.9}
+    - {label: 'sys,iso', symerror: 0.9}
+    - {label: 'sys,trig', symerror: 0.5}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -1.8, plus: 1.2}
+      label: sys,gen_model
+    value: 91.0
+  - errors:
+    - {label: stat, symerror: 14.6}
+    - {label: 'sys,bkg_model_uncorr', symerror: 1.2}
+    - {label: 'sys,fit', symerror: 1.4}
+    - {label: 'sys,lumi', symerror: 0.5}
+    - {label: 'sys,PID', symerror: 0.2}
+    - {label: 'sys,iso', symerror: 0.2}
+    - {label: 'sys,trig', symerror: 0.1}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.3, plus: 0.2}
+      label: sys,gen_model
+    value: 19.5
+  - errors:
+    - {label: stat, symerror: 11.9}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.9}
+    - {label: 'sys,fit', symerror: 1.1}
+    - {label: 'sys,lumi', symerror: 0.5}
+    - {label: 'sys,PID', symerror: 0.2}
+    - {label: 'sys,iso', symerror: 0.2}
+    - {label: 'sys,trig', symerror: 0.1}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.4, plus: 0.2}
+      label: sys,gen_model
+    value: 17.0
+independent_variables:
+- header: {name: COS(THETA*)}
+  values:
+  - {high: 0.1, low: 0.0}
+  - {high: 0.2, low: 0.1}
+  - {high: 0.3, low: 0.2}
+  - {high: 0.4, low: 0.3}
+  - {high: 0.5, low: 0.4}
+  - {high: 0.6, low: 0.5}
+  - {high: 0.7, low: 0.6}
+  - {high: 0.8, low: 0.7}
+  - {high: 0.9, low: 0.8}
+  - {high: 1.0, low: 0.9}

@@ -1,0 +1,39 @@
+dependent_variables:
+- header: {name: 1/SIG*D(SIG)/DDR, units: ''}
+  qualifiers:
+  - {name: '', value: ''}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.08776}
+    - {label: sys, symerror: 0.1095}
+    value: 0.91262
+  - errors:
+    - {label: stat, symerror: 0.13433}
+    - {label: sys, symerror: 0.18091}
+    value: 1.32669
+  - errors:
+    - {label: stat, symerror: 0.10548}
+    - {label: sys, symerror: 0.13995}
+    value: 0.77392
+  - errors:
+    - {label: stat, symerror: 0.09819}
+    - {label: sys, symerror: 0.21461}
+    value: 1.05071
+  - errors:
+    - {label: stat, symerror: 0.06687}
+    - {label: sys, symerror: 0.04319}
+    value: 0.48557
+  - errors:
+    - {label: stat, symerror: 0.00929}
+    - {label: sys, symerror: 0.02528}
+    value: 0.06957
+independent_variables:
+- header: {name: DRMINbb, units: ''}
+  values:
+  - {high: 0.6, low: 0.35}
+  - {high: 0.75, low: 0.6}
+  - {high: 0.9, low: 0.75}
+  - {high: 1.1, low: 0.9}
+  - {high: 1.35, low: 1.1}
+  - {high: 3.15, low: 1.35}
+name: ljets_ttXSubtracted_figure17c_deltaRbb.yaml

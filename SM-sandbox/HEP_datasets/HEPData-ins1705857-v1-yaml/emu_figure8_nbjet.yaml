@@ -1,0 +1,24 @@
+dependent_variables:
+- header: {name: 1/SIG*D(SIG)/DNbjet, units: ''}
+  qualifiers:
+  - {name: '', value: ''}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.00544}
+    - {label: sys, symerror: 0.00311}
+    value: 0.97067
+  - errors:
+    - {label: stat, symerror: 0.00058}
+    - {label: sys, symerror: 0.00471}
+    value: 0.02486
+  - errors:
+    - {label: stat, symerror: 0.00026}
+    - {label: sys, symerror: 0.001}
+    value: 0.00447
+independent_variables:
+- header: {name: Nbjets, units: ''}
+  values:
+  - {value: 2}
+  - {value: 3}
+  - {value: '>= 4'}
+name: emu_figure8_nbjet.yaml

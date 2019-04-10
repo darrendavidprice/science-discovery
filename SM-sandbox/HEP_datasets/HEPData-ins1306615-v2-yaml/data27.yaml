@@ -1,0 +1,734 @@
+dependent_variables:
+- header: {name: NON-PERTURBATIVE CORRECTION FACTORS, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '1.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors:
+    - {symerror: 0.6}
+    value: 99.9
+  - errors:
+    - {symerror: 2.2}
+    value: 99.2
+  - errors:
+    - {symerror: 4.4}
+    value: 98.0
+  - errors:
+    - {symerror: 5.7}
+    value: 96.2
+  - errors:
+    - {symerror: 5.8}
+    value: 98.8
+  - errors:
+    - {symerror: 4.0}
+    value: 98.8
+  - errors:
+    - {symerror: 2.1}
+    value: 100.9
+  - errors:
+    - {symerror: 1.2}
+    value: 100.6
+  - errors:
+    - {symerror: 2.1}
+    value: 99.7
+  - errors:
+    - {symerror: 3.9}
+    value: 97.7
+  - errors:
+    - {symerror: 2.7}
+    value: 99.7
+  - errors:
+    - {symerror: 4.1}
+    value: 97.1
+  - errors:
+    - {symerror: 3.6}
+    value: 97.5
+  - errors:
+    - {symerror: 4.6}
+    value: 96.6
+  - errors:
+    - {symerror: 6.3}
+    value: 97.0
+  - errors:
+    - {symerror: 5.4}
+    value: 101.6
+  - errors:
+    - {symerror: 1.7}
+    value: 100.5
+  - errors:
+    - {symerror: 1.7}
+    value: 100.5
+  - errors:
+    - {symerror: 2.1}
+    value: 100.9
+  - errors:
+    - {symerror: 2.1}
+    value: 100.9
+  - errors:
+    - {symerror: 0.6}
+    value: 100.0
+  - errors:
+    - {symerror: 0.6}
+    value: 100.1
+  - errors:
+    - {symerror: 1.3}
+    value: 99.2
+  - errors:
+    - {symerror: 0.9}
+    value: 99.5
+  - errors:
+    - {symerror: 0.7}
+    value: 100.2
+- header: {name: NON-PERTURBATIVE CORRECTION FACTORS, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '2.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 6.8}
+    value: 96.9
+  - errors:
+    - {symerror: 2.7}
+    value: 99.7
+  - errors:
+    - {symerror: 2.4}
+    value: 99.4
+  - errors:
+    - {symerror: 2.0}
+    value: 99.4
+  - errors:
+    - {symerror: 4.2}
+    value: 98.2
+  - errors:
+    - {symerror: 4.9}
+    value: 98.3
+  - errors:
+    - {symerror: 4.4}
+    value: 99.0
+  - errors:
+    - {symerror: 5.2}
+    value: 99.0
+  - errors:
+    - {symerror: 4.1}
+    value: 98.6
+  - errors:
+    - {symerror: 3.0}
+    value: 99.5
+  - errors:
+    - {symerror: 4.2}
+    value: 98.3
+  - errors:
+    - {symerror: 2.6}
+    value: 99.0
+  - errors:
+    - {symerror: 2.3}
+    value: 99.4
+  - errors:
+    - {symerror: 2.2}
+    value: 99.5
+  - errors:
+    - {symerror: 2.6}
+    value: 99.5
+  - errors:
+    - {symerror: 0.6}
+    value: 100.1
+  - errors:
+    - {symerror: 0.7}
+    value: 100.0
+  - errors:
+    - {symerror: 1.1}
+    value: 101.0
+  - errors:
+    - {symerror: 1.0}
+    value: 101.0
+  - errors:
+    - {symerror: 0.6}
+    value: 100.1
+- header: {name: NON-PERTURBATIVE CORRECTION FACTORS, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '3.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 3.2}
+    value: 95.5
+  - errors:
+    - {symerror: 4.0}
+    value: 98.8
+  - errors:
+    - {symerror: 4.0}
+    value: 98.4
+  - errors:
+    - {symerror: 2.2}
+    value: 99.2
+  - errors:
+    - {symerror: 5.0}
+    value: 98.6
+  - errors:
+    - {symerror: 4.5}
+    value: 98.0
+  - errors:
+    - {symerror: 4.9}
+    value: 99.2
+  - errors:
+    - {symerror: 5.8}
+    value: 98.7
+  - errors:
+    - {symerror: 4.3}
+    value: 98.1
+  - errors:
+    - {symerror: 4.4}
+    value: 98.8
+  - errors:
+    - {symerror: 4.7}
+    value: 98.6
+  - errors:
+    - {symerror: 2.3}
+    value: 100.4
+  - errors:
+    - {symerror: 2.3}
+    value: 100.6
+  - errors:
+    - {symerror: 2.3}
+    value: 99.2
+  - errors:
+    - {symerror: 3.1}
+    value: 99.4
+  - errors:
+    - {symerror: 0.4}
+    value: 99.9
+  - errors:
+    - {symerror: 0.6}
+    value: 100.0
+  - errors:
+    - {symerror: 0.7}
+    value: 100.4
+  - errors:
+    - {symerror: 0.9}
+    value: 100.4
+  - errors:
+    - {symerror: 0.7}
+    value: 100.2
+- header: {name: NON-PERTURBATIVE CORRECTION FACTORS, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '4.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 5.7}
+    value: 96.3
+  - errors:
+    - {symerror: 3.2}
+    value: 95.3
+  - errors:
+    - {symerror: 3.4}
+    value: 98.2
+  - errors:
+    - {symerror: 6.1}
+    value: 98.1
+  - errors:
+    - {symerror: 3.5}
+    value: 97.8
+  - errors:
+    - {symerror: 5.7}
+    value: 99.0
+  - errors:
+    - {symerror: 6.9}
+    value: 98.8
+  - errors:
+    - {symerror: 5.4}
+    value: 100.2
+  - errors:
+    - {symerror: 5.2}
+    value: 97.9
+  - errors:
+    - {symerror: 4.0}
+    value: 95.2
+  - errors:
+    - {symerror: 2.0}
+    value: 100.2
+  - errors:
+    - {symerror: 2.6}
+    value: 99.5
+  - errors:
+    - {symerror: 2.3}
+    value: 99.1
+  - errors:
+    - {symerror: 2.5}
+    value: 99.0
+  - errors:
+    - {symerror: 0.6}
+    value: 100.1
+  - errors:
+    - {symerror: 0.8}
+    value: 100.2
+  - errors:
+    - {symerror: 0.7}
+    value: 100.1
+  - errors:
+    - {symerror: 0.7}
+    value: 100.2
+  - errors:
+    - {symerror: 0.7}
+    value: 99.9
+- header: {name: NON-PERTURBATIVE CORRECTION FACTORS, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '5.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 2.5}
+    value: 99.1
+  - errors:
+    - {symerror: 2.3}
+    value: 99.0
+  - errors:
+    - {symerror: 3.5}
+    value: 98.5
+  - errors:
+    - {symerror: 0.6}
+    value: 100.0
+  - errors:
+    - {symerror: 0.6}
+    value: 100.2
+  - errors:
+    - {symerror: 0.7}
+    value: 100.2
+  - errors:
+    - {symerror: 1.0}
+    value: 100.2
+  - errors:
+    - {symerror: 0.6}
+    value: 100.2
+- header: {name: NON-PERTURBATIVE CORRECTION FACTORS, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '6.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 0.6}
+    value: 100.3
+  - errors:
+    - {symerror: 0.5}
+    value: 100.2
+  - errors:
+    - {symerror: 0.7}
+    value: 100.0
+  - errors:
+    - {symerror: 0.7}
+    value: 99.8
+  - errors:
+    - {symerror: 0.5}
+    value: 100.0
+- header: {name: NON-PERTURBATIVE CORRECTION FACTORS, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '7.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 1.5}
+    value: 100.5
+  - errors:
+    - {symerror: 0.7}
+    value: 99.9
+  - errors:
+    - {symerror: 0.8}
+    value: 100.0
+  - errors:
+    - {symerror: 0.7}
+    value: 100.2
+- header: {name: NON-PERTURBATIVE CORRECTION FACTORS, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '8.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 0.6}
+    value: 100.0
+  - errors:
+    - {symerror: 0.6}
+    value: 100.0
+- header: {name: NON-PERTURBATIVE CORRECTION FACTORS, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '9.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 1.0}
+    value: 100.0
+- header: {name: NON-PERTURBATIVE CORRECTION FACTORS, units: PCT}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: BIN INDEX, value: '10.0'}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors: []
+    value: '-'
+  - errors:
+    - {symerror: 1.1}
+    value: 100.2
+independent_variables:
+- header: {name: VARIABLE / REGION}
+  values:
+  - {value: DIPHOTON BASELINE}
+  - {value: MULT(JET) >= 1}
+  - {value: MULT(JET) >= 2}
+  - {value: MULT(JET) >= 3}
+  - {value: VBF ENHANCED}
+  - {value: PT(JET3)}
+  - {value: 'MULT(JET,PT>30 GEV)'}
+  - {value: 'MULT(JET,PT>50 GEV)'}
+  - {value: YRAP(JET1)}
+  - {value: YRAP(JET2)}
+  - {value: PT(JET2)}
+  - {value: M(2JET)}
+  - {value: DELTAYRAP(2JET)}
+  - {value: DPHI(2JET)}
+  - {value: PT(2GAMMA2JET)}
+  - {value: 'DPHI(2GAMMA,2JET)'}
+  - {value: TAUJET}
+  - {value: SUM(TAUJET)}
+  - {value: PT(JET1)}
+  - {value: HT}
+  - {value: YRAP(2GAMMA)}
+  - {value: DELTAYRAP(2GAMMA)}
+  - {value: PTTHRUST(2GAMMA)}
+  - {value: PT(2GAMMA)}
+  - {value: COS(THETA*)}

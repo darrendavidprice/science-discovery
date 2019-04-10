@@ -1,0 +1,87 @@
+dependent_variables:
+- header: {name: D(SIG)/DYRAP(2GAMMA), units: FB}
+  qualifiers:
+  - {name: ABS(ETARAP(GAMMA1)), value: < 2.37}
+  - {name: ABS(ETARAP(GAMMA2)), value: < 2.37}
+  - {name: PT(GAMMA1)/M(2GAMMA), value: '> 0.35'}
+  - {name: PT(GAMMA2)/M(2GAMMA), value: '> 0.25'}
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GEV, value: '8000.0'}
+  values:
+  - errors:
+    - {label: stat, symerror: 11.0}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.5}
+    - {label: 'sys,fit', symerror: 1.1}
+    - {label: 'sys,lumi', symerror: 0.7}
+    - {label: 'sys,PID', symerror: 0.2}
+    - {label: 'sys,iso', symerror: 0.2}
+    - {label: 'sys,trig', symerror: 0.1}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.2, plus: 0.1}
+      label: sys,gen_model
+    value: 23.7
+  - errors:
+    - {label: stat, symerror: 11.3}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.4}
+    - {label: 'sys,fit', symerror: 1.3}
+    - {label: 'sys,lumi', symerror: 0.7}
+    - {label: 'sys,PID', symerror: 0.3}
+    - {label: 'sys,iso', symerror: 0.3}
+    - {label: 'sys,trig', symerror: 0.1}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - asymerror: {minus: -0.3, plus: 0.1}
+      label: sys,gen_model
+    value: 25.4
+  - errors:
+    - {label: stat, symerror: 12.4}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.4}
+    - {label: 'sys,fit', symerror: 0.7}
+    - {label: 'sys,lumi', symerror: 0.4}
+    - {label: 'sys,PID', symerror: 0.1}
+    - {label: 'sys,iso', symerror: 0.1}
+    - {label: 'sys,trig', symerror: 0.1}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - {label: 'sys,gen_model', symerror: 0.1}
+    value: 13.4
+  - errors:
+    - {label: stat, symerror: 14.6}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.4}
+    - {label: 'sys,fit', symerror: 2.0}
+    - {label: 'sys,lumi', symerror: 0.9}
+    - {label: 'sys,PID', symerror: 0.3}
+    - {label: 'sys,iso', symerror: 0.3}
+    - {label: 'sys,trig', symerror: 0.2}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - {label: 'sys,gen_model', symerror: 0.3}
+    value: 30.5
+  - errors:
+    - {label: stat, symerror: 12.7}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.7}
+    - {label: 'sys,fit', symerror: 2.1}
+    - {label: 'sys,lumi', symerror: 0.8}
+    - {label: 'sys,PID', symerror: 0.3}
+    - {label: 'sys,iso', symerror: 0.3}
+    - {label: 'sys,trig', symerror: 0.1}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - {label: 'sys,gen_model', symerror: 0.3}
+    value: 28.6
+  - errors:
+    - {label: stat, symerror: 5.5}
+    - {label: 'sys,bkg_model_uncorr', symerror: 0.37}
+    - {label: 'sys,fit', symerror: 0.88}
+    - {label: 'sys,lumi', symerror: 0.22}
+    - {label: 'sys,PID', symerror: 0.08}
+    - {label: 'sys,iso', symerror: 0.08}
+    - {label: 'sys,trig', symerror: 0.04}
+    - {label: 'sys,pileup', symerror: 0.0}
+    - {label: 'sys,gen_model', symerror: 0.07}
+    value: 7.86
+independent_variables:
+- header: {name: YRAP(2GAMMA)}
+  values:
+  - {high: 0.3, low: 0.0}
+  - {high: 0.6, low: 0.3}
+  - {high: 0.9, low: 0.6}
+  - {high: 1.2, low: 0.9}
+  - {high: 1.6, low: 1.2}
+  - {high: 2.4, low: 1.6}

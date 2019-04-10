@@ -1,0 +1,30 @@
+dependent_variables:
+- header: {name: SIGNAL STRENGTH}
+  qualifiers:
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GeV, value: '7000.0'}
+  - {name: SQRT(S), units: GeV, value: '8000.0'}
+  values:
+  - errors:
+    - asymerror: {minus: -0.257, plus: 0.282}
+    value: 1.167
+  - errors:
+    - asymerror: {minus: -1.46, plus: 2.15}
+    value: 1.38
+  - errors:
+    - asymerror: {minus: -0.642, plus: 0.93}
+    value: 0.642
+  - errors:
+    - asymerror: {minus: -0.468, plus: 0.561}
+    value: 0.928
+  - errors:
+    - asymerror: {minus: -0.308, plus: 0.343}
+    value: 1.271
+independent_variables:
+- header: {name: CATEGORY GROUP NAME}
+  values:
+  - {value: COMBINED}
+  - {value: TTH}
+  - {value: VH}
+  - {value: VBF}
+  - {value: GGF}

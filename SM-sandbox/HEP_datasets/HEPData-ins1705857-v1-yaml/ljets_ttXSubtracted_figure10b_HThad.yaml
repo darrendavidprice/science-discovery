@@ -1,0 +1,34 @@
+dependent_variables:
+- header: {name: 1/SIG*D(SIG)/DHThad, units: GEV**-1}
+  qualifiers:
+  - {name: '', value: ''}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.00010829}
+    - {label: sys, symerror: 0.00014561}
+    value: 0.00106527
+  - errors:
+    - {label: stat, symerror: 0.00018835}
+    - {label: sys, symerror: 0.00033613}
+    value: 0.00196235
+  - errors:
+    - {label: stat, symerror: 0.00017358}
+    - {label: sys, symerror: 0.0002279}
+    value: 0.00205
+  - errors:
+    - {label: stat, symerror: 0.00012629}
+    - {label: sys, symerror: 0.0001362}
+    value: 0.00120337
+  - errors:
+    - {label: stat, symerror: 3.53e-06}
+    - {label: sys, symerror: 3.83e-06}
+    value: 4.735e-05
+independent_variables:
+- header: {name: HThad, units: GEV}
+  values:
+  - {high: 390, low: 185}
+  - {high: 470, low: 390}
+  - {high: 575, low: 470}
+  - {high: 710, low: 575}
+  - {high: 5925, low: 710}
+name: ljets_ttXSubtracted_figure10b_HThad.yaml

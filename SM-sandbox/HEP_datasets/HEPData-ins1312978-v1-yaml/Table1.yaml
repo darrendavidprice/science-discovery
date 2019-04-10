@@ -1,0 +1,58 @@
+dependent_variables:
+- header: {name: SIGNAL STRENGTH}
+  qualifiers:
+  - {name: RE, value: P P --> HIGGS < GAMMA GAMMA > X}
+  - {name: SQRT(S), units: GeV, value: '7000.0'}
+  - {name: SQRT(S), units: GeV, value: '8000.0'}
+  values:
+  - errors:
+    - asymerror: {minus: -0.257, plus: 0.282}
+    value: 1.167
+  - errors:
+    - asymerror: {minus: -2.06, plus: 3.21}
+    value: 2.41
+  - errors:
+    - asymerror: {minus: -1.25, plus: 3.23}
+    value: -0.85
+  - errors:
+    - asymerror: {minus: -1.06, plus: 1.43}
+    value: 0.4
+  - errors:
+    - asymerror: {minus: -2.41, plus: 3.31}
+    value: 3.5
+  - errors:
+    - asymerror: {minus: -1.39, plus: 1.68}
+    value: 0.22
+  - errors:
+    - asymerror: {minus: -0.51, plus: 0.665}
+    value: 0.674
+  - errors:
+    - asymerror: {minus: -0.78, plus: 0.912}
+    value: 1.321
+  - errors:
+    - asymerror: {minus: -1.17, plus: 1.35}
+    value: 1.71
+  - errors:
+    - asymerror: {minus: -0.519, plus: 0.576}
+    value: 2.021
+  - errors:
+    - asymerror: {minus: -0.83, plus: 1.0}
+    value: 1.61
+  - errors:
+    - asymerror: {minus: -0.396, plus: 0.425}
+    value: 0.617
+independent_variables:
+- header: {name: CATEGORY NAME}
+  values:
+  - {value: COMBINED}
+  - {value: TTH LEPTONIC}
+  - {value: TTH HADRONIC}
+  - {value: VH ONE-LEPTON}
+  - {value: VH MET}
+  - {value: VH DI-JET}
+  - {value: VBF TIGHT}
+  - {value: VBF LOOSE}
+  - {value: FORWARD HIGH PTT}
+  - {value: FORWARD LOW PTT}
+  - {value: CENTRAL HIGH PTT}
+  - {value: CENTRAL LOW PTT}

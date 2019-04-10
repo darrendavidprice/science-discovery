@@ -1,0 +1,700 @@
+additional_resources:
+- {description: web page with auxiliary material, 'https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/TOPQ-2017-12/': null,
+  location: 'https://arxiv.org/pdf/1811.12113v1.pdf'}
+comment: |
+  - {CERN-LHC.  Measurements of fiducial and differential cross section for top-quark pair production with additional heavy-favour jets in the dilepton and lepton+jets decay channels in proton-proton collisions at a centre-of-mass energy of 13 TeV with 36.1 fb^-1 of data collected in 2015 and 2016. The paper is here "https://arxiv.org/pdf/1811.12113v1.pdf" with the link to auxiliary material "https://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/TOPQ-2017-12/"}
+hepdata_doi: 10.17182/hepdata.87098.v1
+---
+data_file: fid_xsec_figure7.yaml
+description: The measured fiducial cross sections
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 24 of the paper
+name: Table 5- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t1
+---
+data_file: fid_xsec_ttXSubtracted_figure7.yaml
+description: The measured fiducial cross sections
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 26 of the paper
+name: Figure 7 and Table 5- ttX contribution excluded
+table_doi: 10.17182/hepdata.87098.v1/t2
+---
+data_file: emu_figure8_nbjet.yaml
+description: Relative differential cross section as a function of the b-jet multiplicity
+  in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 1 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t3
+---
+data_file: emu_ttXSubtracted_figure8_nbjet.yaml
+description: Relative differential cross section as a function of the b-jet multiplicity
+  in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 27 of the paper
+name: Figure 8 in paper and Table 1 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t4
+---
+data_file: emu_figure9a_HT.yaml
+description: Relative differential cross section as a function of H_T in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 2 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t5
+---
+data_file: emu_ttXSubtracted_figure9a_HT.yaml
+description: Relative differential cross section as a function of H_T in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 28 of the paper
+name: Figure 9a in paper and Table 2 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t6
+---
+data_file: emu_figure9b_HThad.yaml
+description: Relative differential cross section as a function of H_Thad in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 3 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t7
+---
+data_file: emu_ttXSubtracted_figure9b_HThad.yaml
+description: Relative differential cross section as a function of H_Thad in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 28 of the paper
+name: Figure 9b in paper and Table 3 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t8
+---
+data_file: ljets_figure10a_HT.yaml
+description: Relative differential cross section as a function of H_T in leptons+jets
+  channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 17 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t9
+---
+data_file: ljets_ttXSubtracted_figure10a_HT.yaml
+description: Relative differential cross section as a function of H_T in leptons+jets
+  channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 29 of the paper
+name: Figure 10a in paper and Table 17 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t10
+---
+data_file: ljets_figure10b_HThad.yaml
+description: Relative differential cross section as a function of H_Thad in leptons+jets
+  channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 18 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t11
+---
+data_file: ljets_ttXSubtracted_figure10b_HThad.yaml
+description: Relative differential cross section as a function of H_Thad in leptons+jets
+  channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 29 of the paper
+name: Figure 10b in paper and Table 18 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t12
+---
+data_file: emu_figure12a_PTleadbjet.yaml
+description: Relative differential cross section as a function of pT of leading b-jet
+  in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 4 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t13
+---
+data_file: emu_ttXSubtracted_figure12a_PTleadbjet.yaml
+description: Relative differential cross section as a function of pT of leading b-jet
+  in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 30 of the paper
+name: Figure 12a in paper and Table 4 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t14
+---
+data_file: emu_figure12b_PTNleadbjet.yaml
+description: Relative differential cross section as a function of pT of sub-leading
+  b-jet in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 5 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t15
+---
+data_file: emu_ttXSubtracted_figure12b_PTNleadbjet.yaml
+description: Relative differential cross section as a function of pT of sub-leading
+  b-jet in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 30 of the paper
+name: Figure 12b in paper and Table 5 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t16
+---
+data_file: emu_figure12c_PTNNleadbjet.yaml
+description: Relative differential cross section as a function of pT of third-leading
+  b-jet in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 6 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t17
+---
+data_file: emu_ttXSubtracted_figure12c_PTNNleadbjet.yaml
+description: Relative differential cross section as a function of pT of third-leading
+  b-jet in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 30 of the paper
+name: Figure 12c in paper and Table 6 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t18
+---
+data_file: ljets_figure13a_PTleadbjet.yaml
+description: Relative differential cross section as a function of pT of leading b-jet
+  in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 13 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t19
+---
+data_file: ljets_ttXSubtracted_figure13a_PTleadbjet.yaml
+description: Relative differential cross section as a function of pT of leading b-jet
+  in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 31 of the paper
+name: Figure 13a in paper and Table 13 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t20
+---
+data_file: ljets_figure13b_PTSubleadbjet.yaml
+description: Relative differential cross section as a function of pT of sub-leading
+  b-jet in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 14 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t21
+---
+data_file: ljets_ttXSubtracted_figure13b_PTSubleadbjet.yaml
+description: Relative differential cross section as a function of pT of sub-leading
+  b-jet in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 31 of the paper
+name: Figure 13b in paper and Table 14 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t22
+---
+data_file: ljets_figure13c_PT3rdleadbjet.yaml
+description: Relative differential cross section as a function of pT of third-leading
+  b-jet in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 15 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t23
+---
+data_file: ljets_ttXSubtracted_figure13c_PT3rdleadbjet.yaml
+description: Relative differential cross section as a function of pT of third-leading
+  b-jet in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 31 of the paper
+name: Figure 13c in paper and Table 15 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t24
+---
+data_file: ljets_figure13d_PT4thleadbjet.yaml
+description: Relative differential cross section as a function of pT of fourth-leading
+  b-jet in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 16 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t25
+---
+data_file: ljets_ttXSubtracted_figure13d_PT4thleadbjet.yaml
+description: Relative differential cross section as a function of pT of fourth-leading
+  b-jet in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 31 of the paper
+name: Figure 13d in paper and Table 16 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t26
+---
+data_file: emu_figure14a_mb1b2.yaml
+description: Relative differential cross section as a function of invarant mass of
+  two highest pT b-jets in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 7 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t27
+---
+data_file: emu_ttXSubtracted_figure14a_mb1b2.yaml
+description: Relative differential cross section as a function of invarant mass of
+  two highest pT b-jets in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 32 of the paper
+name: Figure 14a in paper and Table 7 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t28
+---
+data_file: emu_figure14b_pTb1b2.yaml
+description: Relative differential cross section as a function of pT of two highest
+  pT b-jets in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 8 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t29
+---
+data_file: emu_ttXSubtracted_figure14b_pTb1b2.yaml
+description: Relative differential cross section as a function of pT of two highest
+  pT b-jets in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 32 of the paper
+name: Figure 14b in paper and Table 8 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t30
+---
+data_file: emu_figure14c_deltaRb1b2.yaml
+description: Relative differential cross section as a function of deltaR of two highest
+  pT b-jets in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 9 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t31
+---
+data_file: emu_ttXSubtracted_figure14c_deltaRb1b2.yaml
+description: Relative differential cross section as a function of deltaR of two highest
+  pT b-jets in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 32 of the paper
+name: Figure 14c in paper and Table 9 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t32
+---
+data_file: ljets_figure15a_mb1b2.yaml
+description: Relative differential cross section as a function of invariant mass of
+  two highest pT b-jets in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 19 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t33
+---
+data_file: ljets_ttXSubtracted_figure15a_mb1b2.yaml
+description: Relative differential cross section as a function of invariant mass of
+  two highest pT b-jets in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 33 of the paper
+name: Figure 15a in paper and Table 19 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t34
+---
+data_file: ljets_figure15b_pTb1b2.yaml
+description: Relative differential cross section as a function of pT of two highest
+  pT b-jets in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 20 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t35
+---
+data_file: ljets_ttXSubtracted_figure15b_pTb1b2.yaml
+description: Relative differential cross section as a function of pT of two highest
+  pT b-jets in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 33 of the paper
+name: Figure 15b in paper and Table 20 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t36
+---
+data_file: ljets_figure15c_deltaRb1b2.yaml
+description: Relative differential cross section as a function of deltaR of two highest
+  pT b-jets in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 21 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t37
+---
+data_file: ljets_ttXSubtracted_figure15c_deltaRb1b2.yaml
+description: Relative differential cross section as a function of deltaR of two highest
+  pT b-jets in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 33 of the paper
+name: Figure 15c in paper and Table 21 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t38
+---
+data_file: emu_figure16a_mbb.yaml
+description: Relative differential cross section as a function of invariant mass of
+  two closest b-jets in deltaR in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 10 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t39
+---
+data_file: emu_ttXSubtracted_figure16a_mbb.yaml
+description: Relative differential cross section as a function of invariant mass of
+  two closest b-jets in deltaR in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 36 of the paper
+name: Figure 16a in paper and Table 10 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t40
+---
+data_file: emu_figure16b_pTbb.yaml
+description: Relative differential cross section as a function of pT of two closest
+  b-jets in deltaR in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 11 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t41
+---
+data_file: emu_ttXSubtracted_figure16b_pTbb.yaml
+description: Relative differential cross section as a function of pT of two closest
+  b-jets in deltaR in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 36 of the paper
+name: Figure 16b in paper and Table 11 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t42
+---
+data_file: emu_figure16c_deltaRbb.yaml
+description: Relative differential cross section as a function of deltaR of two closest
+  b-jets in deltaR in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 12 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t43
+---
+data_file: emu_ttXSubtracted_figure16c_deltaRbb.yaml
+description: Relative differential cross section as a function of deltaR of two closest
+  b-jets in deltaR in emu channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 36 of the paper
+name: Figure 16c in paper and Table 12 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t44
+---
+data_file: ljets_figure17a_mbb.yaml
+description: Relative differential cross section as a function of invariant mass of
+  two closest b-jets in deltaR in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 22 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t45
+---
+data_file: ljets_ttXSubtracted_figure17a_mbb.yaml
+description: Relative differential cross section as a function of invariant mass of
+  two closest b-jets in deltaR in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 37 of the paper
+name: Figure 17a in paper and Table 22 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t46
+---
+data_file: ljets_figure17b_pTbb.yaml
+description: Relative differential cross section as a function of pT of two closest
+  b-jets in deltaR in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 23 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t47
+---
+data_file: ljets_ttXSubtracted_figure17b_pTbb.yaml
+description: Relative differential cross section as a function of pT of two closest
+  b-jets in deltaR in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 37 of the paper
+name: Figure 17b in paper and Table 23 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t48
+---
+data_file: ljets_figure17c_deltaRbb.yaml
+description: Relative differential cross section as a function of deltaR of two closest
+  b-jets in deltaR in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Auxiliary material
+name: Table 24 in auxiliary material- ttX contribution included
+table_doi: 10.17182/hepdata.87098.v1/t49
+---
+data_file: ljets_ttXSubtracted_figure17c_deltaRbb.yaml
+description: Relative differential cross section as a function of deltaR of two closest
+  b-jets in deltaR in lepton+jets channel
+keywords:
+- name: reactions
+  values: [P P --> 2TQ HEAVY-FLAVOR]
+- name: observables
+  values: []
+- name: cmenergies
+  values: [13000]
+location: Page 37 of the paper
+name: Figure 17c in paper and Table 24 in aux. material- without ttX
+table_doi: 10.17182/hepdata.87098.v1/t50
