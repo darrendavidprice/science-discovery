@@ -166,10 +166,24 @@ class Distribution_store (object) :
 			self.rename(old_key,keys[old_key])
 		self.print_keys()
 	def print_keys ( self ) :
-		msg.info ( "Distribution_store.print_keys" , "keys for _distributions_1D are: " + str([key for key in self._distributions_1D]) )
-		msg.info ( "Distribution_store.print_keys" , "keys for _distributions_2D are: " + str([key for key in self._distributions_2D]) )
+		msg.info ( "Distribution_store.print_keys" , "keys for _distributions_1D are:" )
+		for key in self._distributions_1D : print(key)
+		msg.info ( "Distribution_store.print_keys" , "keys for _distributions_2D are:" )
+		for key in self._distributions_2D : print(key)
 		for key in self._distributions_2D : msg.info("Distribution_store.print_keys","2D distribution [key={0}] with local-keys: {1}".format(key,["{0}@{1}".format(little_key,self._distributions_2D[key]._local_key_indices[little_key]) for little_key in self._distributions_2D[key]._local_keys]))
 		msg.info ( "Distribution_store.print_keys" , "N.B. you can rename these keys using obj.rename(<old-key>,<new-key>)" , _verbose_level=0 )
+	def plot_1D_distribution ( self , key_ , **kwargs ) :
+		x, y, [ey_lo,ey_hi], ex = HEPData_plt.get_1D_distribution(self,key_)
+		fig = plt.figure(figsize=(5,5))
+		ax = fig.add_subplot(111)
+		ax.errorbar(x, y, yerr=[ey_lo,ey_hi], xerr=ex, c='k', linestyle='None', marker='+', alpha=0.6, label=kwargs.get("label","label"))
+		ax.legend(loc=kwargs.get("legend_loc","best"))
+		plt.xlabel(kwargs.get("xlabel","observable"))
+		plt.ylabel(kwargs.get("ylabel","observable"))
+		plt.title(kwargs.get("title",""))
+		if "xlim" in kwargs : ax.axis(xmin=kwargs["xlim"][0],xmax=kwargs["xlim"][1])
+		if "ylim" in kwargs : ax.axis(ymin=kwargs["ylim"][0],ymax=kwargs["ylim"][1])
+		plt.show()
 	def plot_data_vs_prediction ( self , key_meas_ , key_pred_ , **kwargs ) :
 		x_m, y_m, [ey_lo_m,ey_hi_m], ex_m = HEPData_plt.get_1D_distribution(self,key_meas_)
 		x_p, y_p, [ey_lo_p,ey_hi_p], ex_p = HEPData_plt.get_1D_distribution(self,key_pred_)
@@ -179,6 +193,7 @@ class Distribution_store (object) :
 		ax1.errorbar(x_m, y_m, yerr=[ey_lo_m,ey_hi_m], xerr=ex_m, c='k', linestyle='None', alpha=1, label="Data")
 		ax1.legend(loc=kwargs.get("legend_loc","best"))
 		plt.ylabel(kwargs.get("ylabel","observable"))
+		plt.title(kwargs.get("title",""))
 		if "xlim" in kwargs : ax1.axis(xmin=kwargs["xlim"][0],xmax=kwargs["xlim"][1])
 		if "ylim" in kwargs : ax1.axis(ymin=kwargs["ylim"][0],ymax=kwargs["ylim"][1])
 		ax2 = fig.add_subplot(212)
@@ -187,6 +202,26 @@ class Distribution_store (object) :
 		if "xlim" in kwargs : ax2.axis(xmin=kwargs["xlim"][0],xmax=kwargs["xlim"][1])
 		plt.ylabel("Measured / prediction")
 		if "xlabel" in kwargs : plt.xlabel(kwargs["xlabel"])
+		plt.show()
+	def plot_matrix ( self , key_ , **kwargs ) :
+		dist = self._distributions_2D[key_]
+		fig = plt.figure(figsize=(7,7))
+		ax = fig.add_subplot(111)
+		x_label = str([ "{0} [{1}:{2}]".format(var,dist._local_key_indices[var][0],dist._local_key_indices[var][1]) for var in dist._local_keys ])
+		max_val = max([np.fabs(val) for val in dist._values.flatten()])
+		vmin = -1*max_val
+		vmax = max_val
+		if "vlim" in kwargs : 
+			vmin = kwargs["vlim"][0]
+			vmax = kwargs["vlim"][1]
+		ax.imshow(dist._values,cmap="bwr",vmin=vmin,vmax=vmax)
+		plt.xlabel(kwargs.get("xlabel",x_label))
+		plt.ylabel(kwargs.get("ylabel",x_label))
+		precision = kwargs.get("flt_precision",2)
+		for i in range(len(dist._bin_labels_x)) :
+			for j in range(len(dist._bin_labels_y)) :
+				ax.text(j, i, "{0:.{1}f}".format(dist._values[i, j],precision), ha="center", va="center", color="k",fontsize="xx-small")
+		if "title" in kwargs : plt.title(kwargs["title"])
 		plt.show()
 	def print_meta ( self , target_key_ ) :
 		something_done = False
