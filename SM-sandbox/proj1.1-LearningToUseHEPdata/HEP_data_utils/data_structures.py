@@ -183,6 +183,7 @@ class Distribution_store (object) :
 		plt.title(kwargs.get("title",""))
 		if "xlim" in kwargs : ax.axis(xmin=kwargs["xlim"][0],xmax=kwargs["xlim"][1])
 		if "ylim" in kwargs : ax.axis(ymin=kwargs["ylim"][0],ymax=kwargs["ylim"][1])
+		plt.grid()
 		plt.show()
 	def plot_data_vs_prediction ( self , key_meas_ , key_pred_ , **kwargs ) :
 		x_m, y_m, [ey_lo_m,ey_hi_m], ex_m = HEPData_plt.get_1D_distribution(self,key_meas_)
@@ -196,12 +197,14 @@ class Distribution_store (object) :
 		plt.title(kwargs.get("title",""))
 		if "xlim" in kwargs : ax1.axis(xmin=kwargs["xlim"][0],xmax=kwargs["xlim"][1])
 		if "ylim" in kwargs : ax1.axis(ymin=kwargs["ylim"][0],ymax=kwargs["ylim"][1])
+		plt.grid()
 		ax2 = fig.add_subplot(212)
 		ax2.errorbar(x_p, y_p/y_p, yerr=[ey_lo_p/y_p,ey_hi_p/y_p], xerr=ex_p, c='r', linestyle='None', marker='+', alpha=0.8)
 		ax2.errorbar(x_m, y_m/y_p, yerr=[ey_lo_m/y_p,ey_hi_m/y_p], xerr=ex_m, c='k', linestyle='None', alpha=1)
 		if "xlim" in kwargs : ax2.axis(xmin=kwargs["xlim"][0],xmax=kwargs["xlim"][1])
 		plt.ylabel("Measured / prediction")
 		if "xlabel" in kwargs : plt.xlabel(kwargs["xlabel"])
+		plt.grid()
 		plt.show()
 	def plot_matrix ( self , key_ , **kwargs ) :
 		dist = self._distributions_2D[key_]
