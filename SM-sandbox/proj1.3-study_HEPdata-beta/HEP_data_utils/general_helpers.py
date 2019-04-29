@@ -51,6 +51,7 @@ def is_directory ( path_ ) :
 
 #  Brief: take list of inputs and return the yaml files to be processed. If a submission file is found, all other arguments are ignored.
 def keep_only_yaml_files ( inputs_ , **kwargs ) :
+	if type(inputs_) is not list : inputs_ = [inputs_]
 	do_recurse = kwargs.get("recurse",False)
 	ret = [ f for f in inputs_ if is_submission_file(f) ]
 	if len(ret) > 0 :

@@ -52,3 +52,13 @@ def info ( whereFrom_ , message_ , **kwargs ) :
 #  Brief: print warning message only if the global verbosity setting dictates
 def warning ( whereFrom_ , message_ , **kwargs ) :
 	print_message ( "WARNING" , whereFrom_ , message_ , **kwargs )
+
+
+#  Brief: forbid fatals
+def forbid_fatal_errors () :
+	ENABLE_FATAL = False
+
+
+#  Brief: allow fatals
+def allow_fatal_errors () :
+	ENABLE_FATAL = True

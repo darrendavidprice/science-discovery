@@ -5,6 +5,7 @@
 
 import numpy as np
 import sys, configparser, yaml
+from copy import copy
 
 import HEP_data_utils.messaging as msg
 import HEP_data_utils.plotting as plotter
@@ -21,13 +22,13 @@ class SubmissionFileMeta (object) :
 	def __type__ ( self ) :
 		return "HEP_data_utils.data_structures.SubmissionFileMeta"
 	def __str__ ( self ) :
-		ret = "submission-file dataset doi: " + self._hepdata_doi 
-		ret = ret + "\nsubmission-file dataset comment:  " + self._comment
-		for v in self._additional_resources : ret = ret + "\nsubmission-file dataset additional info:  {0}".format(v)
+		ret = "\033[1msubmission-file dataset doi:\033[0m " + self._hepdata_doi 
+		ret = ret + "\n\033[1msubmission-file dataset comment:\033[0m  " + self._comment
+		for v in self._additional_resources : ret = ret + "\n\033[1msubmission-file dataset additional info:\033[0m  {0}".format(v)
 		return ret
-	def additional_resources (self) : return self._additional_resources
-	def hepdata_doi (self) : return self._hepdata_doi
-	def comment (self) : return self._comment
+	def additional_resources (self) : return copy(self._additional_resources)
+	def hepdata_doi (self) : return copy(self._hepdata_doi)
+	def comment (self) : return copy(self._comment)
 
 
 #  Brief: store the data contained within a submission.yaml file for a specific distribution
@@ -45,23 +46,23 @@ class SubmissionFileTable (object) :
 	def __type__ ( self ) :
 		return "HEP_data_utils.data_structures.SubmissionFileTable"
 	def __str__ ( self ) :
-		ret = "submission-file table name: " + self._name 
-		ret = ret + "\nsubmission-file table description:  " + self._description
-		ret = ret + "\nsubmission-file table doi:  " + self._table_doi
-		ret = ret + "\nsubmission-file table location:  " + self._table_doi
-		ret = ret + "\nsubmission-file table data-file:  " + self._data_file
-		ret = ret + "\nsubmission-file table keywords:  "
+		ret = "\033[1msubmission-file table name:\033[0m " + self._name 
+		ret = ret + "\n\033[1msubmission-file table description:\033[0m  " + self._description
+		ret = ret + "\n\033[1msubmission-file table doi:\033[0m  " + self._table_doi
+		ret = ret + "\n\033[1msubmission-file table location:\033[0m  " + self._table_doi
+		ret = ret + "\n\033[1msubmission-file table data-file:\033[0m  " + self._data_file
+		ret = ret + "\n\033[1msubmission-file table keywords:\033[0m  "
 		for name, value in self._keywords : ret = ret + "\n\t{0}:  {1}".format(name,value)
-		ret = ret + "\nsubmission-file table metadata:  "
+		ret = ret + "\n\033[1msubmission-file table metadata:\033[0m  "
 		for name, value in self._table_metadata.items() : ret = ret + "\n\t{0}:  {1}".format(name,value)
 		return ret
-	def name (self) : return self._name
-	def table_doi (self) : return self._table_doi
-	def location (self) : return self._location
-	def description (self) : return self._description
-	def data_file (self) : return self._data_file
-	def keywords (self) : return self._keywords
-	def table_metadata (self) : return self._table_metadata
+	def name (self) : return copy(self._name)
+	def table_doi (self) : return copy(self._table_doi)
+	def location (self) : return copy(self._location)
+	def description (self) : return copy(self._description)
+	def data_file (self) : return copy(self._data_file)
+	def keywords (self) : return copy(self._keywords)
+	def table_metadata (self) : return copy(self._table_metadata)
 
 
 #  Brief: store the data of an independent_variable as defined in a HEPData table
@@ -84,11 +85,16 @@ class IndependentVariable (object) :
 		ret = ret + "\n-  Bin labels are {0}".format(self._bin_labels)
 		ret = ret + "\n-  Bin edges are {0}".format(self._bin_edges)
 		return ret
-	def name (self) : return self._name
-	def units (self) : return self._units
-	def bin_edges (self) : return self._bin_edges
-	def bin_labels (self) : return self._bin_labels
+	def name (self) : return copy(self._name)
+	def units (self) : return copy(self._units)
+	def bin_edges (self) : return copy(self._bin_edges)
+	def bin_labels (self) : return copy(self._bin_labels)
 	def n_bins (self) : return len(self)
+	def set_bin_labels ( self , labels_ ) :
+		new_length = len(labels_)
+		self._bin_labels = labels_
+		self._bin_edges = np.zeros(shape=(new_length+1))
+		for i in range(0,new_length+1) : self._bin_edges[i] = float(i) - 0.5
 
 
 #  Brief: store the data of an dependent_variable as defined in a HEPData table
@@ -133,10 +139,10 @@ class DependentVariable (object) :
 			if len(errors) == n_values : continue
 			return False, "Downwards asymmetric error {0} has length {1} where {2} was expected".format(key,len(errors),n_values)
 		return True, ""
-	def name (self) : return self._name
-	def units (self) : return self._units
-	def qualifiers (self) : return self._qualifiers
-	def values (self) : return self._values
+	def name (self) : return copy(self._name)
+	def units (self) : return copy(self._units)
+	def qualifiers (self) : return copy(self._qualifiers)
+	def values (self) : return copy(self._values)
 	def n_bins (self) : return len(self)
 	def symerrors (self, key_=None) :
 		if key_ is None : return self._symerrors
@@ -171,17 +177,17 @@ class HEPDataTable (object) :
 		return "HEP_data_utils.data_structures.HEPDataTable"
 	def __str__ (self) :
 		ret = ""
-		if self._submission_file_meta : ret = ret + str(self._submission_file_meta)
-		if self._submission_file_table : ret = ret + str(self._submission_file_table)
-		ret = ret + "\nDEPENDENT VARIABLE:\n" + str(self._dep_var)
-		ret = ret + "\nINDEPENDENT VARIABLES:"
+		if self._submission_file_meta : ret = ret + str(self._submission_file_meta) + "\n"
+		if self._submission_file_table : ret = ret + str(self._submission_file_table) + "\n"
+		ret = ret + "\033[1m\033[95mDEPENDENT VARIABLE:\033[0m\n" + str(self._dep_var)
+		ret = ret + "\n\033[1m\033[95mINDEPENDENT VARIABLES:\033[0m"
 		for v in self._indep_vars : ret = ret + "\n" + str(v)
 		return ret
-	def submission_file_meta (self) : return self._submission_file_meta
-	def submission_file_table (self) : return self._submission_file_table
-	def dep_var (self) : return self._dep_var
+	def submission_file_meta (self) : return copy(self._submission_file_meta)
+	def submission_file_table (self) : return copy(self._submission_file_table)
+	def dep_var (self) : return copy(self._dep_var)
 	def n_bins (self) : return self._dep_var.n_bins()
-	def indep_vars (self) : return self._indep_vars
+	def indep_vars (self) : return copy(self._indep_vars)
 	def n_indep_vars (self) : return len(self._indep_vars)
 	def is_valid (self) :
 		n_values = len(self._dep_var)
@@ -193,6 +199,7 @@ class HEPDataTable (object) :
 				if indep_var.n_bins() == n_values : continue
 				return False, "Independent variable {0} has length {1} where {2} was expected".format(indep_var.name(),indep_var.n_bins(),n_values)
 		return self._dep_var.is_valid()
+	def values (self) : return self._dep_var.values()
 
 
 #  Brief: store a number of HEPData tables, and be able to manipulate them
@@ -205,6 +212,7 @@ class DistributionContainer (object) :
 	def clear (self) :
 		self.clear_entries()
 		self._name = ""
+		self._make_matrix_if_possible = True
 	def __init__ ( self , name_ = "" ) :
 		self.clear()
 		self._name = name_
@@ -214,17 +222,26 @@ class DistributionContainer (object) :
 		return len(self._inclusive_distributions) + len(self._1D_distributions) + len(self._2D_distributions) + len(self._ND_distributions)
 	def __str__ (self) :
 		ret = "DistributionContainer \"{0}\" with the following entries".format(self._name)
-		ret = ret + "\nINCLUSIVE DISTRIBUTIONS:"
-		for key, dist in self._inclusive_distributions.items() : ret = ret + "\n   \033[1m-key \"\033[95m{0}\033[0m\033[1m\", name  \"{1}\" and {2} bins\033[0m".format(key,dist._dep_var.name(),dist.n_bins())
-		ret = ret + "\n1D DISTRIBUTIONS:"
-		for key, dist in self._1D_distributions.items() : ret = ret + "\n   \033[1m-key \"\033[95m{0}\033[0m\033[1m\", name  \"{1}\" and {2} bins\033[0m".format(key,dist._dep_var.name(),dist.n_bins())
-		ret = ret + "\n2D DISTRIBUTIONS:"
-		for key, dist in self._2D_distributions.items() : ret = ret + "\n   \033[1m-key \"\033[95m{0}\033[0m\033[1m\", name  \"{1}\" and {2} bins\033[0m".format(key,dist._dep_var.name(),dist.n_bins())
-		ret = ret + "\n>=3D DISTRIBUTIONS:"
-		for key, dist in self._ND_distributions.items() : ret = ret + "\n   \033[1m-key \"\033[95m{0}\033[0m\033[1m\", name  \"{1}\" and {2} bins\033[0m".format(key,dist._dep_var.name(),dist.n_bins())
+		ret = ret + "\n\033[1mINCLUSIVE DISTRIBUTIONS:\033[0m"
+		for key, dist in self._inclusive_distributions.items() : ret = ret + "\n   key: \033[95m{0}\033[0m\n      --> name \"{1}\" with {2} bins".format(key,dist._dep_var.name(),dist.n_bins())
+		ret = ret + "\n\033[1m1D DISTRIBUTIONS:\033[0m"
+		for key, dist in self._1D_distributions.items() : ret = ret + "\n   key: \033[95m{0}\033[0m\n      --> name \"{1}\" with {2} bins".format(key,dist._dep_var.name(),dist.n_bins())
+		ret = ret + "\n\033[1m2D DISTRIBUTIONS:\033[0m"
+		for key, dist in self._2D_distributions.items() : ret = ret + "\n   key: \033[95m{0}\033[0m\n      --> name \"{1}\" with {2} bins".format(key,dist._dep_var.name(),dist.n_bins())
+		ret = ret + "\n\033[1m>=3D DISTRIBUTIONS:\033[0m"
+		for key, dist in self._ND_distributions.items() : ret = ret + "\n  key: \033[95m{0}\033[0m\n      --> name \"{1}\" with {2} bins".format(key,dist._dep_var.name(),dist.n_bins())
 		return ret
 	def __contains__( self , key_ ) :
 		return key_ in {**self._inclusive_distributions, **self._1D_distributions, **self._2D_distributions, **self._ND_distributions}
+	def get_table ( self , key_ ) :
+		for key, table in {**self._inclusive_distributions,**self._1D_distributions,**self._2D_distributions,**self._ND_distributions}.items() :
+			if key != key_ : continue
+			return table
+		return None
+	def __getitem__ ( self , key_ ) :
+		if key_ not in self :
+			raise KeyError("No distribution with key {0} in DistributionContainer {1}".format(key_,self._name))
+		return self.get_table(key_)
 	def print_keys (self) :
 		print(self)
 	def print_all (self) :
@@ -245,38 +262,38 @@ class DistributionContainer (object) :
 	def get_1D_keys (self) : return [ key for key in self._1D_distributions ]
 	def get_2D_keys (self) : return [ key for key in self._2D_distributions ]
 	def get_ND_keys (self) : return [ key for key in self._ND_distributions ]
-	def rename ( self , old_key_ , new_key_ ) :
+	def rename_key ( self , old_key_ , new_key_ ) :
 		something_done = False
 		old_key = r"{0}".format(old_key_)
 		new_key = r"{0}".format(new_key_)
 		for key in self._inclusive_distributions :
 			if old_key != key : continue
 			self._inclusive_distributions[new_key_] = self._inclusive_distributions.pop(old_key_)
-			msg.info("DistributionContainer.rename","Store \"{0}\" renaming inclusive distribution key {1} to {2}".format(self._name,old_key_,new_key_),_verbose_level=1)
+			msg.info("DistributionContainer.rename_key","Store \"{0}\" renaming inclusive distribution key {1} to {2}".format(self._name,old_key_,new_key_),verbose_level=1)
 			something_done = True
 		for key in self._1D_distributions :
 			if old_key != key : continue
 			self._1D_distributions[new_key_] = self._1D_distributions.pop(old_key_)
-			msg.info("DistributionContainer.rename","Store \"{0}\" renaming 1D distribution key {1} to {2}".format(self._name,old_key_,new_key_),_verbose_level=1)
+			msg.info("DistributionContainer.rename_key","Store \"{0}\" renaming 1D distribution key {1} to {2}".format(self._name,old_key_,new_key_),verbose_level=1)
 			something_done = True
 		for key in self._2D_distributions :
 			if old_key != key : continue
 			self._2D_distributions[new_key_] = self._2D_distributions.pop(old_key_)
-			msg.info("DistributionContainer.rename","Store \"{0}\" renaming 2D distribution key {1} to {2}".format(self._name,old_key_,new_key_),_verbose_level=1)
+			msg.info("DistributionContainer.rename_key","Store \"{0}\" renaming 2D distribution key {1} to {2}".format(self._name,old_key_,new_key_),verbose_level=1)
 			something_done = True
 		for key in self._ND_distributions :
 			if old_key != key : continue
 			self._ND_distributions[new_key_] = self._ND_distributions.pop(old_key_)
-			msg.info("DistributionContainer.rename","Store \"{0}\" renaming ND distribution key {1} to {2}".format(self._name,old_key_,new_key_),_verbose_level=1)
+			msg.info("DistributionContainer.rename_key","Store \"{0}\" renaming ND distribution key {1} to {2}".format(self._name,old_key_,new_key_),verbose_level=1)
 			something_done = True
 		if not something_done :
-			msg.error("DistributionContainer.rename","Store \"{0}\" with nothing done for old_key_={1}, new_key_={2}".format(self._name,old_key_,new_key_),_verbose_level=1)
+			msg.error("DistributionContainer.rename_key","Store \"{0}\" with nothing done for old_key_={1}, new_key_={2}".format(self._name,old_key_,new_key_),verbose_level=1)
 	def load_keys ( self , filename_ ) :
 		config = configparser.ConfigParser()
 		config.optionxform = str
 		try : config.read(filename_)
 		except :
-			msg.check_verbosity_and_print ( str(sys.exc_info()[0]) , _verbose_level=-1 )
+			msg.check_verbosity_and_print ( str(sys.exc_info()[0]) , verbose_level=-1 )
 			msg.error("HEP_data_utils.data_structures.DistributionContainer","An exception occured when parsing the config file... Continuing with nothing done")
 			return
 		if "KEYS" not in config.sections() :
@@ -284,7 +301,7 @@ class DistributionContainer (object) :
 			return
 		keys = config["KEYS"]
 		for old_key in keys :
-			self.rename(old_key,keys[old_key])
+			self.rename_key(old_key,keys[old_key])
 		self.print_keys()
 	def generate_key ( self , table_ ) :
 		table_doi = ""
@@ -302,12 +319,44 @@ class DistributionContainer (object) :
 			key = key + "-;1"
 			while key in self : key = key[:-1] + str(1+int(key[-1:]))
 		return r"{0}".format(key)
+	def plot ( self , key_ , **kwargs ) :
+		for key, dist in self._inclusive_distributions.items() :
+			if key != key_ : continue
+			try : plotter.plot_inclusive_distribution(dist,**kwargs)
+			except Exception as e :
+				print(e)
+				msg.error("HEP_data_utils.data_structures.DistributionContainer.plot","Error when plotting inclusive distribution with key {0}... skipping".format(key))
+		for key, dist in self._1D_distributions.items() :
+			if key != key_ : continue
+			try : plotter.plot_1D_distribution(dist,**kwargs)
+			except Exception as e :
+				print(e)
+				msg.error("HEP_data_utils.data_structures.DistributionContainer.plot","Error when plotting 1D distribution with key {0}... skipping".format(key))
+		for key, dist in self._2D_distributions.items() :
+			if key != key_ : continue
+			try : plotter.plot_2D_distribution(dist,**kwargs)
+			except Exception as e :
+				print(e)
+				msg.error("HEP_data_utils.data_structures.DistributionContainer.plot","Error when plotting 1D distribution with key {0}... skipping".format(key))
 	def plot_all (self) :
-		msg.warning("DistributionContainer.plot_all","===================================================================================")
-		msg.warning("DistributionContainer.plot_all","===   Not yet implemented the 0D and ND plotting. I will only do 1D and 2D...   ===")
-		msg.warning("DistributionContainer.plot_all","===================================================================================")
-		for key in self._1D_distributions : plotter.plot_1D_distribution(self,key)
-		for key in self._2D_distributions : plotter.plot_2D_distribution(self,key)
+		for key in { **self._inclusive_distributions , **self._1D_distributions , **self._2D_distributions } :
+			self.plot(key)
+	def plot_ratio ( self , key_num_ , key_den_ , **kwargs ) :
+		table_num = self._1D_distributions.get(key_num_,None)
+		if not table_num :
+			msg.error("HEP_data_utils.data_structures.DistributionContainer.plot_ratio","Error when plotting 1D distribution with key {0}... skipping".format(key_num_))
+			raise KeyError("key {0} not in {1}".format(key_num_,self._name))
+		table_den = self._1D_distributions.get(key_den_,None)
+		if not table_den :
+			msg.error("HEP_data_utils.data_structures.DistributionContainer.plot_ratio","Error when plotting 1D distribution with key {0}... skipping".format(key_den_))
+			raise KeyError("key {0} not in {1}".format(key_den_,self._name))
+		try : plotter.plot_ratio(table_num,table_den,**kwargs)
+		except Exception as e :
+			print(e)
+			msg.error("HEP_data_utils.data_structures.DistributionContainer.plot_ratio","Error when plotting {0} / {1} ratio... skipping".format(key_num_,key_den_))
+
+
+
 '''
 	def rename ( self , old_key_ , new_key_ ) :
 		something_done = False
@@ -451,17 +500,6 @@ class Distribution_2D (Distribution) :
 			ax2.set_xticklabels(self._distributions_1D[key_]._bin_labels,rotation=45)
 		plt.grid()
 		plt.show()
-	def plot_all ( self ) :
-		for key in self._distributions_1D :
-			try : self.plot_1D_distribution(key,label=key)
-			except Exception as e :
-				print(e)
-				msg.error("Distribution_store.plot_all","Error when plotting 1D distribution with key {0}... skipping".format(key))
-		for key in self._distributions_2D :
-			try : self.plot_matrix(key,label=key)
-			except Exception as e :
-				print(e)
-				msg.error("Distribution_store.plot_all","Error when plotting 2D distribution with key {0}... skipping".format(key))
 	def copy_2D_local_keys ( self , from_key_ , *args ) :
 		if from_key_ not in self._distributions_2D :
 			msg.error("HEP_data_utils.data_structures.Distribution_store.copy_2D_local_keys","key {0} does not exist... returning with nothing done".format(from_key_),_verbose_level=0)

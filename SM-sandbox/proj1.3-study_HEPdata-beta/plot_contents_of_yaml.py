@@ -19,7 +19,9 @@ def print_help () :
 	msg.info("plot_contents_of_yaml.py:print_help","Optional arguments are:")
 	msg.info("plot_contents_of_yaml.py:print_help","       -h, --help\t\tPrint this help message")
 	msg.info("plot_contents_of_yaml.py:print_help","       -v, --verbosity\t\tSet HEP_data_utils.messaging.VERBOSE_LEVEL as {-1, 0, 1, 2} (-1 by default)")
-	msg.info("plot_contents_of_yaml.py:print_help","       -r, --recursive\t\tAllow recursive searching of directories. Recursion stops if submission.yaml file is found.")
+	msg.info("plot_contents_of_yaml.py:print_help","       -r, --recursive\t\tAllow recursive searching of directories. Recursion stops if submission.yaml file is found")
+	msg.info("plot_contents_of_yaml.py:print_help","       --print\t\t\tPrint all information on the distributions found")
+	msg.info("plot_contents_of_yaml.py:print_help","       --default-2D-bins\tPrevent interpretation of 2D bins as a matrix (will be stored as a 1D vector instead)")
 	msg.info("plot_contents_of_yaml.py:print_help","N.B. you can validate your yaml files using the following package: https://github.com/HEPData/hepdata-validator")
 
 
@@ -37,13 +39,17 @@ def parse_inputs ( argv_ ) :
 	#  Parse arguments
 	do_recurse = False
 	do_print_all = False
+	do_not_make_matrix = False
 	for opt, arg in opts:
 		if opt in ['-h',"--help"] :
 			print_help()
 			sys.exit(0)
-		if opt in ['-r',"--recursive"] :
+		if opt in ['-r',"--recursive",] :
 			msg.info("plot_contents_of_yaml.py","Config: using recursion if needed",verbose_level=0)
 			do_recurse = True
+		if opt in ["--default-2D-bins"] :
+			msg.info("plot_contents_of_yaml.py","Config: I will *not* try to convert 2D binning into matrix format",verbose_level=0)
+			do_not_make_matrix = True
 		if opt in ['-p',"--print"] :
 			msg.info("plot_contents_of_yaml.py","Config: printing all distributions found",verbose_level=0)
 			do_print_all = True
@@ -62,21 +68,27 @@ def parse_inputs ( argv_ ) :
 	rest = hlp.keep_only_yaml_files(rest,recurse=do_recurse)
 	if len(rest) == 0 :
 		msg.fatal("plot_contents_of_yaml.py","No input yaml files found from the inputs provided")
-	return rest, do_print_all
+	for f in rest : msg.info("plot_contents_of_yaml.py","Registered input file {0}".format(f),verbose_level=0)
+	return rest, do_print_all, do_not_make_matrix
 
 
-#  Brief: main program
+#  =================================== #
+#  ====    Brief: main program    ==== #
+#  =================================== #
 if __name__ == "__main__" :
 				#
 				#  Welcome
 				#
 	msg.info("plot_contents_of_yaml.py","Running program")
 				#
-				#  Get and load input files
+				#  Get input files and settings
 				#
-	files_to_load, do_print_all = parse_inputs(sys.argv[1:])
-	for f in files_to_load : msg.info("plot_contents_of_yaml.py","Registered input file {0}".format(f),verbose_level=0)
+	files_to_load, do_print_all, do_not_make_matrix = parse_inputs(sys.argv[1:])
+				#
+				#  Load input files
+				#
 	my_tables = DistributionContainer("my_tables")
+	HD._make_matrix_if_possible = not do_not_make_matrix
 	HD.load_all(my_tables,files_to_load)
 				#
 				#  Print contents (if --print was called then go into excruciating detail)
