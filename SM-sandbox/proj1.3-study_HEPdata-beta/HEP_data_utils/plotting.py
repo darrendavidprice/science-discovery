@@ -3,11 +3,35 @@
 #  Author: Stephen Menary (stmenary@cern.ch)
 # ====================================================================================================
 
+import matplotlib
+from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 import numpy as np
 from natsort import natsorted, ns
 
 import HEP_data_utils.messaging as msg
+
+
+#  Brief: global pdf to store all plots
+document = None
+
+
+#  Brief: set the save file (plots created using save=True will be saved here)
+def set_save_file ( fname_ ) :
+	global document
+	if type(fname_) is str :
+		if type(document) is PdfPages : document.close()
+		if fname_[-4:] != ".pdf" : fname_ = fname_ + ".pdf"
+		msg.info("HEP_data_utils.plotting.set_save_file","Opening pdf file {0}".format(fname_),verbose_level=0)
+		document = PdfPages(fname_)
+	else : msg.error("HEP_data_utils.plotting.set_save_file","Filename must be a str")
+
+
+#  Brief: close the save file
+def close_save_file () :
+	global document
+	if type(document) is not PdfPages : return
+	document.close()
 
 
 #  Brief: open a 1D distribution and turn it into plottable data
@@ -87,6 +111,9 @@ def plot_1D_distribution ( table_ , **kwargs ) :
 	if kwargs.get("logx",False) is True : plt.xscale("log")
 	plt.grid()
 	plt.show()
+	if kwargs.get("save",False) :
+		fig.savefig ( document , format='pdf' )
+		plt.close(fig)
 
 
 #  Brief: plot ratio of 1D distributions from HEPDataTable table_
@@ -97,7 +124,7 @@ def plot_ratio ( table_num_ , table_den_ , **kwargs ) :
 	if x_n != x_d :
 		msg.error("HEP_data_helpers.plot_ratio","Arguments do not have the same binning")
 		raise ValueError("Ratio of distributions with bin centres at {0} and {1}",x_n,x_d) 
-	fig = plt.figure(figsize=(15,7))
+	fig = plt.figure(figsize=(10,10))
 	ax1 = fig.add_subplot(211)
 	legend_char_width = 53
 	str_num_legend = kwargs.get("numerator_label","numerator") + " ( " + " + ".join(keys_num) + " )"

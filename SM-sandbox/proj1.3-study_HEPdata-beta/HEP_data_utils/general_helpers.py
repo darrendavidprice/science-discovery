@@ -44,9 +44,28 @@ def is_submission_file ( path_ ) :
 
 
 #  Brief: check that file has a yaml extension
+def is_root_file ( path_ ) :
+	if type(path_) is not str : return False
+	return check_extension(path_,"root")
+
+
+#  Brief: check that file has a yaml extension
 def is_directory ( path_ ) :
 	if type(path_) is not str : return False
 	return os.path.isdir(path_)
+
+
+#  Brief: return the rootfiles to be processed.
+def keep_only_root_files ( inputs_ , **kwargs ) :
+	if type(inputs_) is not list : inputs_ = [inputs_]
+	do_recurse = kwargs.get("recurse",False)
+	ret = []
+	for f in inputs_ :
+		if do_recurse and is_directory(f) :
+			ret = ret + keep_only_root_files([f+"/"+f2 for f2 in os.listdir(f)],recurse=True)
+		if not is_root_file(f) : continue
+		ret.append(f)
+	return ret
 
 
 #  Brief: take list of inputs and return the yaml files to be processed. If a submission file is found, all other arguments are ignored.

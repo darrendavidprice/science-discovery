@@ -1,10 +1,11 @@
 # ===================================================================================================================================
-#  Brief: functions which allow us to load and manipulate HEPdata files, as well as the containers which store their data
+#  Brief: functions which allow us to load HEPdata files
 #  Author: Stephen Menary (stmenary@cern.ch)
 # ===================================================================================================================================
 
 
 import os, yaml
+from natsort import natsorted, ns
 import HEP_data_utils.messaging as msg
 import HEP_data_utils.general_helpers as hlp
 from HEP_data_utils.data_structures import *
@@ -50,21 +51,36 @@ def get_error_from_yaml_map ( dep_var_ , error_ , pt_idx_ , err_idx_=0 ) :
 
 
 #  Brief: set the bins of an independent variable based on its HEPData yaml dict
-def get_bins_from_dict ( indep_var_ , n_bins_ ) :
+def get_bins_from_dict ( indep_var_ , n_bins_ , **kwargs ) :
 	bin_edges = np.zeros(shape=(1+n_bins_))
 	bin_labels = [ "" for i in range(0,n_bins_) ]
 	values = indep_var_.get("values",[])
-	for i in range(0,len(values)) :
-		bin = values[i]
-		if bin.get("value",None) != None :
-			bin_labels[i] = str(bin["value"])
+	if kwargs.get("force_labels",False) :
+		for i in range(0,len(values)) :
+			bin = values[i]
 			bin_lo, bin_hi = float(i)-0.5 , float(i)+0.5
-		if "high" in bin and "low" in bin :
-			bin_lo, bin_hi = bin["low"], bin["high"]
-		if i == 0 :
-			bin_edges[0], bin_edges[1] = float(bin_lo), float(bin_hi)
-			continue
-		bin_edges[i+1] = bin_hi
+			if bin.get("value",None) != None :
+				bin_labels[i] = str(bin["value"])
+			if "high" in bin and "low" in bin :
+				bin_labels[i] = "{0}[{1},{2}]".format(bin_labels[i],bin["low"],bin["high"])
+			if i == 0 :
+				bin_edges[0], bin_edges[1] = float(bin_lo), float(bin_hi)
+				continue
+			bin_edges[i+1] = bin_hi
+	else :
+		for i in range(0,len(values)) :
+			bin = values[i]
+			if bin.get("value",None) != None :
+				bin_labels[i] = str(bin["value"])
+				bin_lo, bin_hi = float(i)-0.5 , float(i)+0.5
+			if "high" in bin and "low" in bin :
+				bin_lo, bin_hi = bin["low"], bin["high"]
+			if i == 0 :
+				bin_edges[0], bin_edges[1] = float(bin_lo), float(bin_hi)
+				continue
+			elif bin_lo != bin_edges[i] :
+				return get_bins_from_dict(indep_var_,n_bins_,force_labels=True)
+			bin_edges[i+1] = bin_hi
 	return bin_edges, bin_labels
 
 
@@ -88,10 +104,10 @@ def get_dependent_variable_from_yaml_map ( dep_var_ , path_="unknown" ) :
 		try : val = float(entry["value"])
 		except ValueError as exc :
 			msg.error("HEP_data_helpers.get_dependent_variable_from_yaml_map","ValueError ({0}) when loading dependent variable {1} from file {2}".format(exc,dep_var._name,path_),verbose_level=1)
-			val = 0
+			val = None
 		except KeyError as exc :
 			msg.error("HEP_data_helpers.get_dependent_variable_from_yaml_map","KeyError ({0}) when loading dependent variable {1} from file {2}".format(exc,dep_var._name,path_),verbose_level=1)
-			val = 0
+			val = None
 		dep_var._values = np.append(dep_var._values, val)
 	pt_idx = 0
 	for entry in dep_var_.get("values",[]) :
@@ -102,6 +118,145 @@ def get_dependent_variable_from_yaml_map ( dep_var_ , path_="unknown" ) :
 			err_idx = err_idx + 1
 		pt_idx = pt_idx + 1
 	return dep_var
+
+
+#  Brief: reorder bins into a matrix for 2D distribution
+def reformat_2D_bins_as_matrix_using_edges ( dist_2D_ ) :
+	if type(dist_2D_) != HEPDataTable :
+		msg.fatal("HEP_data_helpers.reformat_2D_bins_as_matrix_using_edges","argument must be of type HEPDataTable")
+	dep_var = dist_2D_._dep_var
+	if len(dist_2D_._indep_vars) != 2 :
+		msg.fatal("HEP_data_helpers.reformat_2D_bins_as_matrix_using_edges","HEPDataTable {0} has {1} independent_variable where 2 are required".format(dep_var._name,len(dist_2D_._indep_vars)))
+	n_vals = len(dep_var)
+	old_bin_edges_x, old_bin_edges_y = dist_2D_._indep_vars[0]._bin_edges, dist_2D_._indep_vars[1]._bin_edges
+	old_n_bins_x, old_n_bins_y = len(old_bin_edges_x)-1, len(old_bin_edges_y)-1
+	if n_vals != old_n_bins_x*old_n_bins_y :
+		msg.warning("HEP_data_helpers.reformat_2D_bins_as_matrix_using_edges","Cannot interpret 2D distribution unless num_values = num_bins_x * num_bins_y",1)
+		return
+
+
+#  Brief: reorder bins into a matrix for 2D distribution
+def reformat_2D_bins_as_matrix_using_labels ( dist_2D_ ) :
+	if type(dist_2D_) != HEPDataTable :
+		msg.fatal("HEP_data_helpers.reformat_2D_bins_as_matrix_using_labels","argument must be of type HEPDataTable")
+	dep_var = dist_2D_._dep_var
+	if len(dist_2D_._indep_vars) != 2 :
+		msg.fatal("HEP_data_helpers.reformat_2D_bins_as_matrix_using_labels","HEPDataTable {0} has {1} independent_variable where 2 are required".format(dep_var._name,len(dist_2D_._indep_vars)))
+	n_vals = len(dep_var)
+	old_bin_labels_x = dist_2D_._indep_vars[0]._bin_labels
+	old_bin_labels_y = dist_2D_._indep_vars[1]._bin_labels
+	old_n_bins_x = len(old_bin_labels_x)
+	old_n_bins_y = len(old_bin_labels_y)
+	if n_vals == old_n_bins_x == old_n_bins_y :
+		bin_labels_x = [y for y in {x for x in old_bin_labels_x}]
+		bin_labels_x = natsorted(bin_labels_x, alg=ns.IGNORECASE)
+		bin_labels_y = [y for y in {x for x in old_bin_labels_y}]
+		bin_labels_y = natsorted(bin_labels_y, alg=ns.IGNORECASE)
+		new_n_bins_x = len(bin_labels_x)
+		new_n_bins_y = len(bin_labels_y)
+		new_values = np.array(np.zeros(shape=(new_n_bins_x,new_n_bins_y)))
+		for x,y,v in zip(old_bin_labels_x,old_bin_labels_y,dep_var._values) :
+			new_values[bin_labels_x.index(x),bin_labels_y.index(y)] = v
+		dep_var._values = new_values
+		for key, values in dep_var._symerrors.items() :
+			new_error = np.array(np.zeros(shape=(new_n_bins_x,new_n_bins_y)))
+			for x,y,v in zip(old_bin_labels_x,old_bin_labels_y,values) :
+				new_error[bin_labels_x.index(x),bin_labels_y.index(y)] = v
+			dep_var._symerrors[key] = new_error
+		for key, values in dep_var._asymerrors_up.items() :
+			new_error = np.array(np.zeros(shape=(new_n_bins_x,new_n_bins_y)))
+			for x,y,v in zip(old_bin_labels_x,old_bin_labels_y,values) :
+				new_error[bin_labels_x.index(x),bin_labels_y.index(y)] = v
+			dep_var._asymerrors_up[key] = new_error
+		for key, values in dep_var._asymerrors_dn.items() :
+			new_error = np.array(np.zeros(shape=(new_n_bins_x,new_n_bins_y)))
+			for x,y,v in zip(old_bin_labels_x,old_bin_labels_y,values) :
+				new_error[bin_labels_x.index(x),bin_labels_y.index(y)] = v
+			dep_var._asymerrors_dn[key] = new_error
+		dist_2D_._indep_vars[0].set_bin_labels(bin_labels_x)
+		dist_2D_._indep_vars[1].set_bin_labels(bin_labels_y)
+		return
+	if n_vals == old_n_bins_x*old_n_bins_y :
+		new_values = np.array(np.zeros(shape=(old_n_bins_x,old_n_bins_y)))
+		for x_idx in enumerate(old_bin_labels_x) :
+			for y_idx in enumerate(old_bin_labels_y) :
+				new_values[x_idx,y_idx] = values[ x_idx + old_n_bins_x*y_idx ]
+		dep_var._values = new_values
+		for key, values in dist_2D_._symerrors.items() :
+			new_error = np.array(np.zeros(shape=(new_n_bins_x,new_n_bins_y)))
+			for x_idx in enumerate(old_bin_labels_x) :
+				for y_idx in enumerate(old_bin_labels_y) :
+					new_error[x_idx,y_idx] = values[ x_idx + old_n_bins_x*y_idx ]
+			dep_var._symerrors[key] = new_error
+		for key, values in dist_2D_._asymerrors_up.items() :
+			new_error = np.array(np.zeros(shape=(new_n_bins_x,new_n_bins_y)))
+			for x_idx in enumerate(old_bin_labels_x) :
+				for y_idx in enumerate(old_bin_labels_y) :
+					new_error[x_idx,y_idx] = values[ x_idx + old_n_bins_x*y_idx ]
+			dep_var._asymerrors_up[key] = new_error
+		for key, values in dist_2D_._asymerrors_dn.items() :
+			new_error = np.array(np.zeros(shape=(new_n_bins_x,new_n_bins_y)))
+			for x_idx in enumerate(old_bin_labels_x) :
+				for y_idx in enumerate(old_bin_labels_y) :
+					new_error[x_idx,y_idx] = values[ x_idx + old_n_bins_x*y_idx ]
+			dep_var._asymerrors_dn[key] = new_error
+		return
+	msg.warning("HEP_data_helpers.reformat_2D_bins_as_matrix_using_labels","HEPDataTable {0} is not a matrix... assuming it is a non-factorisable distribution and returning with nothing done".format(dep_var._name),verbose_level=0)
+	return
+
+
+#  Brief: reorder bins into a matrix for 2D distribution
+def reformat_2D_bins_as_matrix ( dist_2D_ ) :
+	use_labels = True
+	for indep_var in dist_2D_._indep_vars :
+		for label in indep_var._bin_labels :
+			label = str(label)
+			if len(label) > 0 : continue 
+			use_labels = False
+	if use_labels :
+		reformat_2D_bins_as_matrix_using_labels(dist_2D_)
+	else :
+		reformat_2D_bins_as_matrix_using_edges(dist_2D_)
+
+
+#  Brief: remove all bins from a 1D table which include a "None" entry
+def remove_None_entries_from_1D_table ( table_ ) :
+		# check dimensions and number of Nones
+	if table_.n_indep_vars() != 1 : return
+	dep_var = table_._dep_var
+	indep_var = table_._indep_vars[0]
+	old_values, old_labels, old_edges = dep_var._values, indep_var._bin_labels, indep_var._bin_edges
+	num_Nones = len([x for x in old_values if x is None])
+	if num_Nones == 0 : return
+		# make sure bin labels are sensibly configured for a discontinuous distribution
+	if len(old_values) != len(old_labels) : 
+		msg.error("HEP_data_utils.HEP_data_helpers.remove_None_entries_from_1D_table","Cannot interpret binning when len(values) = {0} but len(labels) = {1}".format(len(old_values),len(old_labels)),verbose_level=1)
+		return
+	if len(old_edges) > len(old_labels) : 
+		for i in range(len(old_labels)) :
+			label = old_labels[i]
+			if len(label) > 0 : continue
+			old_labels[i] = "[{0},{1}]".format(old_edges[i],old_edges[i+1])
+		# set new values
+	None_indices = []
+	new_labels = []
+	new_edges = np.full(shape=(len(old_edges)-num_Nones),fill_value=-0.5)
+	for i in range(1,len(new_edges)) : new_edges[i] = new_edges[i-1] + 1.
+	indep_var._bin_edges = new_edges
+	for i in range(len(old_values)) :
+		if old_values[i] == None :
+			None_indices.append(i)
+			continue
+		new_labels.append(old_labels[i])
+	dep_var._values = np.delete(old_values,None_indices)
+	indep_var._bin_labels = new_labels
+		# set new errors
+	for key in dep_var._symerrors :
+		dep_var._symerrors[key] = np.delete(dep_var._symerrors[key],None_indices)
+	for key in dep_var._asymerrors_up :
+		dep_var._asymerrors_up[key] = np.delete(dep_var._asymerrors_up[key],None_indices)
+	for key in dep_var._asymerrors_dn :
+		dep_var._asymerrors_dn[key] = np.delete(dep_var._asymerrors_dn[key],None_indices)
 
 
 #  Brief: load yaml contents into a HEPDataTable object within dataset_ (of type DistributionContainer)
@@ -122,18 +277,22 @@ def load_distribution_from_yaml ( dataset_ , dep_var_ , indep_vars_ , path_ , **
 			indep_var._units = indep_header.get("units","")
 		indep_var._bin_edges, indep_var._bin_labels = get_bins_from_dict(indep_var_map,len(dep_var))
 		table._indep_vars.append(indep_var)
+	# If our table has 'None' entries, we want to remove them
+	remove_None_entries_from_1D_table(table)
+	# Figure out what key to give it
+	key = dataset_.generate_key(table)
 	# Validate our table
 	is_valid, validity_message = table.is_valid()
 	if not is_valid :
-		msg.error("HEP_data_helpers.load_distribution_from_yaml","Error occured when loading table {0} from file {1}... returning with nothing done.")
+		msg.error("HEP_data_helpers.load_distribution_from_yaml","Error occured when loading table {0} from file {1}... returning with nothing done.".format(key,path_))
 		msg.error("HEP_data_helpers.load_distribution_from_yaml",">>>>>>>>>>>>>>")
 		msg.error("HEP_data_helpers.load_distribution_from_yaml",validity_message)
 		msg.error("HEP_data_helpers.load_distribution_from_yaml","<<<<<<<<<<<<<<")
 		return
-	# Figure out what key to give it
-	key = dataset_.generate_key(table)
-	# Add to dataset
+	# Reformat 2D distribution bins into a matrix
 	n_dim = len(table._indep_vars)
+	if n_dim == 2 and dataset_._make_matrix_if_possible : reformat_2D_bins_as_matrix(table)
+	# Add to dataset
 	if n_dim == 0 : dataset_._inclusive_distributions[key] = table
 	elif n_dim == 1 : dataset_._1D_distributions[key] = table
 	elif n_dim == 2 : dataset_._2D_distributions[key] = table
@@ -197,18 +356,18 @@ def load_submission_file ( dataset_ , path_ ,  **kwargs ) :
 
 
 #  Brief: load yaml files based on the file path
-def load_dataset ( dataset_ , path_ , **kwargs ) :
+def load_all_yaml_files ( dataset_ , path_ , **kwargs ) :
 	do_recurse = kwargs.get("recurse",True)
 	path_ = hlp.remove_subleading(path_,"/")
 	if hlp.is_directory(path_) :
 		yaml_files = hlp.keep_only_yaml_files(path_,recurse=do_recurse)
 		if len(yaml_files) == 0 :
-			msg.error("HEP_data_helpers.load_dataset","Directory {0} has no yaml files... returning with nothing done.".format(path_),verbose_level=-1)
+			msg.error("HEP_data_helpers.load_all_yaml_files","Directory {0} has no yaml files... returning with nothing done.".format(path_),verbose_level=-1)
 			return
-		for f in yaml_files : load_dataset(dataset_,path_,**kwargs)
+		for f in yaml_files : load_all_yaml_files(dataset_,f,**kwargs)
 		return
 	if not hlp.is_yaml_file(path_) :
-		msg.error("HEP_data_helpers.load_dataset","Path {0} is not a directory or yaml file... returning with nothing done.".format(path_),verbose_level=-1)
+		msg.error("HEP_data_helpers.load_all_yaml_files","Path {0} is not a directory or yaml file... returning with nothing done.".format(path_),verbose_level=-1)
 		return
 	if hlp.is_submission_file(path_) :
 		load_submission_file(dataset_,path_,**kwargs)
@@ -217,18 +376,18 @@ def load_dataset ( dataset_ , path_ , **kwargs ) :
 
 
 #  Brief: load yaml files based on a directory path or file list
-def load_all ( dataset_ , dir_ , **kwargs ) :
+def load_yaml_files_from_list ( dataset_ , dir_ , **kwargs ) :
 	if hlp.is_directory(dir_) :
 		for filename in [ dir_+"/"+f for f in os.listdir(dir_) if is_yaml_file(f) ] :
-			msg.info("HEP_data_helpers.load_all_yaml_files","Opening yaml file {0}".format(filename),verbose_level=0)
-			load_dataset(dataset_,filename,**kwargs)
+			msg.info("HEP_data_helpers.load_yaml_files_from_list","Opening yaml file {0}".format(filename),verbose_level=0)
+			load_all_yaml_files(dataset_,filename,**kwargs)
 	elif type(dir_) == list :
 		for filename in dir_ :
 			if type(filename) != str : continue
-			msg.info("HEP_data_helpers.load_all_yaml_files","Opening yaml file {0}".format(filename),verbose_level=0)
-			load_dataset(dataset_,filename,**kwargs)
+			msg.info("HEP_data_helpers.load_yaml_files_from_list","Opening yaml file {0}".format(filename),verbose_level=0)
+			load_all_yaml_files(dataset_,filename,**kwargs)
 	else :
-		msg.error("HEP_data_helpers.load_all_yaml_files","Input {0} is neither a directory nor a list... returning with nothing done".format(dir_),verbose_level=-1)
+		msg.error("HEP_data_helpers.load_yaml_files_from_list","Input {0} is neither a directory nor a list... returning with nothing done".format(dir_),verbose_level=-1)
 
 
 
