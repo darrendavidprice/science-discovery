@@ -68,8 +68,9 @@ class IndependentVariable (object) :
 	def clear (self) :
 		self._name = ""
 		self._units = ""
-		self._bin_edges = np.empty(shape=(0))
 		self._bin_labels = []
+		self._bin_centers = np.empty(shape=(0))
+		self._bin_edges = np.empty(shape=(0))
 	def __init__ (self) :
 		self.clear()
 	def __type__ (self) :
@@ -81,17 +82,21 @@ class IndependentVariable (object) :
 		if len(self._units) > 0 : ret = ret + "[ units = {0} ] ".format(self._units)
 		ret = ret + "with {0} values".format(len(self._bin_edges)-1)
 		ret = ret + "\n-  Bin labels are {0}".format(self._bin_labels)
+		ret = ret + "\n-  Bin centres are {0}".format(self._bin_centers)
 		ret = ret + "\n-  Bin edges are {0}".format(self._bin_edges)
 		return ret
 	def name (self) : return copy(self._name)
 	def units (self) : return copy(self._units)
+	def bin_centers (self) : return copy(self._bin_centers)
 	def bin_edges (self) : return copy(self._bin_edges)
 	def bin_labels (self) : return copy(self._bin_labels)
 	def n_bins (self) : return len(self)
 	def set_bin_labels ( self , labels_ ) :
 		new_length = len(labels_)
 		self._bin_labels = labels_
+		self._bin_centers = np.zeros(shape=(new_length))
 		self._bin_edges = np.zeros(shape=(new_length+1))
+		for i in range(0,new_length) : self._bin_centers[i] = i
 		for i in range(0,new_length+1) : self._bin_edges[i] = float(i) - 0.5
 
 

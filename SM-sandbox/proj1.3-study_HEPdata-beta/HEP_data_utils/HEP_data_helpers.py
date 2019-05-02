@@ -53,12 +53,13 @@ def get_error_from_yaml_map ( dep_var_ , error_ , pt_idx_ , err_idx_=0 ) :
 #  Brief: set the bins of an independent variable based on its HEPData yaml dict
 def get_bins_from_dict ( indep_var_ , n_bins_ , **kwargs ) :
 	bin_edges = np.zeros(shape=(1+n_bins_))
+	bin_centers = np.zeros(shape=(n_bins_))
 	bin_labels = [ "" for i in range(0,n_bins_) ]
 	values = indep_var_.get("values",[])
 	if kwargs.get("force_labels",False) :
 		for i in range(0,len(values)) :
 			bin = values[i]
-			bin_lo, bin_hi = float(i)-0.5 , float(i)+0.5
+			bin_centers[i], bin_lo, bin_hi = float(i), float(i)-0.5 , float(i)+0.5
 			if bin.get("value",None) != None :
 				bin_labels[i] = str(bin["value"])
 			if "high" in bin and "low" in bin :
@@ -75,13 +76,15 @@ def get_bins_from_dict ( indep_var_ , n_bins_ , **kwargs ) :
 				bin_lo, bin_hi = float(i)-0.5 , float(i)+0.5
 			if "high" in bin and "low" in bin :
 				bin_lo, bin_hi = bin["low"], bin["high"]
+			try : bin_centers[i] = float(bin["value"],0.5*(bin_lo+bin_hi))
+			except : bin_centers[i] = 0.5*(bin_lo+bin_hi)
 			if i == 0 :
 				bin_edges[0], bin_edges[1] = float(bin_lo), float(bin_hi)
 				continue
 			elif bin_lo != bin_edges[i] :
 				return get_bins_from_dict(indep_var_,n_bins_,force_labels=True)
 			bin_edges[i+1] = bin_hi
-	return bin_edges, bin_labels
+	return bin_centers, bin_edges, bin_labels
 
 
 #  Brief: from a yaml map called error_, get the uncertainty source (default labelled err{err_idx_}) and add the pt_idx_'th entry to dep_var_
@@ -225,7 +228,7 @@ def remove_None_entries_from_1D_table ( table_ ) :
 	if table_.n_indep_vars() != 1 : return
 	dep_var = table_._dep_var
 	indep_var = table_._indep_vars[0]
-	old_values, old_labels, old_edges = dep_var._values, indep_var._bin_labels, indep_var._bin_edges
+	old_values, old_labels, old_centers, old_edges = dep_var._values, indep_var._bin_labels, indep_var._bin_centers, indep_var._bin_edges
 	num_Nones = len([x for x in old_values if x is None])
 	if num_Nones == 0 : return
 		# make sure bin labels are sensibly configured for a discontinuous distribution
@@ -241,8 +244,11 @@ def remove_None_entries_from_1D_table ( table_ ) :
 	None_indices = []
 	new_labels = []
 	new_edges = np.full(shape=(len(old_edges)-num_Nones),fill_value=-0.5)
-	for i in range(1,len(new_edges)) : new_edges[i] = new_edges[i-1] + 1.
-	indep_var._bin_edges = new_edges
+	new_centers = np.zeros(shape=(len(old_centers)-num_Nones))
+	for i in range(1,len(new_edges)) :
+		new_centers[i-1] = i-1
+		new_edges[i] = new_edges[i-1] + 1.
+	indep_var._bin_centers, indep_var._bin_edges = new_centers, new_edges
 	for i in range(len(old_values)) :
 		if old_values[i] == None :
 			None_indices.append(i)
@@ -275,7 +281,7 @@ def load_distribution_from_yaml ( dataset_ , dep_var_ , indep_vars_ , path_ , **
 		if indep_header :
 			indep_var._name = indep_header.get("name","")
 			indep_var._units = indep_header.get("units","")
-		indep_var._bin_edges, indep_var._bin_labels = get_bins_from_dict(indep_var_map,len(dep_var))
+		indep_var._bin_centers, indep_var._bin_edges, indep_var._bin_labels = get_bins_from_dict(indep_var_map,len(dep_var))
 		table._indep_vars.append(indep_var)
 	# If our table has 'None' entries, we want to remove them
 	remove_None_entries_from_1D_table(table)
