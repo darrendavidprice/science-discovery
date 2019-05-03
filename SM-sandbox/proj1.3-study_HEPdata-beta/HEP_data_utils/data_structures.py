@@ -70,20 +70,22 @@ class IndependentVariable (object) :
 		self._units = ""
 		self._bin_labels = []
 		self._bin_centers = np.empty(shape=(0))
-		self._bin_edges = np.empty(shape=(0))
+		self._bin_widths_lo = np.empty(shape=(0))
+		self._bin_widths_hi = np.empty(shape=(0))
 	def __init__ (self) :
 		self.clear()
 	def __type__ (self) :
 		return "HEP_data_utils.data_structures.IndependentVariable"
 	def __len__ (self) :
-		return len(self._bin_edges) - 1
+		return len(self._bin_centers)
 	def __str__ (self) :
 		ret = "Independent variable < {0} > ".format(self._name)
 		if len(self._units) > 0 : ret = ret + "[ units = {0} ] ".format(self._units)
-		ret = ret + "with {0} values".format(len(self._bin_edges)-1)
+		ret = ret + "with {0} values".format(len(self))
 		ret = ret + "\n-  Bin labels are {0}".format(self._bin_labels)
 		ret = ret + "\n-  Bin centres are {0}".format(self._bin_centers)
-		ret = ret + "\n-  Bin edges are {0}".format(self._bin_edges)
+		ret = ret + "\n-  Bin widths (low)  are {0}".format(self._bin_widths_lo)
+		ret = ret + "\n-  Bin widths (high) are {0}".format(self._bin_widths_hi)
 		return ret
 	def name (self) : return copy(self._name)
 	def units (self) : return copy(self._units)
@@ -95,9 +97,12 @@ class IndependentVariable (object) :
 		new_length = len(labels_)
 		self._bin_labels = labels_
 		self._bin_centers = np.zeros(shape=(new_length))
-		self._bin_edges = np.zeros(shape=(new_length+1))
-		for i in range(0,new_length) : self._bin_centers[i] = i
-		for i in range(0,new_length+1) : self._bin_edges[i] = float(i) - 0.5
+		self._bin_widths_lo = np.zeros(shape=(new_length))
+		self._bin_widths_hi = np.zeros(shape=(new_length))
+		for i in range(0,new_length) :
+			self._bin_centers[i] = i
+			self._bin_widths_lo[i] = 0.5
+			self._bin_widths_hi[i] = 0.5
 
 
 #  Brief: store the data of an dependent_variable as defined in a HEPData table
@@ -128,7 +133,7 @@ class DependentVariable (object) :
 			for i in range(len(key)) : ret = ret + " "
 			ret = ret + "                              DOWN: {0}".format(self._asymerrors_dn[key])
 		return ret
-	def __len__ (self) : return len(self._values)
+	def __len__ (self) : return len(self._values.flatten())
 	def is_valid (self) :
 		n_values = len(self._values)
 		if n_values == 0 : return False, "No values provided"
@@ -194,12 +199,16 @@ class HEPDataTable (object) :
 	def n_indep_vars (self) : return len(self._indep_vars)
 	def is_valid (self) :
 		n_values = len(self._dep_var)
+		n_axes = self.n_indep_vars()
 		if n_values == 0 : return False, "self._dep_var has zero length"
-		product_of_bins = 1
-		for indep_var in self._indep_vars : product_of_bins = product_of_bins * len(indep_var)
-		if product_of_bins != n_values :
-			for indep_var in self._indep_vars :
-				if indep_var.n_bins() == n_values : continue
-				return False, "Independent variable {0} has length {1} where {2} was expected".format(indep_var.name(),indep_var.n_bins(),n_values)
+		shape = self._dep_var._values.shape
+		if len(shape) == 1 and n_axes != 1 :
+			for n_values_axis in [ x for x in [ len(indep_var) for indep_var in self._indep_vars ] if x != n_values ] :
+				return False, "Independent variable with length {0} where {1} was expected".format(n_values_axis,shape)
+		else :
+			for i in range(self.n_indep_vars()) :
+				indep_var = self._indep_vars[i]
+				if indep_var.n_bins() == shape[i] : continue
+				return False, "Independent variable {0} (index {1}) has length {2} where {3} was expected".format(indep_var.name(),i,indep_var.n_bins(),shape[i])
 		return self._dep_var.is_valid()
 	def values (self) : return self._dep_var.values()

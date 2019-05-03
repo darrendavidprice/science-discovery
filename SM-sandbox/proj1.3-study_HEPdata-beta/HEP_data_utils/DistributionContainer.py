@@ -146,7 +146,7 @@ class DistributionContainer (object) :
 			try : plotter.plot_2D_distribution(dist,**kwargs)
 			except Exception as e :
 				print(e)
-				msg.error("HEP_data_utils.data_structures.DistributionContainer.plot","Error when plotting 1D distribution with key {0}... skipping".format(key))
+				msg.error("HEP_data_utils.data_structures.DistributionContainer.plot","Error when plotting 2D distribution with key {0}... skipping".format(key))
 	def plot_all ( self , **kwargs ) :
 		for key in { **self._inclusive_distributions , **self._1D_distributions , **self._2D_distributions } :
 			self.plot(key,**kwargs)

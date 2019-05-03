@@ -4,7 +4,7 @@
 # ===================================================================================================================================
 
 
-import os, yaml, uproot
+import os, uproot
 import HEP_data_utils.messaging as msg
 import HEP_data_utils.general_helpers as hlp
 from HEP_data_utils.data_structures import *
@@ -16,13 +16,16 @@ class ROOT_axis :
 		self.name = ""
 		self.bin_labels = []
 		self.bin_centers = np.zeros(shape=(0))
-		self.bin_edges = np.zeros(shape=(0))
+		self.bin_widths_lo = np.zeros(shape=(0))
+		self.bin_widths_hi = np.zeros(shape=(0))
 	def __str__ (self) :
 		ret = "ROOT_axis: {0}".format(self.name)
 		ret = ret + "\n  -  bin labels  = " + str(self.bin_labels)
 		ret = ret + "\n  -  bin centres = " + str(self.bin_centers)
-		ret = ret + "\n  -  bin edges   = " + str(self.bin_edges)
+		ret = ret + "\n  -  bin widths (low)  = " + str(self.bin_widths_lo)
+		ret = ret + "\n  -  bin widths (high) = " + str(self.bin_widths_hi)
 		return ret
+	def __len__ (self) : return len(self.bin_centers)
 
 
 #  Brief: store a ROOT dep_var
@@ -38,6 +41,7 @@ class ROOT_observable :
 		ret = ret + "\n  -  errors up   = " + str(self.errors_up)
 		ret = ret + "\n  -  errors down = " + str(self.errors_dn)
 		return ret
+	def __len__ (self) : return len(self.values)
 
 
 #  Brief: create a TH1F
@@ -69,7 +73,12 @@ def open_root_file ( in_ , pre_key = "" ) :
 					num = int(key2.split(";").pop())
 					key2 = key2 + str(num+1)
 				ret[key2] = value2
-	else : ret [ "{0}{1}".format(pre_key,in_.name) ] = in_
+	else :
+		try : key = "{0}{1}".format(pre_key,in_.name)
+		except :
+			try : key = "{0}{1}".format(pre_key,in_.title)
+			except : key = "{0}/unknown".format(pre_key)
+		ret [ key ] = in_
 	return ret
 
 
@@ -96,24 +105,26 @@ def open_root_file ( in_ , pre_key = "" ) :
 def get_ROOT_Table_from_uproot_TH1 ( histo_ ) :
 		# create table
 	ret = ROOT_Table()
-	ROOT_Table._name = histo_.name
+	if histo_.title is not None : ret._name = str(histo_.title)
 		# create dep_var
 	dep_var = ROOT_observable()
 	dep_var.name = str(histo_._fYaxis._fTitle)
-	dep_var.values = np.array(histo_.values)
-	dep_var.errors_up = np.sqrt( np.array(histo_.variances) )
+	dep_var.values = histo_.values
+	dep_var.errors_up = np.sqrt( histo_.variances )
 	dep_var.errors_dn = dep_var.errors_up
 	ret.dep_var = dep_var
 		# create indep_var
 	indep_var = ROOT_axis()
-	indep_var.name = histo_._fXaxis._fTitle
+	indep_var.name = str(histo_._fXaxis._fTitle)
 	indep_var.bin_labels = []
 	if histo_.xlabels is not None : indep_var.bin_labels = [ str(x) for x in histo_.xlabels ]
 	if len(indep_var.bin_labels) == 0 : indep_var.bin_labels = [ "" for i in range(len(dep_var.values)) ]
-	indep_var.bin_edges = np.array(histo_.edges)
-	indep_var.bin_centers = np.zeros(shape=(len(indep_var.bin_edges)-1))
+	bin_edges = histo_.edges
+	indep_var.bin_centers = np.zeros(shape=(len(bin_edges)-1))
 	for i in range(len(indep_var.bin_centers)) :
-		indep_var.bin_centers[i] = 0.5 * ( indep_var.bin_edges[i] + indep_var.bin_edges[i+1] )
+		indep_var.bin_centers[i] = 0.5 * ( bin_edges[i] + bin_edges[i+1] )
+	indep_var.bin_widths_lo = np.array( [ indep_var.bin_centers[i] - bin_edges[i] for i in range(len(indep_var.bin_centers)) ] )
+	indep_var.bin_widths_hi = np.array( [ bin_edges[i+1] - indep_var.bin_centers[i] for i in range(len(indep_var.bin_centers)) ] )
 	ret.indep_vars.append(indep_var)
 	return ret
 
@@ -122,12 +133,12 @@ def get_ROOT_Table_from_uproot_TH1 ( histo_ ) :
 def get_ROOT_Table_from_uproot_TH2 ( histo_ ) :
 		# create table
 	ret = ROOT_Table()
-	ROOT_Table._name = histo_.name
+	if histo_.title is not None : ret._name = str(histo_.title)
 		# add dep_var
 	dep_var = ROOT_observable()
-	dep_var.name = str(histo_._fYaxis._fTitle)
-	dep_var.values = np.array(histo_.values)
-	dep_var.errors_up = np.sqrt( np.array(histo_.variances) )
+	dep_var.name = str(histo_._fZaxis._fTitle)
+	dep_var.values = histo_.values
+	dep_var.errors_up = np.sqrt( histo_.variances )
 	dep_var.errors_dn = dep_var.errors_up
 	ret.dep_var = dep_var
 		# add indep_var for x-axis
@@ -136,10 +147,11 @@ def get_ROOT_Table_from_uproot_TH2 ( histo_ ) :
 	indep_var_x.bin_labels = []
 	if histo_.xlabels is not None : indep_var_x.bin_labels = [ str(x) for x in histo_.xlabels ]
 	if len(indep_var_x.bin_labels) == 0 : indep_var_x.bin_labels = [ "" for i in range(histo_.xnumbins) ]
-	indep_var_x.bin_edges = np.array(histo_.edges[0])
-	indep_var_x.bin_centers = np.zeros(shape=(len(indep_var_x.bin_edges)-1))
-	for i in range(len(indep_var_x.bin_centers)) :
-		indep_var_x.bin_centers[i] = 0.5 * ( indep_var_x.bin_edges[i] + indep_var_x.bin_edges[i+1] )
+	bin_edges_x = histo_.edges[0]
+	indep_var_x.bin_centers = np.zeros(shape=(len(bin_edges_x)-1))
+	for i in range(len(indep_var_x.bin_centers)) : indep_var_x.bin_centers[i] = 0.5 * ( bin_edges_x[i] + bin_edges_x[i+1] )
+	indep_var_x.bin_widths_lo = np.array( [ indep_var_x.bin_centers[i] - bin_edges_x[i] for i in range(len(indep_var_x.bin_centers)) ] )
+	indep_var_x.bin_widths_hi = np.array( [ bin_edges_x[i+1] - indep_var_x.bin_centers[i] for i in range(len(indep_var_x.bin_centers)) ] )
 	ret.indep_vars.append(indep_var_x)
 		# add indep_var for y-axis
 	indep_var_y = ROOT_axis()
@@ -147,81 +159,112 @@ def get_ROOT_Table_from_uproot_TH2 ( histo_ ) :
 	indep_var_y.bin_labels = []
 	if histo_.ylabels is not None : indep_var_y.bin_labels = [ str(x) for x in histo_.ylabels ]
 	if len(indep_var_y.bin_labels) == 0 : indep_var_y.bin_labels = [ "" for i in range(histo_.ynumbins) ]
-	indep_var_y.bin_edges = np.array(histo_.edges[1])
-	indep_var_y.bin_centers = np.zeros(shape=(len(indep_var_y.bin_edges)-1))
-	for i in range(len(indep_var_y.bin_centers)) :
-		indep_var_y.bin_centers[i] = 0.5 * ( indep_var_y.bin_edges[i] + indep_var_y.bin_edges[i+1] )
+	bin_edges_y = histo_.edges[1]
+	indep_var_y.bin_centers = np.zeros(shape=(len(bin_edges_y)-1))
+	for i in range(len(indep_var_y.bin_centers)) : indep_var_y.bin_centers[i] = 0.5 * ( bin_edges_y[i] + bin_edges_y[i+1] )
+	indep_var_y.bin_widths_lo = np.array( [ indep_var_y.bin_centers[i] - bin_edges_y[i] for i in range(len(indep_var_y.bin_centers)) ] )
+	indep_var_y.bin_widths_hi = np.array( [ bin_edges_y[i+1] - indep_var_y.bin_centers[i] for i in range(len(indep_var_y.bin_centers)) ] )
 	ret.indep_vars.append(indep_var_y)
 		# return table
 	return ret
 
 
-def read_TGraphAsymmErrors ( histo_ ) :
-	return
-	print("\nTGRAPHASYMMERRORS:\n")
-	print(histo_.name)
-	print(histo_.xlabel)
-	print(histo_.xvalues)
-	print(histo_.xerrorslow)
-	print(histo_.xerrorshigh)
-	print(histo_.ylabel)
-	print(histo_.yvalues)
-	print(histo_.yerrorslow)
-	print(histo_.yerrorshigh)
-	return 
-	print([x for x in dir(histo_) if x[:1] != "_"])
+#  Brief: turn an uproot.rootio.TGraphErrors object into an instance of ROOT_Table
+def get_ROOT_Table_from_uproot_TGraphErrors ( graph_ ) :
+		# create table
+	ret = ROOT_Table()
+	if graph_.title is not None : ret._name = str(graph_.title)
+		# create dep_var
+	dep_var = ROOT_observable()
+	if graph_.ylabel is not None : dep_var.name = str(graph_.ylabel)
+	dep_var.values = graph_.yvalues
+	dep_var.errors_up = graph_.yerrors
+	dep_var.errors_dn = dep_var.errors_up
+	ret.dep_var = dep_var
+		# create indep_var
+	indep_var = ROOT_axis()
+	if graph_.xlabel is not None : indep_var.name = str(graph_.xlabel)
+	indep_var.bin_labels = [ "" for i in range(len(dep_var.values)) ]
+	indep_var.bin_centers = graph_.xvalues
+	indep_var.bin_widths_lo = graph_.xerrors
+	indep_var.bin_widths_hi = indep_var.bin_widths_lo
+	ret.indep_vars.append(indep_var)
+	return ret
 
 
-def read_TGraphErrors ( histo_ ) :
-	return
-	print("\nTGRAPHERRORS:\n")
-	print(histo_.name)
-	print(histo_.xlabel)
-	print(histo_.xvalues)
-	print(histo_.xerrors)
-	print(histo_.ylabel)
-	print(histo_.yvalues)
-	print(histo_.yerrors)
-	return 
-	print([x for x in dir(histo_) if x[:1] != "_"])
+#  Brief: turn an uproot.rootio.TGraphAsymmErrors object into an instance of ROOT_Table
+def get_ROOT_Table_from_uproot_TGraphAsymmErrors ( graph_ ) :
+		# create table
+	ret = ROOT_Table()
+	if graph_.title is not None : ret._name = str(graph_.title)
+		# create dep_var
+	dep_var = ROOT_observable()
+	if graph_.ylabel is not None : dep_var.name = str(graph_.ylabel)
+	dep_var.values = graph_.yvalues
+	dep_var.errors_up = graph_.yerrorshigh
+	dep_var.errors_dn = graph_.yerrorslow
+	ret.dep_var = dep_var
+		# create indep_var
+	indep_var = ROOT_axis()
+	if graph_.xlabel is not None : indep_var.name = str(graph_.xlabel)
+	indep_var.bin_labels = [ "" for i in range(len(dep_var.values)) ]
+	indep_var.bin_centers = graph_.xvalues
+	indep_var.bin_widths_lo = graph_.xerrorslow
+	indep_var.bin_widths_hi = graph_.xerrorshigh
+	ret.indep_vars.append(indep_var)
+	return ret
 
 
-#  Brief: turn an uproot.rootio.TH2F or TH2D object into an instance of ROOT_Table
+#  Brief: turn an uproot.rootio.TGraph object into an instance of ROOT_Table
 def get_ROOT_Table_from_uproot_TGraph ( graph_ ) :
 		# create table
 	ret = ROOT_Table()
-	ROOT_Table._name = graph_.name
+	if graph_.title is not None : ret._name = str(graph_.title)
 		# create dep_var
 	dep_var = ROOT_observable()
-	dep_var.name = str(graph_.ylabel)
-	dep_var.values = np.array(graph_.yvalues)
+	if graph_.ylabel is not None : dep_var.name = str(graph_.ylabel)
+	dep_var.values = graph_.yvalues
 	dep_var.errors_up = np.zeros(shape=len(dep_var.values))
 	dep_var.errors_dn = np.zeros(shape=len(dep_var.values))
 	ret.dep_var = dep_var
 		# create indep_var
 	indep_var = ROOT_axis()
-	indep_var.name = str(graph_.xlabel)
+	if graph_.xlabel is not None : indep_var.name = str(graph_.xlabel)
 	indep_var.bin_labels = [ "" for i in range(len(dep_var.values)) ]
-	indep_var.bin_centers = np.array(graph_.xvalues)
-
-	indep_var.bin_edges = np.array(histo_.edges)
-	indep_var.bin_centers = np.zeros(shape=(len(indep_var.bin_edges)-1))
-	for i in range(len(indep_var.bin_centers)) :
-		indep_var.bin_centers[i] = 0.5 * ( indep_var.bin_edges[i] + indep_var.bin_edges[i+1] )
+	indep_var.bin_centers = graph_.xvalues
+	indep_var.bin_widths_lo = np.zeros(shape=(len(indep_var.bin_centers)))
+	indep_var.bin_widths_hi = np.zeros(shape=(len(indep_var.bin_centers)))
 	ret.indep_vars.append(indep_var)
 	return ret
 
 
-def read_TGraph ( histo_ ) :
-	return
-	print("\nTGRAPH:\n")
-	print(histo_.name)
-	print(histo_.xlabel)
-	print(histo_.xvalues)
-	print(histo_.ylabel)
-	print(histo_.yvalues)
-	return 
-	print([x for x in dir(histo_) if x[:1] != "_"])
+#  Brief: turn an uproot.rootio.TGraph2DErrors object into an instance of ROOT_Table
+def get_ROOT_Table_from_uproot_TGraph2DErrors ( graph_ ) :
+		# create table
+	ret = ROOT_Table()
+	if graph_._fTitle is not None : ret._name = str(graph_._fTitle)
+	elif graph_._fName is not None : ret._name = str(graph_._fName)
+		# create dep_var
+	dep_var = ROOT_observable()
+	dep_var.values = graph_._fZ
+	dep_var.errors_up = graph_._fEZ
+	dep_var.errors_dn = dep_var.errors_up
+	ret.dep_var = dep_var
+		# create indep_var_x
+	indep_var_x = ROOT_axis()
+	indep_var_x.bin_centers = graph_._fX
+	indep_var_x.bin_widths_hi = graph_._fEX
+	indep_var_x.bin_widths_lo = indep_var_x.bin_widths_hi
+	indep_var_x.bin_labels = [ "" for i in range(len(indep_var_x.bin_centers)) ]
+	ret.indep_vars.append(indep_var_x)
+		# create indep_var_y
+	indep_var_y = ROOT_axis()
+	indep_var_y.bin_centers = graph_._fY
+	indep_var_y.bin_widths_hi = graph_._fEY
+	indep_var_y.bin_widths_lo = indep_var_y.bin_widths_hi
+	indep_var_y.bin_labels = [ "" for i in range(len(indep_var_y.bin_centers)) ]
+	ret.indep_vars.append(indep_var_y)
+	return ret
 
 
 #  Brief: turn raw uproot data into data structures
@@ -229,19 +272,76 @@ def get_uproot_histograms ( data_ ) :
 	ret = {}
 	for key, entry in data_.items() :
 		if str(type(entry)) == "<class 'uproot.rootio.TH1F'>" : ret[key] = get_ROOT_Table_from_uproot_TH1(entry)
-		if str(type(entry)) == "<class 'uproot.rootio.TH1D'>" : ret[key] = get_ROOT_Table_from_uproot_TH1(entry)
-		if str(type(entry)) == "<class 'uproot.rootio.TH2F'>" : ret[key] = get_ROOT_Table_from_uproot_TH2(entry)
-		if str(type(entry)) == "<class 'uproot.rootio.TH2D'>" : ret[key] = get_ROOT_Table_from_uproot_TH2(entry)
-		if str(type(entry)) == "<class 'uproot.rootio.TGraph'>" : ret[key] = get_ROOT_Table_from_uproot_TGraph(entry)
-		print(key,type(entry))
+		elif str(type(entry)) == "<class 'uproot.rootio.TH1D'>" : ret[key] = get_ROOT_Table_from_uproot_TH1(entry)
+		elif str(type(entry)) == "<class 'uproot.rootio.TH2F'>" : ret[key] = get_ROOT_Table_from_uproot_TH2(entry)
+		elif str(type(entry)) == "<class 'uproot.rootio.TH2D'>" : ret[key] = get_ROOT_Table_from_uproot_TH2(entry)
+		elif str(type(entry)) == "<class 'uproot.rootio.TGraph'>" : ret[key] = get_ROOT_Table_from_uproot_TGraph(entry)
+		elif str(type(entry)) == "<class 'uproot.rootio.TGraphErrors'>" : ret[key] = get_ROOT_Table_from_uproot_TGraphErrors(entry)
+		elif str(type(entry)) == "<class 'uproot.rootio.TGraphAsymmErrors'>" : ret[key] = get_ROOT_Table_from_uproot_TGraphAsymmErrors(entry)
+		elif str(type(entry)) == "<class 'uproot.rootio.TGraph2DErrors'>" : ret[key] = get_ROOT_Table_from_uproot_TGraph2DErrors(entry)
+		else :
+			msg.info("HEP_data_utils.ROOT_helpers.get_uproot_histograms","Object {0} of type {1} is ignored as I don't understand this format".format(key,type(entry)),verbose_level=0)
+	return ret
+
+
+#  Brief: convert a ROOT_observable object into a data_structures.DependentVariable one
+def ROOT_observable_to_DependentVariable ( ROOT_y_ ) :
+	ret = DependentVariable()
+	ret._name = ROOT_y_.name
+	ret._values = ROOT_y_.values
+	ret._asymerrors_up["err0"] = ROOT_y_.errors_up
+	ret._asymerrors_dn["err0"] = -1.0 * ROOT_y_.errors_dn
+	return ret
+
+
+#  Brief: convert a ROOT_axis object into a data_structures.IndependentVariable one
+def ROOT_axis_to_IndependentVariable ( ROOT_x_ ) :
+	ret = IndependentVariable()
+	ret._name = ROOT_x_.name
+	ret._bin_labels = ROOT_x_.bin_labels
+	ret._bin_centers = ROOT_x_.bin_centers
+	ret._bin_widths_lo = ROOT_x_.bin_widths_lo
+	ret._bin_widths_hi = ROOT_x_.bin_widths_hi
+	return ret
+
+
+#  Brief: load ROOT_Table contents into a HEPDataTable object within dataset_ (of type DistributionContainer)
+def load_distribution_from_ROOT_Table ( dataset_ , key_ , table_ , **kwargs ) :
+	# Create the table object
+	table = HEPDataTable()
+	table._submission_file_meta = kwargs.get("submission_file_metadata",None)
+	table._submission_file_table = kwargs.get("submission_file_table",None)
+	# Set the variables
+	table._dep_var = ROOT_observable_to_DependentVariable(table_.dep_var)
+	for indep_var in table_.indep_vars :
+		table._indep_vars.append(ROOT_axis_to_IndependentVariable(indep_var))
+	# Figure out what key to give it
+	if key_ in dataset_ :
+		key_ = key_ + "-;1"
+		while key_ in self : key_ = key_[:-1] + str(1+int(key_[-1:]))
+	# Validate our table
+	is_valid, validity_message = table.is_valid()
+	if not is_valid :
+		msg.error("ROOT_helpers.load_distribution_from_ROOT_Table","Error occured when loading table {0}... returning with nothing done.".format(key_))
+		msg.error("ROOT_helpers.load_distribution_from_ROOT_Table",">>>>>>>>>>>>>>")
+		msg.error("ROOT_helpers.load_distribution_from_ROOT_Table",validity_message)
+		msg.error("ROOT_helpers.load_distribution_from_ROOT_Table","<<<<<<<<<<<<<<")
+		return
+	# Add to dataset
+	n_dim = table.n_indep_vars()
+	if n_dim == 0 : dataset_._inclusive_distributions[key_] = table
+	elif n_dim == 1 : dataset_._1D_distributions[key_] = table
+	elif n_dim == 2 : dataset_._2D_distributions[key_] = table
+	else : dataset_._ND_distributions[key_] = table
 
 
 #  Brief: use uproot to load a single root file based on the file path
-def load_root_file ( dataset_ , path_ , **kwargs ) :
+def load_root_file ( dataset_ , path_ , **kwargs) :
 	msg.info("ROOT_helpers.load_root_file","Opening root file {0}".format(path_),verbose_level=0)
 	raw_uproot_data = open_root_file(path_,path_)
 	uproot_histos = get_uproot_histograms(raw_uproot_data)
-	exit()
+	for key, table in uproot_histos.items() :
+		load_distribution_from_ROOT_Table(dataset_,key,table,**kwargs)
 
 
 #  Brief: load root files based on the file path

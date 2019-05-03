@@ -52,22 +52,22 @@ def get_error_from_yaml_map ( dep_var_ , error_ , pt_idx_ , err_idx_=0 ) :
 
 #  Brief: set the bins of an independent variable based on its HEPData yaml dict
 def get_bins_from_dict ( indep_var_ , n_bins_ , **kwargs ) :
-	bin_edges = np.zeros(shape=(1+n_bins_))
 	bin_centers = np.zeros(shape=(n_bins_))
 	bin_labels = [ "" for i in range(0,n_bins_) ]
+	bin_widths_lo = np.zeros(shape=(n_bins_))
+	bin_widths_hi = np.zeros(shape=(n_bins_))
 	values = indep_var_.get("values",[])
 	if kwargs.get("force_labels",False) :
 		for i in range(0,len(values)) :
 			bin = values[i]
-			bin_centers[i], bin_lo, bin_hi = float(i), float(i)-0.5 , float(i)+0.5
+			bin_center, bin_lo, bin_hi = float(i), float(i)-0.5 , float(i)+0.5
 			if bin.get("value",None) != None :
 				bin_labels[i] = str(bin["value"])
 			if "high" in bin and "low" in bin :
 				bin_labels[i] = "{0}[{1},{2}]".format(bin_labels[i],bin["low"],bin["high"])
-			if i == 0 :
-				bin_edges[0], bin_edges[1] = float(bin_lo), float(bin_hi)
-				continue
-			bin_edges[i+1] = bin_hi
+			bin_centers[i] = bin_center
+			bin_widths_lo[i] = bin_center - bin_lo
+			bin_widths_hi[i] = bin_hi - bin_center
 	else :
 		for i in range(0,len(values)) :
 			bin = values[i]
@@ -76,15 +76,12 @@ def get_bins_from_dict ( indep_var_ , n_bins_ , **kwargs ) :
 				bin_lo, bin_hi = float(i)-0.5 , float(i)+0.5
 			if "high" in bin and "low" in bin :
 				bin_lo, bin_hi = bin["low"], bin["high"]
-			try : bin_centers[i] = float(bin["value"],0.5*(bin_lo+bin_hi))
-			except : bin_centers[i] = 0.5*(bin_lo+bin_hi)
-			if i == 0 :
-				bin_edges[0], bin_edges[1] = float(bin_lo), float(bin_hi)
-				continue
-			elif bin_lo != bin_edges[i] :
-				return get_bins_from_dict(indep_var_,n_bins_,force_labels=True)
-			bin_edges[i+1] = bin_hi
-	return bin_centers, bin_edges, bin_labels
+			try : bin_center = float(bin["value"],0.5*(bin_lo+bin_hi))
+			except : bin_center = 0.5*(bin_lo+bin_hi)
+			bin_centers[i] = bin_center
+			bin_widths_lo[i] = bin_center - bin_lo
+			bin_widths_hi[i] = bin_hi - bin_center
+	return bin_centers, bin_widths_lo, bin_widths_hi, bin_labels
 
 
 #  Brief: from a yaml map called error_, get the uncertainty source (default labelled err{err_idx_}) and add the pt_idx_'th entry to dep_var_
@@ -121,21 +118,6 @@ def get_dependent_variable_from_yaml_map ( dep_var_ , path_="unknown" ) :
 			err_idx = err_idx + 1
 		pt_idx = pt_idx + 1
 	return dep_var
-
-
-#  Brief: reorder bins into a matrix for 2D distribution
-def reformat_2D_bins_as_matrix_using_edges ( dist_2D_ ) :
-	if type(dist_2D_) != HEPDataTable :
-		msg.fatal("HEP_data_helpers.reformat_2D_bins_as_matrix_using_edges","argument must be of type HEPDataTable")
-	dep_var = dist_2D_._dep_var
-	if len(dist_2D_._indep_vars) != 2 :
-		msg.fatal("HEP_data_helpers.reformat_2D_bins_as_matrix_using_edges","HEPDataTable {0} has {1} independent_variable where 2 are required".format(dep_var._name,len(dist_2D_._indep_vars)))
-	n_vals = len(dep_var)
-	old_bin_edges_x, old_bin_edges_y = dist_2D_._indep_vars[0]._bin_edges, dist_2D_._indep_vars[1]._bin_edges
-	old_n_bins_x, old_n_bins_y = len(old_bin_edges_x)-1, len(old_bin_edges_y)-1
-	if n_vals != old_n_bins_x*old_n_bins_y :
-		msg.warning("HEP_data_helpers.reformat_2D_bins_as_matrix_using_edges","Cannot interpret 2D distribution unless num_values = num_bins_x * num_bins_y",1)
-		return
 
 
 #  Brief: reorder bins into a matrix for 2D distribution
@@ -210,6 +192,8 @@ def reformat_2D_bins_as_matrix_using_labels ( dist_2D_ ) :
 
 #  Brief: reorder bins into a matrix for 2D distribution
 def reformat_2D_bins_as_matrix ( dist_2D_ ) :
+	reformat_2D_bins_as_matrix_using_labels(dist_2D_)
+'''
 	use_labels = True
 	for indep_var in dist_2D_._indep_vars :
 		for label in indep_var._bin_labels :
@@ -217,9 +201,7 @@ def reformat_2D_bins_as_matrix ( dist_2D_ ) :
 			if len(label) > 0 : continue 
 			use_labels = False
 	if use_labels :
-		reformat_2D_bins_as_matrix_using_labels(dist_2D_)
-	else :
-		reformat_2D_bins_as_matrix_using_edges(dist_2D_)
+'''
 
 
 #  Brief: remove all bins from a 1D table which include a "None" entry
@@ -228,27 +210,26 @@ def remove_None_entries_from_1D_table ( table_ ) :
 	if table_.n_indep_vars() != 1 : return
 	dep_var = table_._dep_var
 	indep_var = table_._indep_vars[0]
-	old_values, old_labels, old_centers, old_edges = dep_var._values, indep_var._bin_labels, indep_var._bin_centers, indep_var._bin_edges
+	old_values, old_labels, old_centers, old_bw_lo, old_bw_hi = dep_var._values, indep_var._bin_labels, indep_var._bin_centers, indep_var._bin_widths_lo, indep_var._bin_widths_hi
 	num_Nones = len([x for x in old_values if x is None])
 	if num_Nones == 0 : return
 		# make sure bin labels are sensibly configured for a discontinuous distribution
 	if len(old_values) != len(old_labels) : 
 		msg.error("HEP_data_utils.HEP_data_helpers.remove_None_entries_from_1D_table","Cannot interpret binning when len(values) = {0} but len(labels) = {1}".format(len(old_values),len(old_labels)),verbose_level=1)
 		return
-	if len(old_edges) > len(old_labels) : 
-		for i in range(len(old_labels)) :
-			label = old_labels[i]
-			if len(label) > 0 : continue
-			old_labels[i] = "[{0},{1}]".format(old_edges[i],old_edges[i+1])
+	for i in range(len(old_labels)) :
+		label = old_labels[i]
+		if len(label) > 0 : continue
+		old_labels[i] = "[{0},{1}]".format(old_centers[i]-old_bw_lo[i],old_centers[i]+old_bw_hi[i])
 		# set new values
 	None_indices = []
 	new_labels = []
-	new_edges = np.full(shape=(len(old_edges)-num_Nones),fill_value=-0.5)
+	new_bw_lo , new_bw_hi = np.full(shape=(len(old_bw_lo)-num_Nones),fill_value=0.5), np.full(shape=(len(old_bw_hi)-num_Nones),fill_value=0.5)
 	new_centers = np.zeros(shape=(len(old_centers)-num_Nones))
-	for i in range(1,len(new_edges)) :
-		new_centers[i-1] = i-1
-		new_edges[i] = new_edges[i-1] + 1.
-	indep_var._bin_centers, indep_var._bin_edges = new_centers, new_edges
+	for i in range(len(new_centers)) :
+		new_centers[i] = i
+		new_bw_lo[i], new_bw_hi[i] = 0.5, 0.5
+	indep_var._bin_centers, indep_var._bin_widths_lo, indep_var._bin_widths_hi = new_centers, new_bw_lo, new_bw_hi
 	for i in range(len(old_values)) :
 		if old_values[i] == None :
 			None_indices.append(i)
@@ -266,11 +247,11 @@ def remove_None_entries_from_1D_table ( table_ ) :
 
 
 #  Brief: load yaml contents into a HEPDataTable object within dataset_ (of type DistributionContainer)
-def load_distribution_from_yaml ( dataset_ , dep_var_ , indep_vars_ , path_ , **argv ) :
+def load_distribution_from_yaml ( dataset_ , dep_var_ , indep_vars_ , path_ , **kwargs ) :
 	# Create the table object
 	table = HEPDataTable()
-	table._submission_file_meta = argv.get("submission_file_metadata",None)
-	table._submission_file_table = argv.get("submission_file_table",None)
+	table._submission_file_meta = kwargs.get("submission_file_metadata",None)
+	table._submission_file_table = kwargs.get("submission_file_table",None)
 	# Set the dependent variable
 	dep_var = get_dependent_variable_from_yaml_map(dep_var_,path_)
 	table._dep_var = dep_var
@@ -281,7 +262,7 @@ def load_distribution_from_yaml ( dataset_ , dep_var_ , indep_vars_ , path_ , **
 		if indep_header :
 			indep_var._name = indep_header.get("name","")
 			indep_var._units = indep_header.get("units","")
-		indep_var._bin_centers, indep_var._bin_edges, indep_var._bin_labels = get_bins_from_dict(indep_var_map,len(dep_var))
+		indep_var._bin_centers, indep_var._bin_widths_lo, indep_var._bin_widths_hi, indep_var._bin_labels = get_bins_from_dict(indep_var_map,len(dep_var))
 		table._indep_vars.append(indep_var)
 	# If our table has 'None' entries, we want to remove them
 	remove_None_entries_from_1D_table(table)
@@ -306,9 +287,9 @@ def load_distribution_from_yaml ( dataset_ , dep_var_ , indep_vars_ , path_ , **
 
 
 #  Brief: load yaml contents into HEPDataTable objects within dataset_ (of type DistributionContainer) for each of dep_vars_
-def load_distributions_from_yaml ( dataset_ , dep_vars_ , indep_vars_ , path_ , **argv ) :
+def load_distributions_from_yaml ( dataset_ , dep_vars_ , indep_vars_ , path_ , **kwargs ) :
 	for dep_var in dep_vars_ :
-		load_distribution_from_yaml ( dataset_ , dep_var , indep_vars_ , path_ , **argv )
+		load_distribution_from_yaml ( dataset_ , dep_var , indep_vars_ , path_ , **kwargs )
 
 
 #  Brief: load a single yaml file based on the file path

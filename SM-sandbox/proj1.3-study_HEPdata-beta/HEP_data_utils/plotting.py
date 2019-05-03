@@ -38,10 +38,6 @@ def close_save_file () :
 def get_1D_distribution ( table_ , err_ = "total" ) :
 	dep_var = table_._dep_var
 	indep_var = table_._indep_vars[0]
-	bin_edges = indep_var._bin_edges
-	x = indep_var._bin_centers
-	ex_hi = [ bin_edges[i+1] - x[i] for i in range(len(x)) ]
-	ex_lo = [ x[i] - bin_edges[i] for i in range(len(x)) ]
 	use_labels = True
 	for label in indep_var._bin_labels :
 		label = str(label)
@@ -72,7 +68,7 @@ def get_1D_distribution ( table_ , err_ = "total" ) :
 			else : ey_lo[i] = ey_lo[i] + err2*err2
 	ey_lo = np.sqrt(ey_lo)
 	ey_hi = np.sqrt(ey_hi)
-	return x, y, [ex_lo,ex_hi], [ey_lo,ey_hi], use_labels, keys
+	return indep_var._bin_centers, y, [indep_var._bin_widths_lo,indep_var._bin_widths_hi], [ey_lo,ey_hi], use_labels, keys
 
 
 #  Brief: plot 1D distribution from HEPDataTable table_
@@ -101,8 +97,10 @@ def plot_1D_distribution ( table_ , **kwargs ) :
 	plt.subplots_adjust(left=0.1, right=0.5, top=0.95, bottom=0.4)
 	if "legend_loc" in kwargs : ax.legend(loc=kwargs.get("legend_loc","best"))
 	else : ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-	plt.xlabel(kwargs.get("xlabel",table_._indep_vars[0].name().replace(r"\text{",r"{\rm ")))
-	plt.ylabel(kwargs.get("ylabel",table_._dep_var.name().replace(r"\text{",r"{\rm ")))
+	try : plt.xlabel(kwargs.get("xlabel",table_._indep_vars[0].name().replace("\\\\","\\").replace(r"\text{",r"{\rm ")))
+	except : plt.xlabel("<error reading xlabel")
+	try : plt.ylabel(kwargs.get("ylabel",table_._dep_var.name().replace(r"\text{",r"{\rm ")))
+	except : plt.ylabel("<error reading ylabel")
 	plt.title(kwargs.get("title",""))
 	xlim = kwargs.get("xlim",[x[0]-np.fabs(ex_lo[0]),x[-1]+np.fabs(ex_hi[-1])])
 	ylim = kwargs.get("ylim",None)
@@ -157,6 +155,9 @@ def plot_ratio ( table_num_ , table_den_ , **kwargs ) :
 	plt.subplots_adjust(left=0.1, right=0.5, top=0.95, bottom=0.4)
 	plt.grid()
 	plt.show()
+	if kwargs.get("save",False) :
+		fig.savefig ( document , format='pdf' )
+		plt.close(fig)
 
 
 #  Brief: return bins_x,bins_y,value for 2D distribution
@@ -174,9 +175,11 @@ def get_2D_plottable_bins ( table_ ) :
 	for label in old_bin_labels_y :
 		if len(label) == 0 : use_labels_y = False
 	if not use_labels_x :
-		for i in range(n_vals) : old_bin_labels_x = "[{0},{1}]".format(dep_var._bin_edges[i],dep_var._bin_edges[i+1])
+		for i in range(len(old_bin_labels_x)) :
+			old_bin_labels_x[i] = "{0:.2f}[{1:.2f},{2:.2f}]".format(indep_vars[0]._bin_centers[i],indep_vars[0]._bin_centers[i]-indep_vars[0]._bin_widths_lo[i],indep_vars[0]._bin_centers[i]+indep_vars[0]._bin_widths_hi[i])
 	if not use_labels_y :
-		for i in range(n_vals) : old_bin_labels_y = "[{0},{1}]".format(dep_var._bin_edges[i],dep_var._bin_edges[i+1])
+		for i in range(len(old_bin_labels_y)) :
+			old_bin_labels_y[i] = "{0:.2f}[{1:.2f},{2:.2f}]".format(indep_vars[1]._bin_centers[i],indep_vars[1]._bin_centers[i]-indep_vars[1]._bin_widths_lo[i],indep_vars[1]._bin_centers[i]+indep_vars[1]._bin_widths_hi[i])
 	old_n_bins_x = len(old_bin_labels_x)
 	old_n_bins_y = len(old_bin_labels_y)
 	if values.shape == (old_n_bins_x,old_n_bins_y) : return old_bin_labels_x, old_bin_labels_y, values
@@ -234,5 +237,12 @@ def plot_2D_distribution ( table_ , **kwargs ) :
 	for i in range(len(labels_x)) :
 		for j in range(len(labels_y)) :
 			ax.text(j, i, "{0:.{1}f}".format(values[i, j],precision), ha="center", va="center", color="k",fontsize="xx-small")
+	ax.set_xticks(np.arange(len(labels_x)))
+	ax.set_xticklabels(labels_x,rotation=90)
+	ax.set_yticks(np.arange(len(labels_y)))
+	ax.set_yticklabels(labels_y)
 	plt.title(kwargs.get("title",dep_var._name))
 	plt.show()
+	if kwargs.get("save",False) :
+		fig.savefig ( document , format='pdf' )
+		plt.close(fig)
