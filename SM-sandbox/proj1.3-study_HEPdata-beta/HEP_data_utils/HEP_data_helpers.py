@@ -132,6 +132,8 @@ def reformat_2D_bins_as_matrix_using_labels ( dist_2D_ ) :
 	old_bin_labels_y = dist_2D_._indep_vars[1]._bin_labels
 	old_n_bins_x = len(old_bin_labels_x)
 	old_n_bins_y = len(old_bin_labels_y)
+	if dep_var._values.shape == (old_bin_labels_x,old_bin_labels_y) :
+		return
 	if n_vals == old_n_bins_x == old_n_bins_y :
 		bin_labels_x = [y for y in {x for x in old_bin_labels_x}]
 		bin_labels_x = natsorted(bin_labels_x, alg=ns.IGNORECASE)
@@ -163,26 +165,28 @@ def reformat_2D_bins_as_matrix_using_labels ( dist_2D_ ) :
 		return
 	if n_vals == old_n_bins_x*old_n_bins_y :
 		new_values = np.array(np.zeros(shape=(old_n_bins_x,old_n_bins_y)))
-		for x_idx in enumerate(old_bin_labels_x) :
-			for y_idx in enumerate(old_bin_labels_y) :
-				new_values[x_idx,y_idx] = values[ x_idx + old_n_bins_x*y_idx ]
+		print(dep_var._values)
+		print(dep_var._values.shape)
+		for x_idx in range(len(old_bin_labels_x)) :
+			for y_idx in range(len(old_bin_labels_y)) :
+				new_values[x_idx,y_idx] = dep_var._values[ x_idx + old_n_bins_x*y_idx ]
 		dep_var._values = new_values
 		for key, values in dist_2D_._symerrors.items() :
 			new_error = np.array(np.zeros(shape=(new_n_bins_x,new_n_bins_y)))
-			for x_idx in enumerate(old_bin_labels_x) :
-				for y_idx in enumerate(old_bin_labels_y) :
+			for x_idx in range(len(old_bin_labels_x)) :
+				for y_idx in range(len(old_bin_labels_y)) :
 					new_error[x_idx,y_idx] = values[ x_idx + old_n_bins_x*y_idx ]
 			dep_var._symerrors[key] = new_error
 		for key, values in dist_2D_._asymerrors_up.items() :
 			new_error = np.array(np.zeros(shape=(new_n_bins_x,new_n_bins_y)))
-			for x_idx in enumerate(old_bin_labels_x) :
-				for y_idx in enumerate(old_bin_labels_y) :
+			for x_idx in range(len(old_bin_labels_x)) :
+				for y_idx in range(len(old_bin_labels_y)) :
 					new_error[x_idx,y_idx] = values[ x_idx + old_n_bins_x*y_idx ]
 			dep_var._asymerrors_up[key] = new_error
 		for key, values in dist_2D_._asymerrors_dn.items() :
 			new_error = np.array(np.zeros(shape=(new_n_bins_x,new_n_bins_y)))
-			for x_idx in enumerate(old_bin_labels_x) :
-				for y_idx in enumerate(old_bin_labels_y) :
+			for x_idx in range(len(old_bin_labels_x)) :
+				for y_idx in range(len(old_bin_labels_y)) :
 					new_error[x_idx,y_idx] = values[ x_idx + old_n_bins_x*y_idx ]
 			dep_var._asymerrors_dn[key] = new_error
 		return

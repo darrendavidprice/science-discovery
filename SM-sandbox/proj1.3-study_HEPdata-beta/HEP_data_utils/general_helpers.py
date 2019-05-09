@@ -68,6 +68,36 @@ def keep_only_root_files ( inputs_ , **kwargs ) :
 	return ret
 
 
+#  Brief: add red colour formatting to a string
+def red_str ( s , **kwargs ) :
+	ret = "\x1b["
+	if kwargs.get("bold",False) : ret = ret + "1"
+	else : ret = ret + "0"
+	ret = ret + ";31"
+	if "bkg" in kwargs : ret = ret + kwargs["bkg"]
+	return ret + "m" + s + "\x1b[0m"
+
+
+#  Brief: add green colour formatting to a string
+def green_str ( s , **kwargs ) :
+	ret = "\x1b["
+	if kwargs.get("bold",False) : ret = ret + "1"
+	else : ret = ret + "0"
+	ret = ret + ";32"
+	if "bkg" in kwargs : ret = ret + kwargs["bkg"]
+	return ret + "m" + s + "\x1b[0m"
+
+
+#  Brief: add green colour formatting to a string
+def magenta_str ( s , **kwargs ) :
+	ret = "\x1b["
+	if kwargs.get("bold",False) : ret = ret + "1"
+	else : ret = ret + "0"
+	ret = ret + ";35"
+	if "bkg" in kwargs : ret = ret + kwargs["bkg"]
+	return ret + "m" + s + "\x1b[0m"
+
+
 #  Brief: take list of inputs and return the yaml files to be processed. If a submission file is found, all other arguments are ignored.
 def keep_only_yaml_files ( inputs_ , **kwargs ) :
 	if type(inputs_) is not list : inputs_ = [inputs_]

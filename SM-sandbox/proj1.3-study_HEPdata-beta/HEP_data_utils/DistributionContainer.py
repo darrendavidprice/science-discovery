@@ -41,16 +41,33 @@ class DistributionContainer (object) :
 		for key, dist in self._ND_distributions.items() : ret = ret + "\n  key: \033[95m{0}\033[0m\n      --> name \"{1}\" with {2} bins".format(key,dist._dep_var.name(),dist.n_bins())
 		return ret
 	def __contains__( self , key_ ) :
-		return key_ in {**self._inclusive_distributions, **self._1D_distributions, **self._2D_distributions, **self._ND_distributions}
+		if key_ in self._inclusive_distributions : return True
+		if key_ in self._1D_distributions : return True
+		if key_ in self._2D_distributions : return True
+		if key_ in self._ND_distributions : return True
+		return False
 	def get_table ( self , key_ ) :
-		for key, table in {**self._inclusive_distributions,**self._1D_distributions,**self._2D_distributions,**self._ND_distributions}.items() :
-			if key != key_ : continue
-			return table
+		for key, table in self._inclusive_distributions.items() :
+			if key == key_ : return table
+		for key, table in self._1D_distributions.items() :
+			if key == key_ : return table
+		for key, table in self._2D_distributions.items() :
+			if key == key_ : return table
+		for key, table in self._ND_distributions.items() :
+			if key == key_ : return table
 		return None
 	def __getitem__ ( self , key_ ) :
-		if key_ not in self :
+		ret = self.get_table(key_)
+		if ret is None :
 			raise KeyError("No distribution with key {0} in DistributionContainer {1}".format(key_,self._name))
-		return self.get_table(key_)
+		return ret
+	def get_keys (self) :
+		ret = []
+		ret.append( [x for x in self._inclusive_distributions] )
+		ret.append( [x for x in self._1D_distributions] )
+		ret.append( [x for x in self._2D_distributions] )
+		ret.append( [x for x in self._ND_distributions] )
+		return ret
 	def print_keys (self) :
 		print(self)
 	def print_all (self) :
@@ -148,8 +165,9 @@ class DistributionContainer (object) :
 				print(e)
 				msg.error("HEP_data_utils.data_structures.DistributionContainer.plot","Error when plotting 2D distribution with key {0}... skipping".format(key))
 	def plot_all ( self , **kwargs ) :
-		for key in { **self._inclusive_distributions , **self._1D_distributions , **self._2D_distributions } :
-			self.plot(key,**kwargs)
+		for d in [ self._inclusive_distributions , self._1D_distributions , self._2D_distributions ] :
+			for key in d :
+				self.plot(key,**kwargs)
 	def plot_ratio ( self , key_num_ , key_den_ , **kwargs ) :
 		table_num = self._1D_distributions.get(key_num_,None)
 		if not table_num :

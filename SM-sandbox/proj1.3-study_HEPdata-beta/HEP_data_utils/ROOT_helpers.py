@@ -44,7 +44,7 @@ class ROOT_observable :
 	def __len__ (self) : return len(self.values)
 
 
-#  Brief: create a TH1F
+#  Brief: store a ROOT table
 class ROOT_Table :
 	def __init__ (self) :
 		self.name = ""
@@ -288,9 +288,9 @@ def get_uproot_histograms ( data_ ) :
 def ROOT_observable_to_DependentVariable ( ROOT_y_ ) :
 	ret = DependentVariable()
 	ret._name = ROOT_y_.name
-	ret._values = ROOT_y_.values
-	ret._asymerrors_up["err0"] = ROOT_y_.errors_up
-	ret._asymerrors_dn["err0"] = -1.0 * ROOT_y_.errors_dn
+	ret._values = ROOT_y_.values.astype(np.float32)
+	ret._asymerrors_up["err0"] = ROOT_y_.errors_up.astype(np.float32)
+	ret._asymerrors_dn["err0"] = -1.0 * ROOT_y_.errors_dn.astype(np.float32)
 	return ret
 
 
@@ -299,9 +299,9 @@ def ROOT_axis_to_IndependentVariable ( ROOT_x_ ) :
 	ret = IndependentVariable()
 	ret._name = ROOT_x_.name
 	ret._bin_labels = ROOT_x_.bin_labels
-	ret._bin_centers = ROOT_x_.bin_centers
-	ret._bin_widths_lo = ROOT_x_.bin_widths_lo
-	ret._bin_widths_hi = ROOT_x_.bin_widths_hi
+	ret._bin_centers = ROOT_x_.bin_centers.astype(np.float32)
+	ret._bin_widths_lo = ROOT_x_.bin_widths_lo.astype(np.float32)
+	ret._bin_widths_hi = ROOT_x_.bin_widths_hi.astype(np.float32)
 	return ret
 
 

@@ -25,6 +25,7 @@ def print_help () :
 	msg.info("plot_contents_of_yaml.py:print_help","       -s, --save\t\tSave plots to the file provided")
 	msg.info("plot_contents_of_yaml.py:print_help","       -t, --type\t\tSpecific input type as { root , yaml } where the default is both")
 	msg.info("plot_contents_of_yaml.py:print_help","       --print\t\t\tPrint all information on the distributions found")
+	msg.info("plot_contents_of_yaml.py:print_help","       --show\t\t\tShow plots to the screen")
 	msg.info("plot_contents_of_yaml.py:print_help","       --default-2D-bins\tPrevent interpretation of 2D bins as a matrix (will be stored as a 1D vector instead)")
 	msg.info("plot_contents_of_yaml.py:print_help","N.B. you can validate your yaml files using the following package: https://github.com/HEPData/hepdata-validator")
 
@@ -33,7 +34,7 @@ def print_help () :
 def parse_inputs ( argv_ ) :
 	#  Get arguments
 	try :
-		opts, rest = getopt.getopt(argv_,"hrps:t:v:",["help","recursive","default-2D-bins","print","save=","type=","verbosity="])
+		opts, rest = getopt.getopt(argv_,"hrps:t:v:",["help","recursive","default-2D-bins","print","show","save=","type=","verbosity="])
 	except getopt.GetoptError as err :
 		msg.error("plot_contents_of_yaml.py","The following error was thrown whilst parsing command-line arguments")
 		print(">>>>>>>>\n",err,"\n<<<<<<<<")
@@ -44,6 +45,7 @@ def parse_inputs ( argv_ ) :
 	do_recurse = False
 	do_print_all = False
 	do_not_make_matrix = False
+	do_show = False
 	save_file = ""
 	restrict_type = None
 	for opt, arg in opts:
@@ -59,6 +61,9 @@ def parse_inputs ( argv_ ) :
 		if opt in ['-p',"--print"] :
 			msg.info("plot_contents_of_yaml.py","Config: printing all distributions found",verbose_level=0)
 			do_print_all = True
+		if opt in ["--show"] :
+			msg.info("plot_contents_of_yaml.py","Config: showing all distributions found",verbose_level=0)
+			do_show = True
 		if opt in ['-s',"--save"] :
 			save_file = str(arg)
 			if save_file[-4:] != ".pdf" : save_file = save_file + ".pdf"
@@ -90,7 +95,7 @@ def parse_inputs ( argv_ ) :
 		msg.fatal("plot_contents_of_yaml.py","No input yaml or root files found from the inputs provided")
 	for f in rest : msg.info("plot_contents_of_yaml.py","Registered input file {0}".format(f),verbose_level=0)
 	#  Return
-	return yaml_files, root_files, do_print_all, do_not_make_matrix, save_file
+	return yaml_files, root_files, do_show, do_print_all, do_not_make_matrix, save_file
 
 
 #  =================================== #
@@ -104,9 +109,12 @@ if __name__ == "__main__" :
 				#
 				#  Get input files and settings
 				#
-	yamls_to_load, roots_to_load, do_print_all, do_not_make_matrix, save_file = parse_inputs(sys.argv[1:])
+	yamls_to_load, roots_to_load, do_show, do_print_all, do_not_make_matrix, save_file = parse_inputs(sys.argv[1:])
 	do_save = len(save_file) > 0
 	if do_save : plotter.set_save_file(save_file)
+	if not do_show and not do_save and not do_print_all :
+		msg.warning("plot_contents_of_yaml.py","Neither --save, --show nor --print specified. Falling back to --print.")
+		do_print_all = True
 				#
 				#  Load input files
 				#
@@ -122,7 +130,7 @@ if __name__ == "__main__" :
 				#
 				#  Plot everything
 				#
-	my_tables.plot_all(save=do_save)
+	my_tables.plot_all(save=do_save,show=do_show)
 				#
 				#  Save pdf file
 				#

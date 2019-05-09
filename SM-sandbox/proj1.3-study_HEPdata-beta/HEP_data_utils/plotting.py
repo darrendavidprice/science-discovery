@@ -35,7 +35,8 @@ def close_save_file () :
 
 
 #  Brief: open a 1D distribution and turn it into plottable data
-def get_1D_distribution ( table_ , err_ = "total" ) :
+def get_1D_distribution ( table_ , errs_ = [] ) :
+	if type(errs_) is str : errs_ = [errs_]
 	dep_var = table_._dep_var
 	indep_var = table_._indep_vars[0]
 	use_labels = True
@@ -48,14 +49,14 @@ def get_1D_distribution ( table_ , err_ = "total" ) :
 	ey_lo = np.zeros(shape=(len(y)))
 	ey_hi = np.zeros(shape=(len(y)))
 	for key in dep_var._symerrors :
-		if err_ != "total" and key[:len(err_)] != err_ : continue
+		if len(errs_) > 0 and key not in errs_ : continue
 		errs = dep_var._symerrors[key]
 		keys.append(key)
 		for i in range(0,len(errs)) :
 			ey_lo[i] = ey_lo[i] + errs[i]*errs[i]
 			ey_hi[i] = ey_hi[i] + errs[i]*errs[i]
 	for key in dep_var._asymerrors_up :
-		if err_ != "total" and key[:len(err_)] != err_ : continue
+		if len(errs_) > 0 and key not in errs_ : continue
 		errs1 = dep_var._asymerrors_up[key]
 		errs2 = dep_var._asymerrors_dn[key]
 		keys.append(key)
@@ -76,19 +77,31 @@ def plot_1D_distribution ( table_ , **kwargs ) :
 	if table_.n_indep_vars() != 1 :
 		msg.error("plotting.plot_1D_distribution","Table has {0} independent variables where 1 was expected".format(table_.n_indep_vars()))
 		return
-	x, y, [ex_lo,ex_hi], [ey_lo,ey_hi], labels, keys = get_1D_distribution(table_)
-	x, y, [ex_lo,ex_hi], [ey_lo_sys,ey_hi_sys], labels, sys_keys = get_1D_distribution(table_,"sys")
-	x, y, [ex_lo,ex_hi], [ey_lo_stat,ey_hi_stat], labels, stat_keys = get_1D_distribution(table_,"stat")
 	fig = plt.figure(figsize=(10,5))
 	ax = fig.add_subplot(111)
 	legend_char_width = 53
-	str_tot_legend = kwargs.get("label","distribution") + " ( " + " + ".join(keys) + " )"
-	str_tot_legend = "\n".join([str_tot_legend[legend_char_width*i:min(len(str_tot_legend),legend_char_width*(i+1))] for i in range(int(len(str_tot_legend)/legend_char_width)+1)])
-	str_sys_legend = kwargs.get("label","distribution") + " ( " + " + ".join(sys_keys) + " )"
-	str_sys_legend = "\n".join([str_sys_legend[legend_char_width*i:min(len(str_sys_legend),legend_char_width*(i+1))] for i in range(int(len(str_sys_legend)/legend_char_width)+1)])
-	if sum([np.fabs(x) for x in ey_hi_sys+ey_lo_sys]) > 0 :
+	specific_errors = []
+	for requested_error in kwargs.get("errors",[]) :
+		if requested_error not in table_._dep_var._symerrors and requested_error not in table_._dep_var._asymerrors_up :
+			msg.warning("plotting.plot_1D_distribution","Specified error {0} not found in dependent variable {1}. Ignoring.".format(requested_error,table_._dep_var._name))
+			continue
+		specific_errors.append(requested_error)
+	if len(specific_errors) > 0 :
+		x, y, [ex_lo,ex_hi], [ey_lo,ey_hi], labels, keys = get_1D_distribution(table_,specific_errors)
+		ey_lo_sys, ey_hi_sys, ey_lo_stat, ey_hi_stat = [], [], [], []
+		str_tot_legend = kwargs.get("label","distribution") + " ( " + " + ".join(keys) + " )"
+		str_tot_legend = "\n".join([str_tot_legend[legend_char_width*i:min(len(str_tot_legend),legend_char_width*(i+1))] for i in range(int(len(str_tot_legend)/legend_char_width)+1)])
+	else :
+		x, y, [ex_lo,ex_hi], [ey_lo,ey_hi], labels, keys = get_1D_distribution(table_)
+		x, y, [ex_lo,ex_hi], [ey_lo_sys,ey_hi_sys], labels, sys_keys = get_1D_distribution(table_,"sys")
+		x, y, [ex_lo,ex_hi], [ey_lo_stat,ey_hi_stat], labels, stat_keys = get_1D_distribution(table_,"stat")
+		str_tot_legend = kwargs.get("label","distribution") + " ( " + " + ".join(keys) + " )"
+		str_tot_legend = "\n".join([str_tot_legend[legend_char_width*i:min(len(str_tot_legend),legend_char_width*(i+1))] for i in range(int(len(str_tot_legend)/legend_char_width)+1)])
+		str_sys_legend = kwargs.get("label","distribution") + " ( " + " + ".join(sys_keys) + " )"
+		str_sys_legend = "\n".join([str_sys_legend[legend_char_width*i:min(len(str_sys_legend),legend_char_width*(i+1))] for i in range(int(len(str_sys_legend)/legend_char_width)+1)])
+	if sum([np.fabs(el) for el in ey_hi_sys+ey_lo_sys]) > 0 :
 		ax.errorbar(x, y, yerr=[ey_lo_sys,ey_hi_sys], c='royalblue', linewidth=18, linestyle='None', marker='None', alpha=0.4, label=str_sys_legend)
-	if sum([np.fabs(x) for x in ey_hi_stat+ey_lo_stat]) > 0 :
+	if sum([np.fabs(el) for el in ey_hi_stat+ey_lo_stat]) > 0 :
 		ax.errorbar(x, y, yerr=[ey_lo_stat,ey_hi_stat], c='indianred', linewidth=6, linestyle='None', marker='None', alpha=0.6, label=kwargs.get("label","distribution") + " ( stat )")
 	ax.errorbar(x, y, yerr=[ey_lo,ey_hi], xerr=[ex_lo,ex_hi], c='k', linewidth=2, linestyle='None', marker='+', alpha=1, label=str_tot_legend)
 	if labels :
@@ -99,7 +112,7 @@ def plot_1D_distribution ( table_ , **kwargs ) :
 	else : ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 	try : plt.xlabel(kwargs.get("xlabel",table_._indep_vars[0].name().replace("\\\\","\\").replace(r"\text{",r"{\rm ")))
 	except : plt.xlabel("<error reading xlabel")
-	try : plt.ylabel(kwargs.get("ylabel",table_._dep_var.name().replace(r"\text{",r"{\rm ")))
+	try : plt.ylabel(kwargs.get("ylabel",table_._dep_var.name().replace("\\\\","\\").replace(r"\text{",r"{\rm ")))
 	except : plt.ylabel("<error reading ylabel")
 	plt.title(kwargs.get("title",""))
 	xlim = kwargs.get("xlim",[x[0]-np.fabs(ex_lo[0]),x[-1]+np.fabs(ex_hi[-1])])
@@ -109,7 +122,8 @@ def plot_1D_distribution ( table_ , **kwargs ) :
 	if kwargs.get("logy",False) is True : plt.yscale("log")
 	if kwargs.get("logx",False) is True : plt.xscale("log")
 	plt.grid()
-	plt.show()
+	if kwargs.get("show",False) :
+		plt.show()
 	if kwargs.get("save",False) :
 		fig.savefig ( document , format='pdf' )
 		plt.close(fig)
@@ -117,12 +131,15 @@ def plot_1D_distribution ( table_ , **kwargs ) :
 
 #  Brief: plot ratio of 1D distributions from HEPDataTable table_
 def plot_ratio ( table_num_ , table_den_ , **kwargs ) :
-	x_n, y_n, [ex_lo_n,ex_hi_n], [ey_lo_n,ey_hi_n], labels, keys_num = get_1D_distribution(table_num_)
-	x_d, y_d, [ex_lo_d,ex_hi_d], [ey_lo_d,ey_hi_d], labels, keys_den = get_1D_distribution(table_den_)
+	specific_errors_num = [ err for err in kwargs.get("errors",[]) if err in { **table_num_._dep_var._symerrors, **table_num_._dep_var._asymerrors_up } ]
+	specific_errors_den = [ err for err in kwargs.get("errors",[]) if err in { **table_den_._dep_var._symerrors, **table_den_._dep_var._asymerrors_up } ]
+	x_n, y_n, [ex_lo_n,ex_hi_n], [ey_lo_n,ey_hi_n], labels, keys_num = get_1D_distribution(table_num_,specific_errors_num)
+	x_d, y_d, [ex_lo_d,ex_hi_d], [ey_lo_d,ey_hi_d], labels, keys_den = get_1D_distribution(table_den_,specific_errors_den)
 	ex_lo_d, ex_hi_d = np.zeros(shape=(len(x_d))), np.zeros(shape=(len(x_d)))
-	if x_n != x_d :
+	for i in range(len(x_n)) :
+		if x_n[i] == x_d[i] : continue
 		msg.error("HEP_data_helpers.plot_ratio","Arguments do not have the same binning")
-		raise ValueError("Ratio of distributions with bin centres at {0} and {1}",x_n,x_d) 
+		raise ValueError("Ratio of distributions with bin centres at {0} and {1}",x_n.all(),x_d.all()) 
 	fig = plt.figure(figsize=(10,10))
 	ax1 = fig.add_subplot(211)
 	legend_char_width = 53
@@ -135,7 +152,8 @@ def plot_ratio ( table_num_ , table_den_ , **kwargs ) :
 	if "legend_loc" in kwargs : ax1.legend(loc=kwargs.get("legend_loc","best"))
 	else : ax1.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 	plt.subplots_adjust(left=0.1, right=0.5, top=0.95, bottom=0.4)
-	plt.ylabel(kwargs.get("ylabel",table_num_._dep_var.name().replace(r"\text{",r"{\rm ")))
+	try : plt.ylabel(kwargs.get("ylabel",table_num_._dep_var.name().replace("\\\\","\\").replace(r"\text{",r"{\rm ")))
+	except : plt.ylabel("<error reading ylabel")
 	plt.title(kwargs.get("title",""))
 	xlim = kwargs.get("xlim",[x_d[0]-np.fabs(ex_lo_n[0]),x_d[-1]+np.fabs(ex_hi_n[-1])])
 	ylim = kwargs.get("ylim",None)
@@ -151,10 +169,12 @@ def plot_ratio ( table_num_ , table_den_ , **kwargs ) :
 	ax2.set_position([box.x0, box.y0, box.width * 0.4, box.height])
 	ax2.axis(xmin=xlim[0],xmax=xlim[1])
 	plt.ylabel("Ratio")
-	if "xlabel" in kwargs : plt.xlabel(kwargs["xlabel"])
+	try : plt.xlabel(kwargs.get("xlabel",table_den_._indep_vars[0].name().replace("\\\\","\\").replace(r"\text{",r"{\rm ")))
+	except : plt.xlabel("<error reading xlabel")
 	plt.subplots_adjust(left=0.1, right=0.5, top=0.95, bottom=0.4)
 	plt.grid()
-	plt.show()
+	if kwargs.get("show",False) :
+		plt.show()
 	if kwargs.get("save",False) :
 		fig.savefig ( document , format='pdf' )
 		plt.close(fig)
@@ -221,8 +241,10 @@ def plot_2D_distribution ( table_ , **kwargs ) :
 	fig = plt.figure(figsize=(7,7))
 	ax = fig.add_subplot(111)
 	#x_label = str([ "{0} [{1}:{2}]".format(var,table_._local_key_indices[var][0],table_._local_key_indices[var][1]) for var in table_._local_keys ])
-	x_label = kwargs.get("x_label",indep_var[0]._name)
-	y_label = kwargs.get("y_label",indep_var[1]._name)
+	try : x_label = kwargs.get("x_label",indep_var[0].name().replace("\\\\","\\").replace(r"\text{",r"{\rm "))
+	except : plt.xlabel("<error reading xlabel")
+	try : y_label = kwargs.get("y_label",indep_var[1].name().replace("\\\\","\\").replace(r"\text{",r"{\rm "))
+	except : plt.ylabel("<error reading ylabel")
 	max_val = max([np.fabs(val) for val in values.flatten()])
 	vmin = -1*max_val
 	vmax = max_val
@@ -241,8 +263,9 @@ def plot_2D_distribution ( table_ , **kwargs ) :
 	ax.set_xticklabels(labels_x,rotation=90)
 	ax.set_yticks(np.arange(len(labels_y)))
 	ax.set_yticklabels(labels_y)
-	plt.title(kwargs.get("title",dep_var._name))
-	plt.show()
+	plt.title(kwargs.get("title",dep_var.name().replace("\\\\","\\").replace(r"\text{",r"{\rm ")))
+	if kwargs.get("show",False) :
+		plt.show()
 	if kwargs.get("save",False) :
 		fig.savefig ( document , format='pdf' )
 		plt.close(fig)
