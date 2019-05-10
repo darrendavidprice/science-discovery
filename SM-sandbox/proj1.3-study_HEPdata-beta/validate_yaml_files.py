@@ -24,8 +24,8 @@ def print_help () :
 	msg.info("validate_yaml_files.py:print_help","       -h, --help\t\tPrint this help message and close")
 	msg.info("validate_yaml_files.py:print_help","       -v, --verbosity\t\tSet HEP_data_utils.messaging.VERBOSE_LEVEL as {-1, 0, 1, 2} (-1 by default)")
 	msg.info("validate_yaml_files.py:print_help","       -r, --recursive\t\tAllow recursive searching of directories. Recursion stops if submission.yaml file is found")
-	msg.info("validate_yaml_files.py:print_help","       --keys\t\tSpecify a file of keys to load")
 	msg.info("validate_yaml_files.py:print_help","N.B. you can validate your yaml files using the following package: https://github.com/HEPData/hepdata-validator")
+#	msg.info("validate_yaml_files.py:print_help","       --keys\t\tSpecify a file of keys to load")
 
 
 #  Brief: return the list provided after one of the option arguments
@@ -56,7 +56,7 @@ def get_argument_list ( argv , options ) :
 def parse_inputs ( argv_ ) :
 	#  Get arguments
 	try :
-		opts, rest = getopt.getopt(argv_,"hrv:",["help","recursive","verbosity=","yaml=","compare="])
+		opts, rest = getopt.getopt(argv_,"hrv:",["help","recursive","verbosity=","yaml=","compare=",""])
 	except getopt.GetoptError as err :
 		msg.error("validate_yaml_files.py","The following error was thrown whilst parsing command-line arguments")
 		print(">>>>>>>>\n",err,"\n<<<<<<<<")
@@ -65,11 +65,6 @@ def parse_inputs ( argv_ ) :
 		msg.fatal("validate_yaml_files.py","Command-line arguments not recognised.")
 	#  Parse arguments
 	do_recurse = False
-	do_print_all = False
-	do_not_make_matrix = False
-	do_show = False
-	save_file = ""
-	restrict_type = None
 	for opt, arg in opts:
 		if opt in ['-h',"--help"] :
 			print_help()
@@ -145,10 +140,9 @@ def do_bins_look_similar ( table1 , table2 , **kwargs ) :
 	bins_match = []
 	for var_idx1 in range(table1.n_indep_vars()) :
 		match = False
-		indep_var_1 = table1._indep_vars[var_idx1]
+		indep_var_1 = table2._indep_vars[var_idx1]
 		for var_idx2 in range(table2.n_indep_vars()) :
 			indep_var_2 = table1._indep_vars[var_idx2]
-			if indep_var_1._bin_labels == indep_var_2._bin_labels : match = True
 			if not do_arrays_look_similar(indep_var_1._bin_centers,indep_var_2._bin_centers) : continue
 			if not do_arrays_look_similar(indep_var_1._bin_widths_lo,indep_var_2._bin_widths_lo,value_margin=1e-3,zero_margin=1e-5) : continue
 			if not do_arrays_look_similar(indep_var_1._bin_widths_hi,indep_var_2._bin_widths_hi,value_margin=1e-3,zero_margin=1e-5) : continue
