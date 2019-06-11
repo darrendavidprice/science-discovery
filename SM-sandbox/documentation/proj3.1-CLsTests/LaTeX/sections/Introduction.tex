@@ -1,0 +1,38 @@
+\section{Introduction} \label{S. Introduction}
+
+Say that we have measured the event yields (/ unfolded cross sections / higher-level observables) in one or many different regions of phase space. We often wish to interpret this result in the context of a particular model, and set limits on certain parameters of this model. Typically we consider limits to be the boundaries of an interval with a high chance of containing the ``true'' parameter value. But what does this really mean? Unfortunately the precise interpretation of a limit is \textit{dependent on the method used}. A Bayesian credible interval is different from a true frequentist interval (``confidence interval''), which is different from a $\textit{CL}_s$ interval. This last point is very important: \textit{a $\textit{CL}_s$ interval is not a true frequentist confidence interval}. However, a $\textit{CL}_s$ interval can be thought of as an approximation to a frequentist interval with one useful extra property. A summary of the three approaches is as follows:
+
+\vspace{0.5cm}
+\noindent \textbf{Confidence intervals (frequentist)}
+\vspace{0.5cm}
+
+Suppose that our model contains a true parameter, $c_\text{model}$. We have performed an experiment and wish to estimate limits on $c_\text{model}$ based on the results. A confidence interval is \textbf{a set of (one- or two-sided) limits which we expect to contain the ``true'' value of $c_\text{model}$ in a fraction $\alpha$ of all independent experiments}. This means that if $\alpha=95~\%$ then we expect approximately $950$ out of every $1000$ independent experiments to set limits which contain the true value of $c_\text{model}$. This can be stated in a second way: \textbf{any given true $c_\text{model}$ will be excluded by the estimated confidence interval in a fraction $(1-\alpha)$ of experiments}. These are different but equivalent statements.
+
+\newpage
+\noindent \textbf{$\textit{CL}_s$ intervals (almost frequentist)}
+\vspace{0.5cm}
+
+The $\textit{CL}_s$ method is used to set limits for which the inclusion probability is \textbf{\emph{at least $\alpha$}}. These should not really be called confidence limits in my opinion. There is a good reason for using this method... which we will get to. This benefit comes at the cost of ambiguity, as the inclusion probability is no longer precisely known as it was with frequentist intervals.
+
+\vspace{0.5cm}
+\noindent \textbf{Bayesian credible intervals}
+\vspace{0.5cm}
+
+Confidence limits are explicitly frequentist as they define probability as the frequency of obtaining a particular result when repeating an experiment. Bayesian statisticians instead define \textit{credible intervals} using the following quantities:
+\begin{itemize}
+\item $\vec{x}$ represents a possible set of measurements (e.g. event yields in bins of some observable). An individual experiment results in a single measurement $\vec{x}_0$.
+\item $P\left( \vec{x}_0 \right)$ is the probability density for obtaining the result $x_0$ out of all possible $\vec{x}$, and is treated as a normalisation constant \cite{Feldman-Cousins-1}.
+\item $P\left( c_\text{model} \right)$ is the \textit{prior} probability density distribution on $c_\text{model}$. This represents how much belief we have in $c_\text{model}$ before the experiment. This can have a lot of impact on the result. In principle a non-informative prior on $c_\text{model}$ will result in a credible interval based only on the measured dataset, however a naive uniform prior is not necessarily non-informative because one can always re-parameterise $c_\text{model}\rightarrow c'_\text{model}=f\left(c_\text{model}\right)$ using some nonlinear function $f$ such that a uniform prior on $c_\text{model}$ is equivalent to a non-uniform prior on $c'_\text{model}$. The form of an apprioriate non-informative prior therefore requires consideration of the parameterisation of the model. If e.g. previous measurements have already constrained $c_\text{model}$ then a more restrictive prior can be used.
+\item $P\left(\vec{x}_0|c_\text{model}\right)$ is the probability density for obtaining the measurement $\vec{x}_0$ given an assumed value of $c_\text{model}$. We have to construct a model probability density function (PDF) which is valid over the domain of possible measurements, and evaluate it at the measured value $\vec{x}_0$. This is called the \textbf{likelihood function}.
+\end{itemize}
+Once these quantities have been defined, we can use Bayes' theorem
+\begin{equation}
+P(A \cup B) = P(A|B) \cdot P(B) = P(B|A) \cdot P(A)
+\end{equation}
+to infer a \textit{posterior} PDF as a function of $c_\text{model}$ as  
+\begin{equation}
+P\left(c_\text{model}|\vec{x}_0\right) = \frac{ P\left(\vec{x}_0|c_\text{model}\right) P\left(c_\text{model}\right) }{ P\left(\vec{x}_0\right) } ~~~.
+\end{equation}
+We can say that we have updated our ``belief'', $P\left(c_\text{model}\right)$, based on the measurement of $\vec{x}_0$. The credible interval is then defined as a set of (one- or two-sided) limits which bound a fraction $\alpha$ of the posterior probability density (normalised to unity over the domain of possible $c_\text{model}$).
+
+We will not consider credible intervals further because they are not often encountered within the context of ATLAS and CMS measurements. Nonetheless, they are important to be aware of as a common statistical tool.

@@ -1,0 +1,14 @@
+\section{The $CL_s$ method}
+\label{S. CLs}
+
+The \textbf{coverage} of a method is the fraction of experiments for which the true value of a model parameter $c_\text{model}$ lies within the estimated interval. The $CL_{s+b}$ method presented in the previous section defines truly frequentist confidence intervals. This means that the coverage of $CL_{s+b}\leq\alpha$ is expected to be $\alpha$.
+
+There is one potential drawback of $CL_{s+b}$: the limit set on $c_\text{model}$ may be rather aggressive if there is a large fluctuation in the number of background events. In fact, for two experiments with exactly the same signal rate, the experiment with \textit{more background} may, by chance, set \textit{more stringent limits} than were possible using the experiment with a more modest background rate. This is because statistical fluctuations go as $~\sqrt{N}$ where $N=N_\text{sig}+N_\text{bkg}$ is the expected number of events in a bin with $N_\text{sig}$ expected signal events and $N_\text{bkg}$ background. A larger $N_\text{bkg}$ therefore increases $N$, allows for larger downwards fluctuations on the measured event yield, and sets a tighter limit on $N_\text{sig}$. This is counter-intuitive feature which many find undesirable.
+
+In order to counteract this problem, the $CL_s$ method defines its confidence level as
+\begin{equation}
+CL_s = \frac{CL_{s+b}}{CL_b}
+\end{equation}
+where $CL_b$ is the frequentist confidence level evaluated \textit{at the null hypothesis}. Why do we do this? Consider an experiment with an extreme downwards fluctuation. This will not only lead to a small $CL_{s+b}$ but a small $CL_b$. The ratio effectively rescales $CL_{s+b}$ to account for this lowering in $CL_b$. The quantity $CL_s$ is therefore not a true confidence level, but a ratio of confidence levels.
+
+The $CL_s$ method evaluates the interval for which $CL_s\leq\alpha$. However, this definition \textit{does not} lead to a coverage of $\alpha$. Instead the coverage is $\geq\alpha$. This has to be true because $0\leq CL_b\leq 1$ by definition, and so $\nicefrac{CL_{s+b}}{CL_b}\left(c_\text{model}\right) \geq CL_{s+b}\left(c_\text{model}\right) ~\forall~ c_\text{model}$. The $CL_s$ method does not set truly frequentist limits, but it sets \text{conservative} limits where the coverage is \textit{never less than $\alpha$}. This is often considered an acceptable compromise in order to solve the ``problem'' of inflated exclusion limits from less sensitive experiments.

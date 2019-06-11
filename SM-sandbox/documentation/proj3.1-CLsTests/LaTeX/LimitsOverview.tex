@@ -1,0 +1,47 @@
+%==========================================
+%     Documentation for Starry Night above Schuster
+%     Compile with pdfLaTeX + BibTeX + pdfLaTeX
+%==========================================
+
+
+
+
+\documentclass[a4paper,12pt]{article}
+
+\input{meta/packages.tex}
+\input{meta/style.tex}
+\input{meta/defs.tex}
+
+\addbibresource{bib/bibliography.bib}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+
+\title{Introduction to limit setting using the $\textit{CL}_{s}$ method}
+\author{Stephen Menary, \href{mailto:stmenary@cern.ch}{stmenary@cern.ch}}
+\date{Last update: \today}
+\maketitle
+
+\begin{abstract}
+Limit setting is an important concept within particle physics, especially when the sensitivity of a measurement is expected to be low (e.g. in searches for BSM signatures which might not exist, or SM signals which do not stand out from their respective backgrounds). We introduce the topic of limit setting and contrast the pure-frequentist and $\textit{CL}_s$ methods, the latter of which is widely used by the ATLAS and CMS collaborations. Toy experiments are performed using two simulated BSM-search experiments in order to demonstrate the core-concepts using a minimal working example.
+\end{abstract}
+
+\onehalfspace
+
+\input{sections/Introduction}
+
+\input{sections/CalculatingFrequentistLimits}
+
+\input{sections/CLs}
+
+\input{sections/CLsInAction}
+
+% 
+
+
+\printbibliography
+
+\clearpage
+
+\end{document}
