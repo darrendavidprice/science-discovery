@@ -102,9 +102,15 @@ def plot_histo_from_data (n_bins, raw_data, **kwargs) :
 	ax = fig.add_subplot(111)
 	labels = kwargs.get("labels",[])
 	if len(labels) != len(raw_data) : labels = ["unknown" for i in range(len(raw_data))]
+	first = kwargs.get("fill_first", False)
 	for datum, label in zip(raw_data, labels) :
 		x_new, y_new = create_histogram(n_bins, datum, **kwargs)
-		ax.plot(x_new, y_new, marker=None, linestyle='-', linewidth=2, label=label)
+		if first is True :
+			ax.fill(x_new, y_new, label=label)
+			ax.plot(x_new, y_new, marker=None, linestyle='-', linewidth=1)
+			first = False
+		else :
+			ax.plot(x_new, y_new, marker=None, linestyle='-', linewidth=3, label=label)
 		ax.set_xlim(x_new[0],x_new[-1])
 		if kwargs.get("overlay_gauss",False) is True :
 			N = (x_new[-1]-x_new[0]) * float(len(datum)) / float(n_bins)
@@ -116,6 +122,7 @@ def plot_histo_from_data (n_bins, raw_data, **kwargs) :
 	ymin, ymax = ax.get_ylim()
 	ymin, ymax = kwargs.get("ymin",ymin), kwargs.get("ymax",ymax)
 	ax.set_ylim(ymin, ymax)
+	if "title" in kwargs : plt.title(kwargs["title"])
 	plt.legend(loc="best")
 	plt.show()
 	if type(document) is PdfPages :

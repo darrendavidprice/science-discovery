@@ -196,9 +196,11 @@ def analyse_coverage(toys_s_b, all_mu_sig, **kwargs) :
 #  Sensitivity analysis
 #
 def analyse_sensitivities(toys_model1, toys_model2, all_mu_sig, **kwargs) :
-	limits_CLs_model1, limits_CLs_b_model1 = get_upper_limits(toys_model1, all_mu_sig, 3.)
-	limits_CLs_model2, limits_CLs_b_model2 = get_upper_limits(toys_model2, all_mu_sig, 3.)
-	plotting.plot_histo_from_data(80, [limits_CLs_model1, limits_CLs_model2], logy=True, xmin=0, xmax=8, xlabel=r"95 % upper confidence limit on $\mu_{\rm sig}$", ylabel="Num. toys", labels=[r"Moderate bkg model", r"Large bkg model"])
+	mu_true = 3.
+	limits_CLs_model1, limits_CLs_b_model1 = get_upper_limits(toys_model1, all_mu_sig, mu_true)
+	limits_CLs_model2, limits_CLs_b_model2 = get_upper_limits(toys_model2, all_mu_sig, mu_true)
+	plotting.plot_histo_from_data(80, [limits_CLs_model1,   limits_CLs_model2]  , logy=True, xmin=0, xmax=8, fill_first=True, xlabel=r"95 % upper limit on $\mu_{\rm sig}$", ylabel="Num. toys", title="$CL_s$ method with $\mu_{{\\rm sig}}^{{\\rm true}}={0:.1f}$".format(mu_true), labels=[r"Model1: Moderate bkg", r"Model2: large bkg"])
+	plotting.plot_histo_from_data(80, [limits_CLs_b_model1, limits_CLs_b_model2], logy=True, xmin=0, xmax=8, fill_first=True, xlabel=r"95 % upper limit on $\mu_{\rm sig}$", ylabel="Num. toys", title="$CL_{{s+b}}$ method with $\mu_{{\\rm sig}}^{{\\rm true}}={0:.1f}$".format(mu_true), labels=[r"Model1: Moderate bkg", r"Model2: large bkg"])
 
 
 #  Main script (importable)
@@ -214,15 +216,15 @@ def test () :
 	n_toys = 4000
 	x_low, x_high = 5, 15
 	rnd_seed = 100
-	plot_asimovs = False
+	plot_asimovs = True
 	plot_pulls = False
 	plot_q = False
-	plot_a_toy = False
+	plot_a_toy = True
 	plot_CL_for_median_toys = False
 	force_new_toys = False
 	mu_sig_interval = 0.2
-	mu_sig_npoints = 30
-	do_analyse_coverage = True
+	mu_sig_npoints = 40
+	do_analyse_coverage = False
 	do_analyse_sensitivities = False
 	# 
 	# Create sig + bkg expectations for moderate and large backgrounds, and plot them
@@ -230,8 +232,8 @@ def test () :
 	model1 = DM.create_simple_DM_model_1(scale_bkg=0.8, x_low=x_low, x_high=x_high, n_bins=n_bins)
 	model2 = DM.create_simple_DM_model_1(scale_bkg=5., x_low=x_low, x_high=x_high, n_bins=n_bins)
 	if plot_asimovs is True :
-		model1.plot_asimov(x_min=5., x_max=15., y_min=0, y_max=50,  xlabel="Observable", ylabel="Events", labels = ("SM bkg (moderate)", "DM signal ($\mu_{sig}=1$)"), title=r"Model1")
-		model2.plot_asimov(x_min=5., x_max=15., y_min=0, y_max=260, xlabel="Observable", ylabel="Events  /  bin width", labels = ("SM bkg (large)", "DM signal ($\mu_{sig}=1$)"), title=r"Model2")
+		model1.plot_asimov(x_min=5., x_max=15., y_min=0, y_max=50,  xlabel="Observable", ylabel="Events  /  bin width", labels = ("SM bkg (moderate)", r"DM signal ($\mu_{\rm sig}^{\rm true}=1$)"), title=r"Model1")
+		model2.plot_asimov(x_min=5., x_max=15., y_min=0, y_max=260, xlabel="Observable", ylabel="Events  /  bin width", labels = ("SM bkg (large)",    r"DM signal ($\mu_{\rm sig}^{\rm true}=1$)"), title=r"Model2")
 	# 
 	# Create an experimental correlation between the fitted bins
 	# 
@@ -241,8 +243,8 @@ def test () :
 	# Plot a toy if desired
 	#
 	if plot_a_toy is True :
-		model1.plot_toy(x_min=5., x_max=15., y_max=50,  xlabel="Observable", ylabel="Events", labels = ("SM bkg (moderate)", "DM signal ($\mu_{sig}=1$)"), title=r"Model1")
-		model2.plot_toy(x_min=5., x_max=15., y_max=260, xlabel="Observable", ylabel="Events  /  bin width", labels = ("SM bkg (large)", "DM signal ($\mu_{sig}=1$)"), title=r"Model2")
+		model1.plot_toy(x_min=5., x_max=15., y_max=50,  xlabel="Observable", ylabel="Events  /  bin width", labels = ("SM bkg (moderate)", r"DM signal ($\mu_{\rm sig}^{\rm true}=1$)"), title=r"Model1")
+		model2.plot_toy(x_min=5., x_max=15., y_max=260, xlabel="Observable", ylabel="Events  /  bin width", labels = ("SM bkg (large)",    r"DM signal ($\mu_{\rm sig}^{\rm true}=1$)"), title=r"Model2")
 		utils.set_numpy_random_seed(rnd_seed)
 	# 
 	# Evaluate the expected significance for the two models
@@ -298,8 +300,6 @@ def test () :
 	#
 	if do_analyse_sensitivities is True :
 		analyse_sensitivities(toys_model1_s, toys_model2_s, signal_points)
-
-
 	# Clean up
 	plotting.close_save_file()
 

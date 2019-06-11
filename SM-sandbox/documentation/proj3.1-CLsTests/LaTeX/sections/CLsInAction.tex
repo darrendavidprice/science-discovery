@@ -34,8 +34,8 @@ where $\mathcal{S}$ is a signal template (known), $\mu_\text{sig}$ is a signal s
 We now define likelihood functions for the $s+b$ and $b$ models. This is easy for event counting experiments without systematic uncertainties. The templates $\mathcal{S}$ and $\mathcal{B}$ are known exactly\footnote{We stress that this is only a result of us not considering systematic uncertainties. In general any lack of model knowledge will be accounted for using NPs.}, perhaps derived in practice using Monte Carlo simulations, but defined here using some arbitrary functions we invented. The expected probability for observing $\nu^\text{obs}_{\text{evt, }i}$ events in bin $i$ follows a Poisson distribution around the expected mean in that bin, $\nu^\text{exp}_{\text{evt, }i}$. Since our bins are statistically independent, the \textit{combined probability} is simply the product of the individual bins. Therefore
 \begin{equation}
 \begin{aligned}
-\mathcal{L}_{s+b} \left(\mu_\text{sig}, \mu_\text{bkg}\right) &=   \text{Poisson}\left( ~ \nu^\text{obs}_{\text{evt, }i}  ~|~  \nu^\text{exp}_{\text{evt, }i} \left(\mu_\text{sig}, \mu_\text{bkg} \right) ~ \right) \\
-\mathcal{L}_{b} \left(\mu_\text{bkg}\right) &=   \text{Poisson}\left( ~ \nu^\text{obs}_{\text{evt, }i}  ~|~  \nu^\text{exp}_{\text{evt, }i} \left(0, \mu_\text{bkg} \right) ~ \right) \\
+\mathcal{L}_{s+b} \left(\mu_\text{sig}, \mu_\text{bkg}\right) &= \prod_i  \text{Poisson}\left( ~ \nu^\text{obs}_{\text{evt, }i}  ~|~  \nu^\text{exp}_{\text{evt, }i} \left(\mu_\text{sig}, \mu_\text{bkg} \right) ~ \right) \\
+\mathcal{L}_{b} \left(\mu_\text{bkg}\right) &=  \prod_i \text{Poisson}\left( ~ \nu^\text{obs}_{\text{evt, }i}  ~|~  \nu^\text{exp}_{\text{evt, }i} \left(0, \mu_\text{bkg} \right) ~ \right) \\
 \end{aligned}
 \end{equation}
 where $\nu^\text{exp}_{\text{evt, }i}$ is defined according to Eq.~\ref{E. ModelYields}. We note an interesting property. In the \textit{asymptotic limit}, which is the limit of infinite event yields (achieved by an experiment with infinite integrated luminosity and $\nu^\text{exp}_{\text{evt, }i}>0 ~\forall~ i$), a Poisson distribution tends towards a Gaussian one. For large datasets, the quantity $-2 \ln \mathcal{L}$ is then expected to follow a $\chi^2$ distribution with degrees of freedom equal to the number of measurements ($N_\text{bins}$). The optimisation process for $-2 \ln \mathcal{L}^\text{max}$ will remove some degrees of freedom. Now, if the $s+b$ and $b$ models are identical but for the inclusion of several \textit{PoIs} in the $s+b$ model, as is true for our model, we find a nice result: $-2 \ln q$ in the asymptotic limit represents a $\Delta \chi^2$ distribution with the number of degrees of freedom equal to the number of PoIs.
@@ -126,19 +126,6 @@ For both the $CL_s$ and $CL_{s+b}$ methods, Figure~\ref{F. CL from test-stat} (l
 \subsection{Confidence levels}
 \label{S. CLsInAction::ConfidenceLevels}
 
-We are now equipped to evaluate confidence limits. The $CL_{s+b}$ and $CL_s$ profiles are evaluated in all toys. Two examples are shown in Figure~\ref{F. CL curve}. \texttt{Model 1} is used with two different values of $\mu_\text{sig}^\text{true}$. When $\mu_\text{sig}^\text{true}$ is sufficiently large, the $CL_s$ and $CL_{s+b}$ methods provide similar results. This is because all toy datasets are able to exclude the null hypothesis ($b$ only), therefore $\mathcal{L}_b \ll \mathcal{L}_{s+b}$, therefore $q_\text{obs}$ is usually large, therefore $CL_b\approx1~\forall~\mu_\text{sig}$. However, when $\mu_\text{sig}^\text{true}$ is zero, we find $CL_s \geq CL_{s+b}$. In this regime, $CL_s$ limits will be more conservative than the frequentist case.
-
-Based on the shape of the $CL$ profiles in Figure~\ref{F. Coverage}, we can see our measurement will be presented as an upper limit on $\mu_\text{sig}$ if we define limits by excluding the region where $CL\leq95~\%$. We now test the coverage of the two methods. We use the following definition:
-
- \begin{table}[h!]
- \begin{tabular}{lc}
-\multirow{2}{*}{\textbf{\emph{Expected coverage}}} \hspace{0.5cm}  & ``the fraction of toy datasets in which $\mu_\text{sig}^\text{true}$ was excluded with \\
-& 95~\% confidence, i.e. for which $CL\left(\mu_\text{sig}=\mu_\text{sig}^\text{true}\right)<0.05$''
-\end{tabular}
-\end{table}
-
-Using \texttt{model 1}, Figure~\ref{F. Coverage} shows the expected coverage of the $CL_s$ and $CL_{s+b}$ as a function of $\mu_\text{sig}^\text{true}$. Since $CL_{s+b}$ is truly frequentist, we confirm that the expected coverage is always 95~\% by definition. We see that $CL_s$ is conservative for small expected signals and ``overcovers''\footnote{It is not really ``overcovering'' if this is the intended behaviour!} compared with $CL_{s+b}$. As the expected signal increases and unambiguously excludes the null hypothesis, the coverage of $CL_s$ converges towards that of $CL_{s+b}$.
-
 \begin{figure}[!]
 \centering
 \includegraphics[page=1, width=0.49\textwidth]{CL_and_coverage.pdf}
@@ -151,7 +138,46 @@ Using \texttt{model 1}, Figure~\ref{F. Coverage} shows the expected coverage of 
 \label{F. Coverage}
 \end{figure}
 
+We are now equipped to evaluate confidence limits. The $CL_{s+b}$ and $CL_s$ profiles are evaluated in all toys. Two examples are shown in Figure~\ref{F. CL curve}. \texttt{Model 1} is used with two different values of $\mu_\text{sig}^\text{true}$. When $\mu_\text{sig}^\text{true}$ is sufficiently large, the $CL_s$ and $CL_{s+b}$ methods provide similar results. This is because all toy datasets are able to exclude the null hypothesis ($b$ only), therefore $\mathcal{L}_b \ll \mathcal{L}_{s+b}$, therefore $q_\text{obs}$ is usually large, therefore $CL_b\approx1~\forall~\mu_\text{sig}$. However, when $\mu_\text{sig}^\text{true}$ is zero, we find $CL_s \geq CL_{s+b}$. In this regime, $CL_s$ limits will be more conservative than the frequentist case.
 
+Based on the shape of the $CL$ profiles in Figure~\ref{F. Coverage}, we can see our measurement will be presented as an upper limit on $\mu_\text{sig}$ if we define limits by excluding the region where $CL\leq95~\%$. We now test the coverage of the two methods. We use the following definition:
+
+ \begin{table}[h!]
+ \begin{tabular}{lc}
+\multirow{2}{*}{\textbf{\emph{Expected coverage}}} \hspace{0.5cm}  & ``the fraction of toy datasets in which $\mu_\text{sig}^\text{true}$ was excluded with \\
+& 95~\% confidence, i.e. for which $CL\left(\mu_\text{sig}=\mu_\text{sig}^\text{true}\right)<0.05$''
+\end{tabular}
+\end{table}
+
+Using \texttt{model 1}, Figure~\ref{F. Coverage} shows the expected coverage of the $CL_s$ and $CL_{s+b}$ methods as a function of $\mu_\text{sig}^\text{true}$. Since $CL_{s+b}$ is truly frequentist, we confirm that the expected coverage is always 95~\% by definition. We see that $CL_s$ is conservative for small expected signals and ``overcovers''\footnote{It is not really ``overcovering'' if this is the intended behaviour!} compared with $CL_{s+b}$. As the expected signal increases and unambiguously excludes the null hypothesis, the coverage of $CL_s$ converges towards that of $CL_{s+b}$.
+
+
+
+
+
+
+
+\subsection{Impact of increasing background}
+\label{S. CLsInAction::ConfidenceLevels}
+
+Figure~\ref{F. Asimovs} showed that \texttt{model 2} has a significantly larger background rate than \texttt{model 1}, with no other differences in the measurements. It represents a different (less sensitive) experimental setup. We intuitively expect such an experiment to set less aggressive limits than the more sensitive case.
+
+Say we fix $\mu_\text{sig}^\text{true}=3$ (this choice is arbitrary, and is selected only to provide a visualisation of the consideration to follow). In all of our 4000 toy datasets, we evaluate the estimated upper limit on $\mu_\text{sig}$. This is shown for the $CL_s$ method in Figure~\ref{F. Sensitivity}(left). As expected, \texttt{model 1} is expected to outperform \texttt{model 2}, typically setting more stringent limits.
+
+Figure~\ref{F. Sensitivity}(right) shows the result using $CL_{s+b}$. We find that although it may still be less sensitive \textit{on average}, \texttt{model 2} may set very aggressive limits with significantly higher frequency than \texttt{model 1}. This is because large background rates will lead to large fluctuations in the event yields. In this case $q\approx1$\footnote{Note that $\mathcal{L}^\text{max}_{s+b}\geq\mathcal{L}^\text{max}_{b}$ and so $q\geq1$, meaning that $q\approx1$ will correspond to a rather low $CL_{s+b}$.}. The $CL_{s+b}$ method deems such measurements to be ``very un-signal-like'' and sets an aggressive limit. From a frequentist standpoint, this is valid so long as the coverage remains $\alpha$ for all $\mu_\text{sig}^\text{true}$. However, it implies that a \textit{less sensitive experiment} is capable of setting the \textit{strongest limits}. We also note that the limits set for \texttt{model 1} are comparable in Figures~\ref{F. Sensitivity}(left) and (right). This means that we do not set unneccessarily conservative limits for sensitive experiments.
+
+In summary: Figures~\ref{F. Coverage}~and~\ref{F. Sensitivity} show that the $CL_s$ method will not set aggressive limits when sensitivity is low, and will converge to the frequentist case when sensitivity is high. 
+
+
+
+
+\begin{figure}[t!]
+\centering
+\includegraphics[page=1, width=0.49\textwidth]{Sensitivity.pdf}
+\includegraphics[page=2, width=0.49\textwidth]{Sensitivity.pdf}
+\caption{Sensitivity of the (left) $CL_{s+b}$ and (right) $CL_s$ methods, expressed as the 95~\% upper limit obtained in each of 4000 toy datasets generated with $\mu_\text{sig}^\text{true}=3$. The two models differ only in their background rate.}
+\label{F. Sensitivity}
+\end{figure}
 
 
 
