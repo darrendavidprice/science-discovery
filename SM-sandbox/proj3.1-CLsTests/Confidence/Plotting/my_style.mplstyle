@@ -1,0 +1,32 @@
+# ====================================================================================================
+#  Brief:  Custom matplotlib style settings
+#  Author: Stephen Menary (stmenary@cern.ch)
+# ====================================================================================================
+
+
+#  See further options at: https://matplotlib.org/3.1.0/tutorials/introductory/customizing.html
+
+
+font.size : 15
+
+axes.titlesize : 20
+axes.labelsize : 17
+axes.grid : True
+axes.xmargin : 0.15
+axes.ymargin : 0.33
+axes.labelpad : 15.
+
+lines.linewidth : 2
+lines.markersize : 5
+
+xtick.labelsize : 16
+ytick.labelsize : 16
+
+figure.subplot.left    : 0.17
+figure.subplot.right   : 0.9
+figure.subplot.bottom  : 0.17
+figure.subplot.top     : 0.9
+
+legend.loc : best
+legend.framealpha : 1.0
+legend.labelspacing : 1.0
