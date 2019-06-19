@@ -57,23 +57,28 @@ class Model :
 		return self.length
 	def __str__ (self) :
 		return "  +  ".join( [ "{0} * {1}".format(p,l) for p,l in zip(self.coefficients,self.templates) ] )
-	def generate_prediction (self) :
+	def generate_prediction (self, **kwargs) :
+		do_fabs = kwargs.get("fabs",False)
 		y = np.zeros(shape=(len(self)))
 		for i in range(self.num_templates()) :
-			y = y + self.coefficients[i] * self.templates[i].values
+			if do_fabs is True :
+				y = y + np.fabs(self.coefficients[i]) * self.templates[i].values
+			else :
+				y = y + self.coefficients[i] * self.templates[i].values
 		return y
-	def generate_asimov (self) :
-		y = self.generate_prediction()
+	def generate_asimov (self, **kwargs) :
+		y = self.generate_prediction(**kwargs)
 		ey = np.sqrt(y)
 		return y, ey
-	def throw_toy (self) :
-		y = self.generate_prediction()
+	def throw_toy (self, **kwargs) :
+		y = self.generate_prediction(**kwargs)
 		for i in range(len(y)) :
 			y[i] = np.random.poisson(y[i])
 		ey = np.sqrt(y)
 		return y, ey
 	def plot_asimov(self, **kwargs) :
 		throw_toy = kwargs.get("throw_toy",False)
+		do_fabs = kwargs.get("fabs",False)
 		if throw_toy is True :
 			y, ey = self.throw_toy()
 			label = "Toy dataset"
@@ -90,7 +95,9 @@ class Model :
 		x_new = plotting.bin_edges_to_histogram_x(bins)
 		y_new = []
 		for i in range(self.num_templates()) :
-			y_new.append( plotting.bin_contents_to_histogram_y(self.templates[i].values*self.coefficients[i]) )
+			coeff = self.coefficients[i]
+			if do_fabs is True : coeff = np.fabs(coeff)
+			else : y_new.append( plotting.bin_contents_to_histogram_y(self.templates[i].values*coeff) )
 		fig  = plt.figure(figsize=(7,7))
 		ax = fig.add_subplot(111)
 		ax.stackplot(x_new, y_new, labels = labels)
@@ -99,6 +106,9 @@ class Model :
 		if "title" in kwargs : plt.title(kwargs["title"])
 		if "xlabel" in kwargs : plt.xlabel(kwargs["xlabel"])
 		if "ylabel" in kwargs : plt.ylabel(kwargs["ylabel"])
+		ymin, ymax = ax.get_ylim()
+		ymin, ymax = kwargs.get("y_min",ymin), kwargs.get("y_max",ymax)
+		ax.set_ylim(ymin, ymax)
 		if len(labels) > 0 : plt.legend(loc="best")
 		plt.show()
 		if type(plotting.document) is not None :
