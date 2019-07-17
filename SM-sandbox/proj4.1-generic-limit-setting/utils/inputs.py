@@ -120,6 +120,7 @@ class InputStore :
 					values = np.concatenate( [my_tables[value_key]._dep_var._values for value_key in value_keys] )
 				elif type(value_keys) is int : values = np.zeros(shape=value_keys)
 				else : values = value_keys
+				num_values = len(values)
 				cov = np.zeros(shape=(num_values, num_values))
 				params = {}
 				if look_for_params :
