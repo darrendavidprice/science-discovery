@@ -156,7 +156,7 @@ class InputStore :
 				value_keys  = utils.string_to_object(cfg.get("INPUTS", f"{key}.{entry_name}.keys.values"    , fallback="[]"))
 				cov_keys    = utils.string_to_object(cfg.get("INPUTS", f"{key}.{entry_name}.keys.covariance", fallback="[]"))
 				if type(value_keys) is list and len(value_keys) > 0 and type(value_keys[0]) is str :
-					values = np.concatenate( [pickle_dict[value_key]._dep_var._values for value_key in value_keys] )
+					values = np.concatenate( [pickle_dict[value_key] for value_key in value_keys] )
 				elif type(value_keys) is int : values = np.zeros(shape=value_keys)
 				else : values = value_keys
 				num_values = len(values)
@@ -353,6 +353,7 @@ def populate_scan_grid_using_ScaleByL6 (BSM_input_dists, new_grid, SM=None, targ
 		if dist_ref.includes_SM :
 			if SM is None : raise ValueError("populate_scan_grid_using_ScaleByL6(): need to subtract SM from BSM input but none provided")
 			dist_ref.subtract_values(SM.values)
+			dist_ref.subtract_cov(SM.cov)
 		L_values = new_grid.axes[0]
 		for idx in range(len(L_values)) :
 			sf = (L_ref/L_values[idx]) ** 6
@@ -373,6 +374,7 @@ def populate_scan_grid_using_ScaleByL6 (BSM_input_dists, new_grid, SM=None, targ
 			if dist_ref.includes_SM :
 				if SM is None : raise ValueError("populate_scan_grid_using_ScaleByL6(): need to subtract SM from BSM input but none provided")
 				dist_ref.subtract_values(SM.values)
+				dist_ref.subtract_cov(SM.cov)
 			for grid_idx_lambda in range(len(new_grid.axes[lambda_grid_index])) :
 				lambda_value = np.float64(new_grid.axes[lambda_grid_index][grid_idx_lambda])
 				sf = (lambda_ref/lambda_value) ** 6

@@ -63,7 +63,7 @@ class Distribution :
 	## Str
 	# 
 	def __str__ (self) :
-		return f"Distribution '{self.name}' with {len(self.values)} entries [" + "  ".join([f"{v}" for v in self.values]) + "]"
+		return f"Distribution '{self.name}' with {len(self.values)} entries [" + "  ".join([f"{v}" for v in self.values[:5]]) + "]"
 	## Addition of a Distribution object
 	# 
 	def __add__ (self, other) :
@@ -74,6 +74,9 @@ class Distribution :
 	def add_to_values (self, v) :
 		if len(self) is not len(v) : raise ValueError(f"Cannot add array of length {len(other)} to that with length {len(self)}").with_traceback(sys.exc_info()[2])
 		self.values = self.values + v
+	def add_to_cov (self, c) :
+		if self.cov.shape != c.shape : raise ValueError(f"Cannot add matrix of shape {c.shape} to that with length {self.cov.shape}").with_traceback(sys.exc_info()[2])
+		self.cov = self.cov + c
 	## Subtraction of a Distribution object
 	# 
 	def __sub__ (self, other) :
@@ -84,18 +87,31 @@ class Distribution :
 	def subtract_values (self, v) :
 		if len(self) is not len(v) : raise ValueError(f"Cannot subtract array of length {len(other)} from that with length {len(self)}").with_traceback(sys.exc_info()[2])
 		self.values = self.values - v
+	def subtract_cov (self, c) :
+		if self.cov.shape != c.shape : raise ValueError(f"Cannot subtract matrix of shape {c.shape} from that with length {self.cov.shape}").with_traceback(sys.exc_info()[2])
+		self.cov = self.cov - c
 	## Multiply by a constant factor
 	# 
 	def __mul__ (self, sf) :
-		return Distribution(values=sf*self.values, cov=sf*self.cov, name=self.name)
+		return Distribution(values=sf*self.values, cov=sf*sf*self.cov, name=self.name)
 	## Divide by a constant factor
 	# 
 	def __div__ (self, sf) :
-		return Distribution(values=self.values/sf, cov=self.cov/sf, name=self.name)
+		return Distribution(values=self.values/sf, cov=self.cov/(sf*sf), name=self.name)
 	## Calculate chi2 (difference between self and other)
 	# 
 	def chi2(self, other) :
+		# print("=========")
+		# print(other.values[:5])
+		# print(other.cov[:5,:5])
+		# print("  -")
+		# print(self.values[:5])
+		# print(self.cov[:5,:5])
+		# print("  =")
 		res = other - self
+		# print(res.values[:5])
+		# print(res.cov[:5,:5])
+		# print("=========")
 		return np.matmul(res.values, np.matmul(np.linalg.inv(res.cov), res.values))
 	## Generate toys using expected covariance
 	# 

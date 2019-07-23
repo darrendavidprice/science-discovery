@@ -199,6 +199,7 @@ def get_CL_across_grid (this_dist, BSM_dist_grid, SM_dist=None) :
 	flat_array_of_predictions = ret.values.flatten()
 	flat_array_of_CL = np.zeros(shape=flat_array_of_predictions.shape, dtype=np.float64)
 	for idx in range(len(flat_array_of_CL)) :
+		#print("------->", idx)
 		flat_array_of_CL[idx] = get_CL(this_dist, flat_array_of_predictions[idx], SM_dist=SM_dist)
 	ret.values = flat_array_of_CL.reshape(ret.values.shape)
 	return ret
