@@ -76,10 +76,17 @@ def get_labelled_dataset (num_pixels=51, num_simulations=1000, do_rings=True, do
 	return TRAIN_X, TRAIN_Y, VAL_X, VAL_Y, TEST_X, TEST_Y
 
 
-def get_rings_with_coordinates (num_pixels=51, num_simulations=1000) :
+def get_rings_with_coordinates (do_xy=True, do_p=False, num_pixels=51, num_simulations=1000) :
 	rings = get_rings  (num_pixels, num_simulations)
+
+	target_labels = []
+	if do_xy :
+		target_labels.append(0)
+		target_labels.append(1)
+	if do_p  :
+		target_labels.append(2)
 	
-	TOTAL_DS = [(np.array([im[0], im[1], im[2]/100.]), im[3]) for im in rings]
+	TOTAL_DS = [(np.array([im[idx] for idx in target_labels]), im[3]) for im in rings]
 	np.random.shuffle(TOTAL_DS)
 
 	frac_split = [0.5, 0.75, 1]
