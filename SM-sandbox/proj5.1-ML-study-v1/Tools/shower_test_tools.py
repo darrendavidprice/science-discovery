@@ -30,9 +30,9 @@ def get_showers (num_pixels=51, num_simulations=1000) :
 	if showers == None :
 	    showers = Images.generate_showers(num_simulations, show=False)
 	    Smart_pickle.dump(".showers.pickle", showers, num=num_simulations, **Images.rcParams)
-	    print(f"{len(rings)} showers saved to file")
+	    print(f"{len(showers)} showers saved to file")
 	else :
-	    print(f"{len(rings)} showers loaded successfully from file")
+	    print(f"{len(showers)} showers loaded successfully from file")
 	store["showers"] = showers
 	return showers
 
