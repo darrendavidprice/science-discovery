@@ -7,14 +7,16 @@ import Tools.Smart_pickle as Smart_pickle
 store = {}
 
 
-def get_rings (num_pixels=51, num_simulations=1000) :
+def get_rings (num_pixels=51, num_simulations=1000, tag="") :
 	global store
 	Images      .rcParams["num_pixels" ] = num_pixels
 	Smart_pickle.rcParams["ignore_load"] = False
-	rings = Smart_pickle.load(".rings.pickle", num=num_simulations, **Images.rcParams)
+	if len(tag) > 0 : pickle_fname = f".rings.{tag}.pickle"
+	else            : pickle_fname = ".rings.pickle"
+	rings = Smart_pickle.load(pickle_fname, num=num_simulations, **Images.rcParams)
 	if rings == None :
 	    rings = Images.generate_rings(num_simulations, show=False)
-	    Smart_pickle.dump(".rings.pickle", rings, num=num_simulations, **Images.rcParams)
+	    Smart_pickle.dump(pickle_fname, rings, num=num_simulations, **Images.rcParams)
 	    print(f"{len(rings)} rings saved to file")
 	else :
 	    print(f"{len(rings)} rings loaded successfully from file")
@@ -22,14 +24,16 @@ def get_rings (num_pixels=51, num_simulations=1000) :
 	return rings
 
 
-def get_showers (num_pixels=51, num_simulations=1000) :
+def get_showers (num_pixels=51, num_simulations=1000, tag="") :
 	global store
 	Images      .rcParams["num_pixels" ] = num_pixels
 	Smart_pickle.rcParams["ignore_load"] = False
-	showers = Smart_pickle.load(".showers.pickle", num=num_simulations, **Images.rcParams)
+	if len(tag) > 0 : pickle_fname = f".showers.{tag}.pickle"
+	else            : pickle_fname = ".showers.pickle"
+	showers = Smart_pickle.load(pickle_fname, num=num_simulations, **Images.rcParams)
 	if showers == None :
 	    showers = Images.generate_showers(num_simulations, show=False)
-	    Smart_pickle.dump(".showers.pickle", showers, num=num_simulations, **Images.rcParams)
+	    Smart_pickle.dump(pickle_fname, showers, num=num_simulations, **Images.rcParams)
 	    print(f"{len(showers)} showers saved to file")
 	else :
 	    print(f"{len(showers)} showers loaded successfully from file")
@@ -37,16 +41,16 @@ def get_showers (num_pixels=51, num_simulations=1000) :
 	return showers
 
 
-def get_dataset (num_pixels=51, num_simulations=1000, do_rings=True, do_showers=True) :
+def get_dataset (num_pixels=51, num_simulations=1000, do_rings=True, do_showers=True, tag="") :
 	rings   = None
 	showers = None
-	if do_rings   : rings   = get_rings  (num_pixels, num_simulations)
-	if do_showers : showers = get_showers(num_pixels, num_simulations)
+	if do_rings   : rings   = get_rings  (num_pixels, num_simulations, tag)
+	if do_showers : showers = get_showers(num_pixels, num_simulations, tag)
 	return rings, showers
 
 
-def get_labelled_dataset (num_pixels=51, num_simulations=1000, do_rings=True, do_showers=True) :
-	rings, showers = get_dataset(num_pixels, num_simulations, do_rings, do_showers)
+def get_labelled_dataset (num_pixels=51, num_simulations=1000, do_rings=True, do_showers=True, tag="") :
+	rings, showers = get_dataset(num_pixels, num_simulations, do_rings, do_showers, tag)
 	
 	TOTAL_DS = [(np.array([0.,1.]), im[3]) for im in rings] + [(np.array([1.,0.]), im[3]) for im in showers]
 	np.random.shuffle(TOTAL_DS)
@@ -76,17 +80,20 @@ def get_labelled_dataset (num_pixels=51, num_simulations=1000, do_rings=True, do
 	return TRAIN_X, TRAIN_Y, VAL_X, VAL_Y, TEST_X, TEST_Y
 
 
-def get_rings_with_coordinates (do_xy=True, do_p=False, num_pixels=51, num_simulations=1000) :
-	rings = get_rings  (num_pixels, num_simulations)
+def get_rings_or_showers_with_coordinates (do_x=True, do_y=True, do_p=True, num_pixels=51, num_simulations=1000, tag="", rings=True, showers=True) :
+	objects = None
+	if rings :
+		objects = get_rings (num_pixels, num_simulations, tag)
+	if showers :
+		if rings : objects = objects + get_showers(num_pixels, num_simulations, tag)
+		else     : objects = get_showers(num_pixels, num_simulations, tag)
 
 	target_labels = []
-	if do_xy :
-		target_labels.append(0)
-		target_labels.append(1)
-	if do_p  :
-		target_labels.append(2)
+	if do_x : target_labels.append(0)
+	if do_y : target_labels.append(1)
+	if do_p : target_labels.append(2)
 	
-	TOTAL_DS = [(np.array([im[idx] for idx in target_labels]), im[3]) for im in rings]
+	TOTAL_DS = [(np.array([im[idx] for idx in target_labels]), im[3]) for im in objects]
 	np.random.shuffle(TOTAL_DS)
 
 	frac_split = [0.5, 0.75, 1]
