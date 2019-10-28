@@ -91,7 +91,7 @@ def import_yoda () :
 		sys.path.append(python_path)
 		import_yoda()
 
-##  Make a pickle-able dictionary usign a yoda file
+##  Make a pickle-able dictionary using a yoda file
 #
 def yoda_to_dict (yoda_file) :
 	ret = {}
