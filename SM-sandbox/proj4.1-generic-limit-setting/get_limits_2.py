@@ -24,40 +24,8 @@ from   utils2.stats.CLGenerator           import CLGenerator
 from   utils2.stats.CLGeneratorGrid       import CLGeneratorGrid
 from   utils2.objects.Distribution        import Distribution
 from   utils2.objects.Grid                import Grid, do_for_all_in_tensor, assign_for_all_in_tensor_from_friend
+from   utils2.custom_parse                import parse_command_line_arguments
 import utils2.stats.helpers               as     st
-
-
-##  Parse command line arguments
-#
-def parse_command_line_arguments () :
-	utils.info("parse_command_line_arguments()", "Parsing arguments")
-	argv = sys.argv[1:]
-	try :
-		opts, rest = getopt.getopt(argv, "", ["save=", "tag=", "show="])
-	except getopt.GetoptError as err :
-		utils.error("parse_command_line_arguments()", "The following error was thrown whilst parsing command-line arguments")
-		utils.fatal("parse_command_line_arguments()", err)
-	if len(rest) is not 1 :
-		raise ValueError(f"parse_command_line_arguments(): expected 1 unlabelled argument where {len(argv)} provided").with_traceback(sys.exc_info()[2])
-	cfg_name = rest[0]
-	save_fname, do_show, tag = None, True, None
-	if not utils.is_file(cfg_name) :
-		raise RuntimeError(f"parse_command_line_arguments(): config file {cfg_name} not found").with_traceback(sys.exc_info()[2])
-	for option, value in opts :
-		if option in ["--tag"]  :
-			tag = str(value)
-			utils.info("parse_command_line_arguments()", f"Labelling temporary files using the tag: {tag}")
-		if option in ["--save"] :
-			save_fname = str(value)
-			utils.info("parse_command_line_arguments()", f"Opening plots file {save_fname}")
-			plotting.open_plots_pdf(save_fname)
-		if option in ["--show"] :
-			do_show = utils.string_to_object(value)
-			if type(do_show) != bool : raise ValueError(f"parse_command_line_arguments(): --show value \"{value}\" could not be cast to a bool")
-	glob.custom_store["config name"   ] = cfg_name
-	glob.custom_store["do show plots" ] = do_show
-	glob.custom_store["plots filename"] = save_fname
-	glob.custom_store["tag"           ] = tag
 
 
 ##  Print the setup details
@@ -232,7 +200,7 @@ def main () :
 	#
 	#  config and setup
 	#
-	parse_command_line_arguments()
+	parse_command_line_arguments("hello")
 	do_general_setup()
 	print_setup()
 	num_scan_params = len(glob.scan_params)
