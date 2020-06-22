@@ -1,0 +1,34 @@
+set stdout_level DEBUG
+import model SMEFTsim_A_U35_MwScheme_UFO_cvmfs_VBFZ-cWtil
+generate p p > j j l+ l- QED<=4 QCD==0 NP==0
+output cWtil_0
+launch -n run_1
+shower=pythia8
+set partonLevel:mpi OFF
+set nevents 50000
+set ptj1min 60
+set ptj2min 50
+set mmjj 150
+set mmll 70
+set mmllmax 110
+set LambdaSMEFT 1e3
+set cWtil 0
+set iseed 300
+launch -n run_2
+set iseed 301
+launch -n run_3
+set iseed 302
+launch -n run_4
+set iseed 303
+launch -n run_5
+set iseed 304
+launch -n run_6
+set iseed 305
+launch -n run_7
+set iseed 306
+launch -n run_8
+set iseed 307
+launch -n run_9
+set iseed 308
+launch -n run_10
+set iseed 309
