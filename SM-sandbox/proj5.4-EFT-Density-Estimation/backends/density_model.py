@@ -13,7 +13,7 @@ import tensorflow as tf
 
 from   keras.layers      import BatchNormalization, Dense, Dropout, Input, LeakyReLU, Concatenate, Lambda, Reshape, Softmax
 from   keras.models      import Model
-from   keras.optimizers  import Adam
+from   keras.optimizers  import Adam, SGD, Adadelta
 from   keras.callbacks   import EarlyStopping
 import keras.backend     as     K
 
@@ -46,10 +46,12 @@ def add_gauss_sigma_offsets (x, num_gauss):
 def create_continuous_density_keras_model (name, **kwargs) :
     #  Parse arguments
     #
-    num_conditions_in  = int (kwargs.get("num_conditions_in"    ))
-    num_observables_in = int (kwargs.get("num_observables_in", 0))
-    num_gaussians      = int (kwargs.get("num_gaussians"     , 5))
-    verbose            = bool(kwargs.get("verbose" , True))
+    num_conditions_in  = int  (kwargs.get("num_conditions_in"         ))
+    num_observables_in = int  (kwargs.get("num_observables_in", 0     ))
+    num_gaussians      = int  (kwargs.get("num_gaussians"     , 5     ))
+    verbose            = bool (kwargs.get("verbose"           , True  ))
+    learning_rate      = float(kwargs.get("learning_rate"     , 0.001 ))
+    optimiser          = str  (kwargs.get("optimiser"         , "adam"))
     
     #  Print a status message
     #
@@ -65,8 +67,8 @@ def create_continuous_density_keras_model (name, **kwargs) :
     #       sigmas so they are positive nonzero, and fractions so they sum to one
     #
     conditions_input  = Input((num_conditions_in ,))
-    model_conditions  = Dense      (5 + 2*num_conditions_in)(conditions_input ) 
-    model_conditions  = LeakyReLU  (0.2)(model_conditions )
+    model_conditions  = Dense      (5 + 2*num_conditions_in)(conditions_input) 
+    model_conditions  = LeakyReLU  (0.2                    )(model_conditions )
     if num_observables_in > 0 :
         observables_input = Input((num_observables_in,))
         model_observables = Dense      (3*num_observables_in)(observables_input)    
@@ -74,6 +76,8 @@ def create_continuous_density_keras_model (name, **kwargs) :
         model             = Concatenate()([model_conditions, model_observables])
     else :
         model = model_conditions
+    '''model = Dense     (10*num_gaussians)(model)
+                model = LeakyReLU (0.2             )(model)'''
         
     gauss_means     = Dense      (2*num_gaussians )(model      )
     gauss_means     = LeakyReLU  (0.2             )(gauss_means )
@@ -100,7 +104,10 @@ def create_continuous_density_keras_model (name, **kwargs) :
     #  Compile model
     #
     loss_function = lambda y_true, y_pred : -1. * K_dataset_log_likelihood (y_true, y_pred, num_gaussians)
-    model.compile(loss=loss_function, optimizer=Adam())    
+    if   optimiser.lower() == "sgd"      : model.compile(loss=loss_function, optimizer=SGD     (learning_rate=learning_rate))    
+    elif optimiser.lower() == "adadelta" : model.compile(loss=loss_function, optimizer=Adadelta(learning_rate=learning_rate))    
+    elif optimiser.lower() == "adam"     : model.compile(loss=loss_function, optimizer=Adam    (learning_rate=learning_rate))   
+    else : raise ValueError(f"Optimiser '{optimiser}' not recognised") 
     if verbose : model.summary()
      
     #  Return model
@@ -113,10 +120,12 @@ def create_continuous_density_keras_model (name, **kwargs) :
 def create_discrete_density_keras_model (name, **kwargs) :
     #  Parse arguments
     #
-    num_conditions_in  = int (kwargs.get("num_conditions_in"    ))
-    num_observables_in = int (kwargs.get("num_observables_in", 0))
-    num_outputs        = int (kwargs.get("num_outputs"       , 5))
-    verbose            = bool(kwargs.get("verbose" , True))
+    num_conditions_in  = int  (kwargs.get("num_conditions_in"         ))
+    num_observables_in = int  (kwargs.get("num_observables_in", 0     ))
+    num_outputs        = int  (kwargs.get("num_outputs"       , 5     ))
+    verbose            = bool (kwargs.get("verbose"           , True  ))
+    learning_rate      = float(kwargs.get("learning_rate"     , 0.001 ))
+    optimiser          = str  (kwargs.get("optimiser"         , "adam"))
     
     #  Print a status message
     #
@@ -153,7 +162,10 @@ def create_discrete_density_keras_model (name, **kwargs) :
     if num_observables_in > 0 : model = Model ([conditions_input, observables_input], model, name=name)
     else                      : model = Model (conditions_input, model, name=name)
     #loss_function = lambda y_true, y_pred : -1. * K.sum(y_true*y_pred)
-    model.compile(loss="categorical_crossentropy", optimizer=Adam())    
+    if   optimiser.lower() == "sgd"      : model.compile(loss="categorical_crossentropy", optimizer=SGD     (learning_rate=learning_rate))    
+    elif optimiser.lower() == "adadelta" : model.compile(loss="categorical_crossentropy", optimizer=Adadelta(learning_rate=learning_rate))    
+    elif optimiser.lower() == "adam"     : model.compile(loss="categorical_crossentropy", optimizer=Adam    (learning_rate=learning_rate))   
+    else : raise ValueError(f"Optimiser '{optimiser}' not recognised")   
     if verbose : model.summary()
      
     #  Return model
@@ -474,7 +486,7 @@ class DensityModel :
             if verbose : print("INFO".ljust(8) + "   " + "DensityModel.fit".ljust(25) + "   " + "Creating weights, as None provided")
             weights = {}
             for condition, datapoints in dataset.items() :
-                weights [condition] = np.ones(shape=(len(datapoints),))
+                weights [condition] = np.full(fill_value=1./len(datapoints), shape=(len(datapoints),))
         #if verbose : print("INFO".ljust(8) + "   " + "DensityModel.fit".ljust(25) + "   " + "Normalising samples to equal weight")
         '''for condition, weights_vec in weights.items() :
                                     weights_vec = weights_vec / np.sum(weights_vec)'''
