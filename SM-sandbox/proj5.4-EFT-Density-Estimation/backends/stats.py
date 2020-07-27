@@ -73,7 +73,7 @@ def get_data_whitening_constants (x) :
 
 #  Brief:  Create lambda functions used to map a distribution with hard boundaries onto a smoothish piecewise Gaussian
 #
-def get_special_encoding_constants_for_axis (dataset, axis, axmin, axmax, ax_npoints, data_frac_constant, gauss_frac_constant=0., weights=None) :
+def get_special_encoding_constants_for_axis (dataset, axis, axmin, axmax, ax_npoints, data_frac_constant, gauss_frac_constant=0., weights=None, **kwargs) :
     if type(axis) == type(None) : tmp_dataset = dataset
     else : tmp_dataset = dataset[:,axis]
 
@@ -89,18 +89,29 @@ def get_special_encoding_constants_for_axis (dataset, axis, axmin, axmax, ax_npo
     data_cdf     = np.array(data_cdf)
     constant_cdf = (ax_scan_points - axmin) / (axmax - axmin)
     combined_cdf = data_frac_constant*constant_cdf + (1-data_frac_constant)*data_cdf
-    
-    Gauss_x   = np.linspace(-5, 5, 201)
-    Gauss_cdf = stats.norm.cdf(Gauss_x)
-    Gauss_cdf[0], Gauss_cdf[-1] = 0., 1.
-    constant_cdf = (Gauss_x + 5.) / 10.
-    Gauss_cdf = gauss_frac_constant*constant_cdf + (1-gauss_frac_constant)*Gauss_cdf 
-    
+
+    whitened_func_form = kwargs.get("func_form", "gaus")
+    if whitened_func_form == "step" :
+        alpha, beta, gamma = kwargs.get("alpha", 3), kwargs.get("beta", 2), kwargs.get("gamma", 0)
+        white_space_x   = np.linspace(-5, 5, 201)
+        Smooth_step_y   = 1. / (1 + np.exp((white_space_x-beta)*alpha-gamma)) / (1 + np.exp(-(white_space_x+beta)*alpha-gamma))
+        Smooth_step_cdf = np.array([np.sum(Smooth_step_y[:i+1]) for i in range(len(Smooth_step_y))])
+        Smooth_step_cdf = Smooth_step_cdf / Smooth_step_cdf[-1]
+        Smooth_step_cdf[0] = 0.
+        constant_cdf    = (white_space_x + 5.) / 10.
+        white_space_cdf = gauss_frac_constant*constant_cdf + (1-gauss_frac_constant)*Smooth_step_cdf
+    else :
+        white_space_x   = np.linspace(-5, 5, 201)
+        Gauss_cdf       = stats.norm.cdf(white_space_x)
+        Gauss_cdf[0], Gauss_cdf[-1] = 0., 1.
+        constant_cdf    = (white_space_x + 5.) / 10.
+        white_space_cdf = gauss_frac_constant*constant_cdf + (1-gauss_frac_constant)*Gauss_cdf 
+        
     A_to_z = lambda A : np.interp(A, ax_scan_points, combined_cdf  )
     z_to_A = lambda z : np.interp(z, combined_cdf  , ax_scan_points)
 
-    z_to_g = lambda z : np.interp(z, Gauss_cdf, Gauss_x  )
-    g_to_z = lambda g : np.interp(g, Gauss_x  , Gauss_cdf)
+    z_to_g = lambda z : np.interp(z, white_space_cdf, white_space_x  )
+    g_to_z = lambda g : np.interp(g, white_space_x  , white_space_cdf)
 
     A_to_g = lambda A : z_to_g(A_to_z(A))
     g_to_A = lambda g : z_to_A(g_to_z(g))
@@ -110,12 +121,12 @@ def get_special_encoding_constants_for_axis (dataset, axis, axmin, axmax, ax_npo
 
 #  Brief:  Whiten a dataset (using the "special" hard-boundary smoothing method)
 #
-def special_whiten_axis (dataset, axis_config, whitening_func=None, weights=None) :
+def special_whiten_axis (dataset, axis_config, whitening_func=None, weights=None, **kwargs) :
     if type(whitening_func) == type(None) :
         if len(axis_config) == 4 :
-            whitening_func = get_special_encoding_constants_for_axis (dataset, None, axis_config[0], axis_config[1], axis_config[2], axis_config[3], 0., weights=weights)
+            whitening_func = get_special_encoding_constants_for_axis (dataset, None, axis_config[0], axis_config[1], axis_config[2], axis_config[3], 0., weights=weights, **kwargs)
         else :
-            whitening_func = get_special_encoding_constants_for_axis (dataset, None, axis_config[0], axis_config[1], axis_config[2], axis_config[3], axis_config[4], weights=weights)
+            whitening_func = get_special_encoding_constants_for_axis (dataset, None, axis_config[0], axis_config[1], axis_config[2], axis_config[3], axis_config[4], weights=weights, **kwargs)
     white_dataset = np.array([whitening_func[0](x) for x in dataset])
     return white_dataset, whitening_func
 
@@ -157,16 +168,16 @@ def special_unwhiten_dataset (white_dataset, whitening_funcs, whitening_params) 
 
 #  Return whitened dataset
 #
-def whiten_axes (data, types, axis_configs, whitening_funcs=None, weights=None) :
+def whiten_axes (data, types, axis_configs, whitening_funcs=None, weights=None, **kwargs) :
     white_data, new_whitening_funcs = [], []
     for obs_idx in range(len(types)) :
         if types[obs_idx] == int :
             white_axis, new_whitening_func = data[:,obs_idx], None
         else :
             if type(whitening_funcs) == type(None) :
-                white_axis, new_whitening_func = special_whiten_axis(data[:,obs_idx], axis_configs[obs_idx], weights=weights)
+                white_axis, new_whitening_func = special_whiten_axis(data[:,obs_idx], axis_configs[obs_idx], weights=weights, **kwargs)
             else :
-                white_axis, new_whitening_func = special_whiten_axis(data[:,obs_idx], axis_configs[obs_idx], whitening_func=whitening_funcs[obs_idx], weights=weights)
+                white_axis, new_whitening_func = special_whiten_axis(data[:,obs_idx], axis_configs[obs_idx], whitening_func=whitening_funcs[obs_idx], weights=weights, **kwargs)
         new_whitening_funcs.append(new_whitening_func)
         white_data         .append(white_axis)
     white_data = np.array(white_data).transpose()

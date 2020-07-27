@@ -30,8 +30,8 @@ def add_gauss_mean_offsets (x, num_gauss, offset_min, offset_max):
 #  Brief: tf function for adding offsets to the Gaussian amplitudes, so they start equal
 # 
 def add_gauss_fraction_offsets (x, num_gauss):
-    c = tf.convert_to_tensor([0. for i in range(num_gauss)])
-    return x + c
+    c = tf.convert_to_tensor([1./num_gauss for i in range(num_gauss)])
+    return 0.8*x + 0.2*c
 
 
 #  Brief: tf function for adding offsets to the Gaussian widths, so they are not allowed to collapse to 0
@@ -80,20 +80,22 @@ def create_continuous_density_keras_model (name, **kwargs) :
                 model = LeakyReLU (0.2             )(model)'''
         
     gauss_means     = Dense      (2*num_gaussians )(model      )
-    gauss_means     = LeakyReLU  (0.2             )(gauss_means )
-    gauss_means     = Dense (num_gaussians, activation="linear"  )(gauss_means)
+    gauss_means     = LeakyReLU  (0.2             )(gauss_means)
+    gauss_means     = Dense      (num_gaussians, activation="linear"  )(gauss_means)
     add_initial_mean_offsets = lambda x : add_gauss_mean_offsets(x, num_gaussians, -5, 5)
     gauss_means     = Lambda(add_initial_mean_offsets)(gauss_means)
     
     gauss_sigmas    = Dense      (2*num_gaussians )(model        )
     gauss_sigmas    = LeakyReLU  (0.2             )(gauss_sigmas )
-    gauss_sigmas    = Dense (num_gaussians, activation="softplus")(gauss_sigmas)
+    gauss_sigmas    = Dense      (num_gaussians, activation="softplus")(gauss_sigmas)
     add_sigma_offsets = lambda x : add_gauss_sigma_offsets(x, num_gaussians)
     gauss_sigmas     = Lambda(add_sigma_offsets)(gauss_sigmas)
     
     gauss_fractions = Dense      (2*num_gaussians )(model           )
     gauss_fractions = LeakyReLU  (0.2             )(gauss_fractions )
-    gauss_fractions = Dense (num_gaussians, activation="softmax" )(gauss_fractions)
+    gauss_fractions = Dense      (num_gaussians, activation="softmax" )(gauss_fractions)
+    add_fraction_offsets = lambda x : add_gauss_fraction_offsets(x, num_gaussians)
+    gauss_fractions = Lambda(add_fraction_offsets)(gauss_fractions)
     
     #  Concatenate model output
     #
@@ -528,6 +530,7 @@ class DensityModel :
             else : batch_size = batch_size_per_observable
             train_data_Y = train_data_obs[:,observable_idx]
             start_time = time.time()
+            #print(" ".join([f"{c:.1f}" for c in train_data_cond[:1000]]))   # check that data is shuffled properly
             self.likelihood_models[observable_idx].fit(train_data_X,
                                                        train_data_Y,
                                                        sample_weight    = train_data_weights,

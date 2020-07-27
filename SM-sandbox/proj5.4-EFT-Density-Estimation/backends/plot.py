@@ -140,8 +140,8 @@ def bin_data_2D (data_x, data_y, bins_x, bins_y, weights=None, normed=True) :
 def get_ratio_1D (data1, data2, bins, weights1=None, weights2=None, as_lines=False) :
     X, Z1, EZ1 = bin_data_1D(data1, bins, weights1, as_lines=as_lines)
     X, Z2, EZ2 = bin_data_1D(data2, bins, weights2, as_lines=as_lines)
-    frac_EZ1 = EZ1 / Z1
-    frac_EZ2 = EZ2 / Z2
+    frac_EZ1  = EZ1 / Z1
+    frac_EZ2  = EZ2 / Z2
     ratio     = Z2 / Z1
     ratio_err = ratio * np.sqrt(frac_EZ1*frac_EZ1 + frac_EZ2*frac_EZ2)
     return X, ratio, ratio_err
