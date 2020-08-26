@@ -52,6 +52,8 @@ def create_continuous_density_keras_model (name, **kwargs) :
     verbose            = bool (kwargs.get("verbose"           , True  ))
     learning_rate      = float(kwargs.get("learning_rate"     , 0.001 ))
     optimiser          = str  (kwargs.get("optimiser"         , "adam"))
+    range_min          = float(kwargs.get("range_min"         , -5.   ))
+    range_max          = float(kwargs.get("range_max"         , 5.    ))
     
     #  Print a status message
     #
@@ -60,6 +62,7 @@ def create_continuous_density_keras_model (name, **kwargs) :
         print(f"  - num_conditions_in  is {num_conditions_in}")
         print(f"  - num_observables_in is {num_observables_in}")
         print(f"  - num_gaussians      is {num_gaussians}")
+        print(f"  - range              is {range_min:.4f} - {range_max:.4f}")
     
     #  Create model
     #
@@ -82,7 +85,7 @@ def create_continuous_density_keras_model (name, **kwargs) :
     gauss_means     = Dense      (2*num_gaussians )(model      )
     gauss_means     = LeakyReLU  (0.2             )(gauss_means)
     gauss_means     = Dense      (num_gaussians, activation="linear"  )(gauss_means)
-    add_initial_mean_offsets = lambda x : add_gauss_mean_offsets(x, num_gaussians, -5, 5)
+    add_initial_mean_offsets = lambda x : add_gauss_mean_offsets(x, num_gaussians, range_min, range_max)
     gauss_means     = Lambda(add_initial_mean_offsets)(gauss_means)
     
     gauss_sigmas    = Dense      (2*num_gaussians )(model        )
@@ -271,10 +274,12 @@ class ContinuousDensityModel () :
     
     def __init__ (self, name, **kwargs) :
         self.rebuild(name, **kwargs)
-        
-    def evaluate (self, x, conditional_params, conditional_observables=[]) :
-        gauss_params_list = self.get_gauss_params(conditional_params, conditional_observables)
-        return np.array([get_sum_gauss_density (xp, gauss_params) for xp, gauss_params in zip(x, gauss_params_list)])
+
+    def evaluate (self, conditions, observables, conditional_observables=[]) :
+        ds_size = len(observables)
+        conditions = [conditions for i in range(ds_size)]
+        gauss_params_list = self.get_gauss_params(conditions, conditional_observables)
+        return np.array([get_sum_gauss_density (xp, gauss_params) for xp, gauss_params in zip(observables, gauss_params_list)])
     
     def fit (self, *argv, **kwargs) :
         self.model.fit(*argv, **kwargs)
@@ -362,17 +367,21 @@ class DensityModel :
                                  "num_conditions":self.num_conditions, 
                                  "num_observables":self.num_observables, 
                                  "types":self.types, 
-                                 "int_limits":self.int_limits}
+                                 "int_limits":self.int_limits, 
+                                 "range_limits":self.range_limits}
         likelihood_models = []
         for i in range(build_settings["num_observables"]) :
             model_segment_name = build_settings["name"]+f"_observable{i}"
             if verbose : print("INFO".ljust(8) + "   " + "DensityModel.build".ljust(25) + "   " + f"Building model segment: {model_segment_name} for observable index {i}")
             if self.types[i] == float :
+                range_min, range_max = build_settings.get("range_limits", {}).get(i, [-5., 5.])
                 density_model = ContinuousDensityModel      (model_segment_name,
                                                              num_gaussians      = build_settings["num_gaussians" ] ,
                                                              num_conditions_in  = build_settings["num_conditions"] ,
                                                              num_observables_in = i                                ,
-                                                             verbose            = verbose                          )
+                                                             verbose            = verbose                          ,
+                                                             range_min          = range_min                        ,
+                                                             range_max          = range_max                        )
             elif self.types[i] == int :
                 density_model = DiscreteDensityModel        (model_segment_name,
                                                              minimum            = build_settings["int_limits"][i][0],
@@ -393,8 +402,9 @@ class DensityModel :
         num_observables = kwargs.get("num_observables", None )
         types           = kwargs.get("types"          , None )
         int_limits      = kwargs.get("int_limits"     , {}   )
+        range_limits    = kwargs.get("range_limits"   , {}   )   
         verbose         = kwargs.get("verbose"        , True ) 
-        do_build        = kwargs.get("build"          , True )        
+        do_build        = kwargs.get("build"          , True )     
         if (type(name)            == type(None)) and (hasattr(self, "name"           )) :
             if verbose      : print(f"No name argument provided - using stored value")
             name            = self.name
@@ -431,14 +441,18 @@ class DensityModel :
         self.num_conditions  = num_conditions
         self.num_observables = num_observables
         self.int_limits      = int_limits
+        self.range_limits    = range_limits
         self.types           = types
         if do_build is False : return
         self.build(verbose=verbose)
-    def evaluate (self, conditions, *observables) :
-        num_observables = len(observables)
-        density = self.likelihood_models[0].evaluate(observables[0], [conditions])
+    def evaluate (self, conditions, observables) :
+        num_observables = observables.shape[1]
+        if len(observables.shape) == 1 :
+            observables = observables.copy()
+            observables.reshape(len(observables), 1)
+        density = self.likelihood_models[0].evaluate(conditions, observables[:,0])
         for obs_idx in range(1, num_observables) :
-            density = density * self.likelihood_models[obs_idx].evaluate(observables[obs_idx], [conditions], observables[:obs_idx])
+            density = density * self.likelihood_models[obs_idx].evaluate(conditions, observables[:,obs_idx], observables[:,:obs_idx])
         return density
     def fit (self, dataset, weights=None, **kwargs) :                                     
         #  Parse settings
@@ -545,6 +559,15 @@ class DensityModel :
         ret = cls(name="dflt", num_gaussians=2, num_observables=1, num_conditions=1, do_build=False, verbose=verbose)
         ret.load_from_dir(dirname)
         return ret
+
+    def get_NLL (self, params, dataset, weights=None) :
+        num_observables = dataset.shape[1]
+        params          = np.full(fill_value=params, shape=dataset[:,0].shape)
+        NLL             = self.likelihood_models[0].model.evaluate(params, dataset[:,0], sample_weight=weights, verbose=0)
+        for obs_idx in range(1, num_observables) :
+            NLL = NLL + self.likelihood_models[obs_idx].model.evaluate([params, dataset[:,:obs_idx]], dataset[:,0], sample_weight=weights, verbose=0)
+        return NLL
+
     def load_from_dir (self, dirname) :
         pfile_name = dirname + "/density_model.pickle"
         to_load = pickle.load(open(pfile_name, "rb"))
@@ -558,6 +581,7 @@ class DensityModel :
         self.num_observables   = to_load ["num_observables"  ]
         self.types             = to_load ["types"            ]
         self.int_limits        = to_load ["int_limits"       ]
+        self.range_limits      = to_load.get ("range_limits", [-5, 5])
         self.build (build_settings=build_settings, verbose=False)
         for idx, (likelihood_model, model_fname) in enumerate(zip(self.likelihood_models, to_load["model_files"])) :
             likelihood_model.model.load_weights(model_fname)
