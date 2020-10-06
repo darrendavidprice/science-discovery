@@ -11,6 +11,7 @@ import pickle, time
 import numpy as np
 import tensorflow as tf
 
+from   keras.activations import softplus
 from   keras.layers      import BatchNormalization, Dense, Dropout, Input, LeakyReLU, Concatenate, Lambda, Reshape, Softmax
 from   keras.models      import Model
 from   keras.optimizers  import Adam, SGD, Adadelta
@@ -18,6 +19,11 @@ from   keras.callbacks   import EarlyStopping
 import keras.backend     as     K
 
 from .utils import joint_shuffle, make_sure_dir_exists_for_filename
+
+
+#  Configurable constants
+#
+Gauss_width_reduction_factor = 8.
 
 
 #  Brief: tf function for adding offsets to the Gaussian means, so they start equally spaced (not all at 0)
@@ -38,6 +44,16 @@ def add_gauss_fraction_offsets (x, num_gauss):
 # 
 def add_gauss_sigma_offsets (x, num_gauss):
     c = tf.convert_to_tensor([1e-4 for i in range(num_gauss)])
+    return x + c
+
+
+#  Brief: tf function for initialising the Gaussian widths, so we control the starting conditions
+# 
+def add_gauss_sigma_offsets2 (x, num_gauss, offset_min, offset_max):
+    offset_range = float(offset_max - offset_min)
+    target_width = offset_range / num_gauss / Gauss_width_reduction_factor
+    offset       = float(np.log(np.exp(target_width) - 1))
+    c = tf.convert_to_tensor([offset for i in range(num_gauss)])
     return x + c
 
 
@@ -88,11 +104,18 @@ def create_continuous_density_keras_model (name, **kwargs) :
     add_initial_mean_offsets = lambda x : add_gauss_mean_offsets(x, num_gaussians, range_min, range_max)
     gauss_means     = Lambda(add_initial_mean_offsets)(gauss_means)
     
-    gauss_sigmas    = Dense      (2*num_gaussians )(model        )
-    gauss_sigmas    = LeakyReLU  (0.2             )(gauss_sigmas )
-    gauss_sigmas    = Dense      (num_gaussians, activation="softplus")(gauss_sigmas)
-    add_sigma_offsets = lambda x : add_gauss_sigma_offsets(x, num_gaussians)
-    gauss_sigmas     = Lambda(add_sigma_offsets)(gauss_sigmas)
+    gauss_sigmas       = Dense      (2*num_gaussians   )(model        )
+    gauss_sigmas       = LeakyReLU  (0.2               )(gauss_sigmas )
+    gauss_sigmas       = Dense      (num_gaussians     )(gauss_sigmas )
+    add_sigma_offsets2 = lambda x : add_gauss_sigma_offsets2(x, num_gaussians, range_min, range_max)
+    gauss_sigmas       = Lambda     (add_sigma_offsets2)(gauss_sigmas )
+
+    lambda_softplus    = lambda x : K.log(1. + K.exp(x))
+    gauss_sigmas       = Lambda     (lambda_softplus   )(gauss_sigmas )
+    #gauss_sigmas       = softplus                       (gauss_sigmas )
+
+    add_sigma_offsets  = lambda x : add_gauss_sigma_offsets(x, num_gaussians)
+    gauss_sigmas       = Lambda     (add_sigma_offsets )(gauss_sigmas )
     
     gauss_fractions = Dense      (2*num_gaussians )(model           )
     gauss_fractions = LeakyReLU  (0.2             )(gauss_fractions )

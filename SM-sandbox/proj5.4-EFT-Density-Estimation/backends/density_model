@@ -1,0 +1,165 @@
+
+
+def K_gauss_prob (x, mean, sigma) :
+    prob = K.exp(-0.5*(x - mean)*(x - mean)/(sigma*sigma)) / K.sqrt(2*np.pi*sigma*sigma)
+    return tf.where(tf.is_nan(prob), 1e-20*tf.ones_like(prob), prob)
+
+
+def K_datapoint_likelihood (x, num_gauss, gauss_fracs, gauss_means, gauss_sigmas) :
+    prob = 0.
+    x = x[:,0]
+    for i in range(num_gauss) :
+        prob = prob + gauss_fracs[:,i] * K_gauss_prob(x, gauss_means[:,i], gauss_sigmas[:,i])
+    return prob
+
+
+def K_datapoint_log_likelihood (x, num_gauss, gauss_fracs, gauss_means, gauss_sigmas) :
+    log_L = K.log(K_datapoint_likelihood(x, num_gauss, gauss_fracs, gauss_means, gauss_sigmas))
+    return tf.where(tf.is_nan(log_L), -1e20*tf.ones_like(log_L), log_L)
+
+
+def K_dataset_mean_likelihood  (x, params, num_gauss) :
+    return K.mean(K_datapoint_likelihood(x, num_gauss, gauss_fracs, gauss_means, gauss_sigmas))  
+
+
+def K_dataset_likelihood (x, params, num_gauss) :
+    prod_L = K.prod(K_datapoint_likelihood(x, num_gauss, gauss_fracs, gauss_means, gauss_sigmas))  
+    return tf.where(tf.is_nan(prod_L), tf.zeros_like(prod_L), prod_L)
+        
+
+def K_dataset_mean_log_likelihood (x, params, num_gauss) :
+    gauss_fracs, gauss_means, gauss_sigmas = params[:,:num_gauss], params[:,num_gauss:2*num_gauss], params[:,2*num_gauss:3*num_gauss]
+    return K.mean(K_datapoint_log_likelihood(x, num_gauss, gauss_fracs, gauss_means, gauss_sigmas))    
+    
+    
+def add_gauss_mean_offsets (x, num_gauss, offset_min, offset_max):
+    c = tf.convert_to_tensor([offset_min + (offset_max-offset_min)*i/(num_gauss-1.) for i in range(num_gauss)])
+    return x + c
+
+
+def add_gauss_fraction_offsets (x, num_gauss):
+    c = tf.convert_to_tensor([0. for i in range(num_gauss)])
+    return x + c
+
+
+def add_gauss_sigma_offsets (x, num_gauss):
+    c = tf.convert_to_tensor([1e-4 for i in range(num_gauss)])
+    return x + c
+
+
+def create_continuous_density_keras_model (name, **kwargs) :
+    #  Parse arguments
+    #
+    num_conditions_in  = int (kwargs.get("num_conditions_in"    ))
+    num_observables_in = int (kwargs.get("num_observables_in", 0))
+    num_gaussians      = int (kwargs.get("num_gaussians"     , 5))
+    verbose            = bool(kwargs.get("verbose" , True))
+    
+    #  Print a status message
+    #
+    if verbose : 
+        print(f"Creating continuous density model: {name}")
+        print(f"  - num_conditions_in  is {num_conditions_in}")
+        print(f"  - num_observables_in is {num_observables_in}")
+        print(f"  - num_gaussians      is {num_gaussians}")
+    
+    #  Create model
+    #
+    #  Format Gaussian means so they start equally placed, 
+    #       sigmas so they are positive nonzero, and fractions so they sum to one
+    #
+    conditions_input  = Input((num_conditions_in ,))
+    model_conditions  = Dense      (5 + 2*num_conditions_in)(conditions_input ) 
+    model_conditions  = LeakyReLU  (0.2)(model_conditions )
+    if num_observables_in > 0 :
+        observables_input = Input((num_observables_in,))
+        model_observables = Dense      (3*num_observables_in)(observables_input)    
+        model_observables = LeakyReLU  (0.2                 )(model_observables)
+        model             = Concatenate(   )([model_conditions, model_observables])
+    else :
+        model = model_conditions
+        
+    gauss_means     = Dense      (2*num_gaussians )(model      )
+    gauss_means     = LeakyReLU  (0.2             )(gauss_means )
+    gauss_means     = Dense (num_gaussians, activation="linear"  )(gauss_means)
+    add_initial_mean_offsets = lambda x : add_gauss_mean_offsets(x, num_gaussians, -5, 5)
+    gauss_means     = Lambda(add_initial_mean_offsets)(gauss_means)
+    
+    gauss_sigmas    = Dense      (2*num_gaussians )(model        )
+    gauss_sigmas    = LeakyReLU  (0.2             )(gauss_sigmas )
+    gauss_sigmas    = Dense (num_gaussians, activation="softplus")(gauss_sigmas)
+    add_sigma_offsets = lambda x : add_gauss_sigma_offsets(x, num_gaussians)
+    gauss_sigmas     = Lambda(add_sigma_offsets)(gauss_sigmas)
+    
+    gauss_fractions = Dense      (2*num_gaussians )(model           )
+    gauss_fractions = LeakyReLU  (0.2             )(gauss_fractions )
+    gauss_fractions = Dense (num_gaussians, activation="softmax" )(gauss_fractions)
+    
+    #  Concatenate model output
+    #
+    model             = Concatenate()([gauss_fractions, gauss_means, gauss_sigmas])
+    if num_observables_in > 0 : model = Model ([conditions_input, observables_input], model, name=name)
+    else                      : model = Model (conditions_input, model, name=name)
+    
+    #  Compile model
+    #
+    loss_function = lambda y_true, y_pred : -1. * K_dataset_mean_log_likelihood (y_true, y_pred, num_gaussians)
+    model.compile(loss=loss_function, optimizer=Adam())    
+    if verbose : model.summary()
+     
+    #  Return model
+    #   
+    return model, (num_conditions_in, num_observables_in, num_gaussians)
+
+
+def create_discrete_density_keras_model (name, **kwargs) :
+    #  Parse arguments
+    #
+    num_conditions_in  = int (kwargs.get("num_conditions_in"    ))
+    num_observables_in = int (kwargs.get("num_observables_in", 0))
+    num_outputs        = int (kwargs.get("num_outputs"       , 5))
+    verbose            = bool(kwargs.get("verbose" , True))
+    
+    #  Print a status message
+    #
+    if verbose : 
+        print(f"Creating discrete density model: {name}")
+        print(f"  - num_conditions_in  is {num_conditions_in}")
+        print(f"  - num_observables_in is {num_observables_in}")
+        print(f"  - num_outputs        is {num_outputs}")
+    
+    #  Create model layers
+    #     output layer must sum to one
+    #
+    conditions_input  = Input((num_conditions_in ,))
+    model_conditions  = Dense      (5 + 2*num_conditions_in)(conditions_input ) 
+    model_conditions  = LeakyReLU  (0.2)(model_conditions )
+    if num_observables_in > 0 :
+        observables_input = Input((num_observables_in,))
+        model_observables = Dense      (3*num_observables_in)(observables_input)    
+        model_observables = LeakyReLU  (0.2                 )(model_observables)
+        model             = Concatenate(   )([model_conditions, model_observables])
+    else :
+        model = model_conditions
+    model = Dense      (3*num_outputs)(model)
+    model = LeakyReLU  (0.2          )(model)
+    model = Dense      (2*num_outputs)(model)
+    model = LeakyReLU  (0.2          )(model)
+    
+    #normalise_to_unity = lambda x : x / K.sum(x)
+    model = Dense (num_outputs, activation="softmax" )(model)
+    #model = Lambda(normalise_to_unity                )(model)
+    
+    #  Compile model
+    #
+    if num_observables_in > 0 : model = Model ([conditions_input, observables_input], model, name=name)
+    else                      : model = Model (conditions_input, model, name=name)
+    #loss_function = lambda y_true, y_pred : -1. * K.sum(y_true*y_pred)
+    model.compile(loss="categorical_crossentropy", optimizer=Adam())    
+    if verbose : model.summary()
+     
+    #  Return model
+    #   
+    return model, (num_conditions_in, num_observables_in, num_outputs)
+
+

@@ -91,23 +91,23 @@ def assert_good_bins_format (bins) :
 #  Bin data in 1 dimension
 #
 def bin_data_1D (data, bins, weights=None, as_lines=False, normed=True) :
-    if type(bins   ) == int        : bins = np.linspace(np.min(data), np.max(data), bins+1)
-    if type(data   ) != np.ndarray : data = np.array(data)
+    if type(bins   ) == int        : bins    = np.linspace(np.min(data), np.max(data), bins+1)
+    if type(data   ) != np.ndarray : data    = np.array(data)
     if type(weights) == type(None) : weights = np.ones(shape=data.shape)
     if normed : weights = weights / np.sum(weights)
     assert len(data) == len(weights)
     assert_good_bins_format(bins)
     z , _ = np.histogram(data, bins=bins, weights=weights, density=False)
     ez, _ = np.histogram(data, bins=bins, weights=weights*weights, density=False)
-    ez = np.sqrt(ez)
+    ez    = np.sqrt(ez)
     if not as_lines :
-        return 0.5 * ( bins[:-1] + bins[0:] ), z, ez
+        return 0.5 * ( bins[:-1] + bins[1:] ), z, ez
     X, Z, EZ = [], [], []
     if as_lines :
         for zp in z :
             Z .append(zp)
             Z .append(zp)
-        for ezp in z :
+        for ezp in ez :
             EZ.append(ezp)
             EZ.append(ezp)
         for i in range(len(bins)-1) :
@@ -137,9 +137,9 @@ def bin_data_2D (data_x, data_y, bins_x, bins_y, weights=None, normed=True) :
 
 #  Get 1D ratio between two histograms
 #
-def get_ratio_1D (data1, data2, bins, weights1=None, weights2=None, as_lines=False) :
-    X, Z1, EZ1 = bin_data_1D(data1, bins, weights1, as_lines=as_lines)
-    X, Z2, EZ2 = bin_data_1D(data2, bins, weights2, as_lines=as_lines)
+def get_ratio_1D (data1, data2, bins, weights1=None, weights2=None, as_lines=False, normed=True) :
+    X, Z1, EZ1 = bin_data_1D(data1, bins, weights1, as_lines=as_lines, normed=normed)
+    X, Z2, EZ2 = bin_data_1D(data2, bins, weights2, as_lines=as_lines, normed=normed)
     frac_EZ1  = EZ1 / Z1
     frac_EZ2  = EZ2 / Z2
     ratio     = Z2 / Z1
@@ -299,8 +299,6 @@ def plot_pull (data_num, data_den, weights_num=None, weights_den=None, keys=None
                 if col_idx == num_observables - 1 :
                     plt.colorbar(im, ax=ax)
                 #cf = ax.contourf(data_x, data_y, data_z, levels=np.linspace(-5., 5., 51), cmap="bwr") #, color=["darkred", "red", "salmon", "gold", "green", "darkgreen", "azure", "blue", "darkblue"])
-                if col_idx == num_observables - 1 :
-                    plt.colorbar(im, ax=ax)
     plt.subplots_adjust(left=0.01, right=0.99, top=0.99, bottom=0.01, hspace=0.4, wspace=0.4)
     if len(save) > 0 :
         plt.savefig(save, bbox_inches="tight")
