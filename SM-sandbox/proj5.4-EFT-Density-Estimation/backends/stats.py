@@ -93,7 +93,7 @@ def get_special_encoding_constants_for_axis (dataset, axis, axmin, axmax, ax_npo
     whitened_func_form = kwargs.get("func_form", "gaus")
     if whitened_func_form == "step" :
         alpha, beta, gamma = kwargs.get("alpha", 3), kwargs.get("beta", 2), kwargs.get("gamma", 0)
-        white_space_x   = np.linspace(-5, 5, 201)
+        white_space_x   = np.linspace(-6, 6, 241)
         Smooth_step_y   = 1. / (1 + np.exp((white_space_x-beta)*alpha-gamma)) / (1 + np.exp(-(white_space_x+beta)*alpha-gamma))
         Smooth_step_cdf = np.array([np.sum(Smooth_step_y[:i+1]) for i in range(len(Smooth_step_y))])
         Smooth_step_cdf = Smooth_step_cdf / Smooth_step_cdf[-1]
@@ -101,7 +101,7 @@ def get_special_encoding_constants_for_axis (dataset, axis, axmin, axmax, ax_npo
         constant_cdf    = (white_space_x + 5.) / 10.
         white_space_cdf = gauss_frac_constant*constant_cdf + (1-gauss_frac_constant)*Smooth_step_cdf
     else :
-        white_space_x   = np.linspace(-5, 5, 201)
+        white_space_x   = np.linspace(-6, 6, 241)
         Gauss_cdf       = stats.norm.cdf(white_space_x)
         Gauss_cdf[0], Gauss_cdf[-1] = 0., 1.
         constant_cdf    = (white_space_x + 5.) / 10.
@@ -121,8 +121,10 @@ def get_special_encoding_constants_for_axis (dataset, axis, axmin, axmax, ax_npo
 
 #  Brief:  Whiten a dataset (using the "special" hard-boundary smoothing method)
 #
-def special_whiten_axis (dataset, axis_config, whitening_func=None, weights=None, **kwargs) :
+def special_whiten_axis (dataset, axis_config=None, whitening_func=None, weights=None, **kwargs) :
     if type(whitening_func) == type(None) :
+        if type(axis_config) is type(None) :
+            raise TypeError("Argument axis_config must be provided when whitening_func is None")
         if len(axis_config) == 4 :
             whitening_func = get_special_encoding_constants_for_axis (dataset, None, axis_config[0], axis_config[1], axis_config[2], axis_config[3], 0., weights=weights, **kwargs)
         else :
@@ -168,9 +170,12 @@ def special_unwhiten_dataset (white_dataset, whitening_funcs, whitening_params) 
 
 #  Return whitened dataset
 #
-def whiten_axes (data, types, axis_configs, whitening_funcs=None, weights=None, **kwargs) :
+def whiten_axes (data, types, axis_configs=None, whitening_funcs=None, weights=None, **kwargs) :
     white_data, new_whitening_funcs = [], []
-    for obs_idx in range(len(types)) :
+    num_observables = len(types)
+    if type(axis_configs) == type(None) :
+        axis_configs = [None for i in range(num_observables)]
+    for obs_idx in range(num_observables) :
         if types[obs_idx] == int :
             white_axis, new_whitening_func = data[:,obs_idx], None
         else :

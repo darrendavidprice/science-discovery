@@ -50,12 +50,12 @@ def plot_data (observables, weights=None, keys=None, cuts=[], save="", lims=True
         row_lims = observable_limits[row_obs]
         if row_obs in int_observables : row_bins = np.linspace(row_lims[0]-0.5, row_lims[1]+0.5, 2+(row_lims[1]-row_lims[0]))
         else                          : row_bins = np.linspace(row_lims[0], row_lims[1], bins+1)
-        if not lims : row_bins = np.linspace(-5, 5, bins+1)
+        if not lims : row_bins = np.linspace(-6, 6, bins+1)
         for col_idx, col_obs in enumerate(keys) :
             col_lims = observable_limits[col_obs]
             if col_obs in int_observables : col_bins = np.linspace(col_lims[0]-0.5, col_lims[1]+0.5, 2+(col_lims[1]-col_lims[0]))
             else                          : col_bins = np.linspace(col_lims[0], col_lims[1], bins+1)
-            if not lims : col_bins = np.linspace(-5, 5, bins+1)
+            if not lims : col_bins = np.linspace(-6, 6, bins+1)
             ax = fig.add_subplot(num_observables, num_observables, row_idx*num_observables + col_idx + 1)
             if row_idx == 0 :
                 ax.set_title(col_obs, weight="bold", fontsize=12)
@@ -209,12 +209,12 @@ def plot_ratio (data_num, data_den, weights_num=None, weights_den=None, keys=Non
         row_lims = observable_limits[row_obs]
         if row_obs in int_observables : row_bins = np.linspace(row_lims[0]-0.5, row_lims[1]+0.5, 2+(row_lims[1]-row_lims[0]))
         else                          : row_bins = np.linspace(row_lims[0], row_lims[1], bins+1)
-        if not lims : row_bins = np.linspace(-5, 5, bins+1)
+        if not lims : row_bins = np.linspace(-6, 6, bins+1)
         for col_idx, col_obs in enumerate(keys) :
             col_lims = observable_limits[col_obs]
             if col_obs in int_observables : col_bins = np.linspace(col_lims[0]-0.5, col_lims[1]+0.5, 2+(col_lims[1]-col_lims[0]))
             else                          : col_bins = np.linspace(col_lims[0], col_lims[1], bins+1)
-            if not lims : col_bins = np.linspace(-5, 5, bins+1)   
+            if not lims : col_bins = np.linspace(-6, 6, bins+1)   
             ax = fig.add_subplot(num_observables, num_observables, row_idx*num_observables + col_idx + 1)
             if row_idx == 0 :
                 ax.set_title(col_obs, weight="bold", fontsize=12)
@@ -269,12 +269,12 @@ def plot_pull (data_num, data_den, weights_num=None, weights_den=None, keys=None
         row_lims = observable_limits[row_obs]
         if row_obs in int_observables : row_bins = np.linspace(row_lims[0]-0.5, row_lims[1]+0.5, 2+(row_lims[1]-row_lims[0]))
         else                          : row_bins = np.linspace(row_lims[0], row_lims[1], bins+1)
-        if not lims : row_bins = np.linspace(-5, 5, bins+1)
+        if not lims : row_bins = np.linspace(-6, 6, bins+1)
         for col_idx, col_obs in enumerate(keys) :
             col_lims = observable_limits[col_obs]
             if col_obs in int_observables : col_bins = np.linspace(col_lims[0]-0.5, col_lims[1]+0.5, 2+(col_lims[1]-col_lims[0]))
             else                          : col_bins = np.linspace(col_lims[0], col_lims[1], bins+1)
-            if not lims : col_bins = np.linspace(-5, 5, bins+1)   
+            if not lims : col_bins = np.linspace(-6, 6, bins+1)   
             ax = fig.add_subplot(num_observables, num_observables, row_idx*num_observables + col_idx + 1)
             if row_idx == 0 :
                 ax.set_title(col_obs, weight="bold", fontsize=12)
