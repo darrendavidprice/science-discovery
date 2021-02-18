@@ -91,20 +91,21 @@ def get_special_encoding_constants_for_axis (dataset, axis, axmin, axmax, ax_npo
     combined_cdf = data_frac_constant*constant_cdf + (1-data_frac_constant)*data_cdf
 
     whitened_func_form = kwargs.get("func_form", "gaus")
+    u_lim, u_div       = kwargs.get("u_lim", 5), kwargs.get("u_div", 0.05)
     if whitened_func_form == "step" :
         alpha, beta, gamma = kwargs.get("alpha", 3), kwargs.get("beta", 2), kwargs.get("gamma", 0)
-        white_space_x   = np.linspace(-6, 6, 241)
+        white_space_x   = np.linspace(-u_lim, u_lim, 1+int(2*u_lim/u_div))
         Smooth_step_y   = 1. / (1 + np.exp((white_space_x-beta)*alpha-gamma)) / (1 + np.exp(-(white_space_x+beta)*alpha-gamma))
         Smooth_step_cdf = np.array([np.sum(Smooth_step_y[:i+1]) for i in range(len(Smooth_step_y))])
         Smooth_step_cdf = Smooth_step_cdf / Smooth_step_cdf[-1]
         Smooth_step_cdf[0] = 0.
-        constant_cdf    = (white_space_x + 5.) / 10.
+        constant_cdf    = (white_space_x + u_lim) / (2*u_lim)
         white_space_cdf = gauss_frac_constant*constant_cdf + (1-gauss_frac_constant)*Smooth_step_cdf
     else :
-        white_space_x   = np.linspace(-6, 6, 241)
+        white_space_x   = np.linspace(-u_lim, u_lim, 1+int(2*u_lim/u_div))
         Gauss_cdf       = stats.norm.cdf(white_space_x)
         Gauss_cdf[0], Gauss_cdf[-1] = 0., 1.
-        constant_cdf    = (white_space_x + 5.) / 10.
+        constant_cdf    = (white_space_x + u_lim) / (2*u_lim)
         white_space_cdf = gauss_frac_constant*constant_cdf + (1-gauss_frac_constant)*Gauss_cdf 
         
     A_to_z = lambda A : np.interp(A, ax_scan_points, combined_cdf  )

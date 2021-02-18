@@ -44,11 +44,11 @@ def add_gauss_mean_offsets (x, num_gauss, offset_min, offset_max):
     return x + c
 
 
-#  Brief: tf function for adding offsets to the Gaussian amplitudes, so they do not approach 0
+#  Brief: tf function for adding offsets to the Gaussian amplitudes, so they start equal
 # 
-def add_gauss_fraction_offsets (x, num_gauss, const_frac=0.2) :
+def add_gauss_fraction_offsets (x, num_gauss):
     c = tf.convert_to_tensor([1./num_gauss for i in range(num_gauss)])
-    return (1.-const_frac)*x + const_frac*c
+    return 0.8*x + 0.2*c
 
 
 #  Brief: tf function for adding offsets to the Gaussian widths, so they are not allowed to collapse to 0
@@ -73,100 +73,27 @@ def add_gauss_sigma_offsets2 (x, num_gauss, offset_min, offset_max):
 def create_continuous_density_keras_model (name, **kwargs) :
     #  Parse arguments
     #
-    num_conditions_in        = int  (kwargs.get("num_conditions_in"                   ))
-    num_observables_in       = int  (kwargs.get("num_observables_in", 0               ))
-    num_gaussians            = int  (kwargs.get("num_gaussians"     , 5               ))
-    verbose                  = bool (kwargs.get("verbose"           , True            ))
-    learning_rate            = float(kwargs.get("learning_rate"     , 0.001           ))
-    optimiser                = str  (kwargs.get("optimiser"         , "adam"          ))
-    activation               = str  (kwargs.get("activation"        , "leakyrelu"     ))
-    range_min                = float(kwargs.get("range_min"         , -5.             ))
-    range_max                = float(kwargs.get("range_max"         , 5.              ))
-    transform_min            = float(kwargs.get("transform_min"     , -2.             ))
-    transform_max            = float(kwargs.get("transform_max"     , 2.              ))
-    min_gauss_amplitude_frac = float(kwargs.get("min_gauss_amplitude_frac", 0.2       ))
-    #kernel_initializer       = kwargs.get("kernel_initializer", "glorot_uniform")
-    bias_initializer         = kwargs.get("bias_initializer"  , "zeros"         )
-    condition_limits         = kwargs.get("condition_limits"  , None            )
-    observables_limits       = [[-5., 5.] for i in range(num_observables_in)]
-
-    #  Network configuration
-    #
-    A1, A2 = int(kwargs.get("A1", 5)), int(kwargs.get("A2", 2))
-    B1, B2 = int(kwargs.get("B1", 0)), int(kwargs.get("B2", 3))
-    C      = int(kwargs.get("C" , 0))
-    D2     = int(kwargs.get("D2", 2))
-
-    #  What constants to scale the output layers by (smaller number  = smaller initial perturbations)
-    #
-    gauss_frac_scale  = float(kwargs.get("gauss_frac_scale" , 1. / 16.))
-    gauss_mean_scale  = float(kwargs.get("gauss_mean_scale" , 1. / 16.))
-    gauss_sigma_scale = float(kwargs.get("gauss_sigma_scale", 1. / 16.))
-
-    #  If condition_limits provided, we want to transform the condition inputs, so we should make sure the input has the correct format
-    #
-    do_transform_conditions = False
-    if type(condition_limits) != type(None) :
-        do_transform_conditions = True
-        transform_range = transform_max - transform_min
-        assert len(condition_limits) == num_conditions_in, f"{condition_limits} expected to have shape [{num_conditions_in}, 2]"
-        assert transform_range > 0, f"Transform range transform_max - transform_min = {transform_max} - {transform_min} = {transform_range} must be > 0"
-        for row_idx, row in enumerate(condition_limits) :
-            assert len(row) == 2, f"condition_limits row index {row_idx} is {row} where object of length 2 expected"
-            assert row[1] >= row[0], f"condition_limits row index {row_idx} is {row} expected upper limit >= lower limit"
-            if verbose :
-                print(f"Projecting row index {row_idx} from interval {row} onto [{transform_min}, {transform_max}]")
-        def transform_conditions (x) :    # x shape is (None, num_conditions_in)
-            cond_ranges = [(row[1]-row[0]) for row in condition_limits]
-            cond_ranges = np.array([r if r > 0 else 1 for r in cond_ranges])
-            out_min     = tf.constant([transform_min if row[1]>row[0] else 0.5*(transform_min+transform_max) for row in condition_limits])
-            out_scale   = tf.constant([transform_range/row_range for row_range in cond_ranges])
-            in_min      = tf.constant([row[0] for row in condition_limits])
-            return out_min + ((x - in_min)*out_scale)
-
-    #  If observables_limits provided, we want to transform the observables inputs, so we should make sure the input has the correct format
-    #
-    do_transform_observables = False
-    if type(observables_limits) != type(None) :
-        do_transform_observables = True
-        transform_range = transform_max - transform_min
-        assert len(observables_limits) == num_observables_in, f"{observables_limits} expected to have shape [{num_observables_in}, 2]"
-        assert transform_range > 0, f"Transform range transform_max - transform_min = {transform_max} - {transform_min} = {transform_range} must be > 0"
-        for row_idx, row in enumerate(observables_limits) :
-            assert len(row) == 2, f"observables_limits row index {row_idx} is {row} where object of length 2 expected"
-            assert row[1] >= row[0], f"observables_limits row index {row_idx} is {row} expected upper limit >= lower limit"
-            if verbose :
-                print(f"Projecting row index {row_idx} from interval {row} onto [{transform_min}, {transform_max}]")
-        def transform_observables (x) :    # x shape is (None, num_conditions_in)
-            cond_ranges = [(row[1]-row[0]) for row in observables_limits]
-            cond_ranges = np.array([r if r > 0 else 1 for r in cond_ranges])
-            out_min     = tf.constant([transform_min if row[1]>row[0] else 0.5*(transform_min+transform_max) for row in observables_limits])
-            out_scale   = tf.constant([transform_range/row_range for row_range in cond_ranges])
-            in_min      = tf.constant([row[0] for row in observables_limits])
-            return out_min + ((x - in_min)*out_scale)
+    num_conditions_in   = int  (kwargs.get("num_conditions_in"                   ))
+    num_observables_in  = int  (kwargs.get("num_observables_in", 0               ))
+    num_gaussians       = int  (kwargs.get("num_gaussians"     , 5               ))
+    verbose             = bool (kwargs.get("verbose"           , True            ))
+    learning_rate       = float(kwargs.get("learning_rate"     , 0.001           ))
+    optimiser           = str  (kwargs.get("optimiser"         , "adam"          ))
+    range_min           = float(kwargs.get("range_min"         , -5.             ))
+    range_max           = float(kwargs.get("range_max"         , 5.              ))
+    kernel_initializer  = kwargs.get("kernel_initializer", "glorot_uniform")
+    bias_initializer    = kwargs.get("bias_initializer"  , "zeros"         )
     
     #  Print a status message
     #
     if verbose : 
         print(f"Creating continuous density model: {name}")
-        print(f"  - num_conditions_in        is {num_conditions_in}")
-        print(f"  - num_observables_in       is {num_observables_in}")
-        print(f"  - num_gaussians            is {num_gaussians}")
-        print(f"  - range                    is {range_min:.4f} - {range_max:.4f}")
-        #print(f"  - kernel_initializer       is {kernel_initializer}")
-        print(f"  - bias_initializer         is {bias_initializer}")
-        print(f"  - min_gauss_amplitude_frac is {min_gauss_amplitude_frac}")
-        print(f"  - optimiser                is {optimiser}")
-        print(f"  - learning_rate            is {learning_rate}")
-        print(f"  - activation               is {activation}")
-        print(f"  - gauss_frac_scale         is {gauss_frac_scale}")
-        print(f"  - gauss_mean_scale         is {gauss_mean_scale}")
-        print(f"  - gauss_sigma_scale        is {gauss_sigma_scale}")
-
-    use_leaky_relu = False
-    if activation.lower() == "leakyrelu" :
-        activation     = "linear"
-        use_leaky_relu = True
+        print(f"  - num_conditions_in  is {num_conditions_in}")
+        print(f"  - num_observables_in is {num_observables_in}")
+        print(f"  - num_gaussians      is {num_gaussians}")
+        print(f"  - range              is {range_min:.4f} - {range_max:.4f}")
+        print(f"  - kernel_initializer is {kernel_initializer}")
+        print(f"  - bias_initializer   is {bias_initializer}")
     
     #  Create model
     #
@@ -174,59 +101,46 @@ def create_continuous_density_keras_model (name, **kwargs) :
     #       sigmas so they are positive nonzero, and fractions so they sum to one
     #
     conditions_input  = Input((num_conditions_in ,))
-    model_conditions  = conditions_input
-    if do_transform_conditions : 
-        model_conditions = Lambda(transform_conditions)(model_conditions)
-    model_conditions  = Dense      (A1 + A2*num_conditions_in, kernel_initializer=custom_weight_init_type1, bias_initializer=bias_initializer, activation=activation)(model_conditions) 
-    if use_leaky_relu : 
-        model_conditions  = LeakyReLU (0.2)(model_conditions )
+    model_conditions  = Dense      (5 + 2*num_conditions_in, kernel_initializer=kernel_initializer, bias_initializer=bias_initializer)(conditions_input) 
+    model_conditions  = LeakyReLU  (0.2                    )(model_conditions )
     if num_observables_in > 0 :
         observables_input = Input((num_observables_in,))
-        model_observables = observables_input
-        if do_transform_observables : 
-            model_observables = Lambda(transform_observables)(model_observables)
-        model_observables = Dense      (B1 + B2*num_observables_in, kernel_initializer=custom_weight_init_type1, bias_initializer=bias_initializer, activation=activation)(model_observables)    
-        if use_leaky_relu : model_observables = LeakyReLU (0.2)(model_observables)
+        #
+        #  overwriting kernel initialiation to reduce initial fluctuations coming from prior observables
+        #
+        initial_weight_limits = 0.1 * np.sqrt(1.5 / num_observables_in)
+        special_kernel_init   = tf.keras.initializers.RandomUniform(minval=-initial_weight_limits, maxval=initial_weight_limits)
+        model_observables = Dense      (3*num_observables_in, kernel_initializer=special_kernel_init, bias_initializer=bias_initializer)(observables_input)    
+        model_observables = LeakyReLU  (0.2                 )(model_observables)
         model             = Concatenate()([model_conditions, model_observables])
     else :
         model = model_conditions
-
-    for c in range(C) :
-        model = Dense     (A1 + A2*num_conditions_in + B1 + B2*num_observables_in, activation=activation)(model)
-        if use_leaky_relu : model = LeakyReLU (0.2)(model)
+    '''model = Dense     (10*num_gaussians)(model)
+                model = LeakyReLU (0.2             )(model)'''
         
-    #  Calculate Gaussian means
-    #
-    gauss_means     = Dense      (D2*num_gaussians, kernel_initializer=custom_weight_init_type2, bias_initializer=bias_initializer, activation=activation)(model)
-    if use_leaky_relu : gauss_means = LeakyReLU (0.2)(gauss_means)
-    gauss_means     = Dense      (num_gaussians, kernel_initializer=custom_weight_init_type2, bias_initializer=bias_initializer, activation="linear")(gauss_means)
-    gauss_means     = Lambda(lambda x : gauss_mean_scale*x)(gauss_means)
+    gauss_means     = Dense      (2*num_gaussians, kernel_initializer=kernel_initializer, bias_initializer=bias_initializer)(model      )
+    gauss_means     = LeakyReLU  (0.2             )(gauss_means)
+    gauss_means     = Dense      (num_gaussians, activation="linear", kernel_initializer=kernel_initializer, bias_initializer=bias_initializer)(gauss_means)
     add_initial_mean_offsets = lambda x : add_gauss_mean_offsets(x, num_gaussians, range_min, range_max)
     gauss_means     = Lambda(add_initial_mean_offsets)(gauss_means)
-      
-    #  Calculate Gaussian widths
-    #
-    gauss_sigmas       = Dense      (D2*num_gaussians   , kernel_initializer=custom_weight_init_type2, bias_initializer=bias_initializer, activation=activation)(model)
-    if use_leaky_relu : gauss_sigmas = LeakyReLU (0.2)(gauss_sigmas )
-    gauss_sigmas       = Dense      (num_gaussians     , kernel_initializer=custom_weight_init_type2, bias_initializer=bias_initializer, activation=activation)(gauss_sigmas )
-    gauss_sigmas       = Lambda(lambda x : gauss_sigma_scale*x)(gauss_sigmas)
+    
+    gauss_sigmas       = Dense      (2*num_gaussians   , kernel_initializer=kernel_initializer, bias_initializer=bias_initializer)(model        )
+    gauss_sigmas       = LeakyReLU  (0.2               )(gauss_sigmas )
+    gauss_sigmas       = Dense      (num_gaussians     , kernel_initializer=kernel_initializer, bias_initializer=bias_initializer)(gauss_sigmas )
     add_sigma_offsets2 = lambda x : add_gauss_sigma_offsets2(x, num_gaussians, range_min, range_max)
     gauss_sigmas       = Lambda     (add_sigma_offsets2)(gauss_sigmas )
 
     lambda_softplus    = lambda x : K.log(1. + K.exp(x))
     gauss_sigmas       = Lambda     (lambda_softplus   )(gauss_sigmas )
+    #gauss_sigmas       = softplus                       (gauss_sigmas )
 
     add_sigma_offsets  = lambda x : add_gauss_sigma_offsets(x, num_gaussians)
     gauss_sigmas       = Lambda     (add_sigma_offsets )(gauss_sigmas )
-      
-    #  Calculate Gaussian fractions
-    #
-    gauss_fractions = Dense      (D2*num_gaussians , kernel_initializer=custom_weight_init_type2, bias_initializer=bias_initializer, activation=activation)(model)
-    if use_leaky_relu : gauss_fractions = LeakyReLU  (0.2)(gauss_fractions)
-    gauss_fractions = Dense      (num_gaussians, kernel_initializer=custom_weight_init_type2, bias_initializer=bias_initializer, activation="linear")(gauss_fractions)
-    gauss_fractions = Lambda(lambda x : gauss_frac_scale*x)(gauss_fractions)
-    gauss_fractions = Softmax() (gauss_fractions)
-    add_fraction_offsets = lambda x : add_gauss_fraction_offsets(x, num_gaussians, min_gauss_amplitude_frac)
+    
+    gauss_fractions = Dense      (2*num_gaussians , kernel_initializer=kernel_initializer, bias_initializer=bias_initializer)(model           )
+    gauss_fractions = LeakyReLU  (0.2             )(gauss_fractions )
+    gauss_fractions = Dense      (num_gaussians, activation="softmax" , kernel_initializer=kernel_initializer, bias_initializer=bias_initializer)(gauss_fractions)
+    add_fraction_offsets = lambda x : add_gauss_fraction_offsets(x, num_gaussians)
     gauss_fractions = Lambda(add_fraction_offsets)(gauss_fractions)
     
     #  Concatenate model output
@@ -353,20 +267,6 @@ def create_evaluator_model_for_density_models (name, model, num_gauss) :
     model.split_evaluator = all_logL
 
 
-#  Brief: custom weight initialiser
-# 
-def custom_weight_init_type1 (shape, dtype=None) :
-    limit = 4. / np.sqrt(shape[0]) / (1 + 0.2)
-    return K.random_uniform(shape, -limit, limit, dtype=dtype)
-
-
-#  Brief: custom weight initialiser
-# 
-def custom_weight_init_type2 (shape, dtype=None) :
-    limit = 3. / np.sqrt(shape[0]) / (1 + 0.2)
-    return K.random_uniform(shape, -limit, limit, dtype=dtype)
-
-
 #  Brief: return the density at position x, given Gaussian parameters params
 # 
 def get_sum_gauss_density (x, params) :
@@ -422,36 +322,11 @@ def K_dataset_log_likelihood (x, params, num_gauss) :
     return K_datapoint_log_likelihood(x, num_gauss, gauss_fracs, gauss_means, gauss_sigmas)
 
 
-#  Brief: keras implemention returning the likelihood for individual datapoints
-# 
-def K_datapoint_likelihood_2 (x, num_gauss, gauss_fracs, gauss_means, gauss_sigmas) :
-    prob = 0.
-    #x = x[:,0]
-    for i in range(num_gauss) :
-        prob = prob + gauss_fracs[:,i] * K_gauss_prob(x, gauss_means[:,i], gauss_sigmas[:,i])
-    return prob
-
-
-#  Brief: keras implemention returning the log likelihood for individual datapoints
-# 
-def K_datapoint_log_likelihood_2 (x, num_gauss, gauss_fracs, gauss_means, gauss_sigmas) :
-    log_L = K.log(K_datapoint_likelihood_2(x, num_gauss, gauss_fracs, gauss_means, gauss_sigmas))
-    return log_L
-    #return tf.where(tf.math.is_nan(log_L), -1e20*tf.ones_like(log_L), log_L)
-        
-
-#  Brief: keras implemention returning the mean log likelihood over a set of datapoints
-# 
-def K_dataset_log_likelihood_2 (x, params, num_gauss) :
-    gauss_fracs, gauss_means, gauss_sigmas = params[:,:num_gauss], params[:,num_gauss:2*num_gauss], params[:,2*num_gauss:3*num_gauss]
-    return K_datapoint_log_likelihood_2(x, num_gauss, gauss_fracs, gauss_means, gauss_sigmas)
-
-
 #  Keras calculation of log-likelihood from a list of inputs, suitable for a keras lambda layer
 #
 def K_get_log_likelihood (inputs, num_gauss) :
     eval_p, params_p = inputs[0], inputs[1]
-    return K_dataset_log_likelihood_2 (eval_p, params_p, num_gauss)
+    return K_dataset_log_likelihood (eval_p, params_p, num_gauss)
 
 
 #  Brief: numpy implemention returning a single Gaussian  probability density
@@ -584,7 +459,7 @@ class DiscreteDensityModel :
 class DensityModel :
     def __init__ (self, **kwargs) :
         self.construct(**kwargs)
-    def build (self, build_settings=None, verbose=True, **kwargs) :
+    def build (self, build_settings=None, verbose=True) :
         if type(build_settings) == type(None) :
             build_settings    = {"name":self.name, 
                                  "num_gaussians":self.num_gaussians, 
@@ -592,8 +467,7 @@ class DensityModel :
                                  "num_observables":self.num_observables, 
                                  "types":self.types, 
                                  "int_limits":self.int_limits, 
-                                 "range_limits":self.range_limits,
-                                 "condition_limits":self.condition_limits}
+                                 "range_limits":self.range_limits}
         likelihood_models = []
         for i in range(build_settings["num_observables"]) :
             model_segment_name = build_settings["name"]+f"_observable{i}"
@@ -601,63 +475,42 @@ class DensityModel :
             if self.types[i] == float :
                 range_min, range_max = build_settings.get("range_limits", {}).get(i, [-5., 5.])
                 density_model = ContinuousDensityModel      (model_segment_name,
-                                                             num_gaussians      = build_settings["num_gaussians" ]      ,
-                                                             num_conditions_in  = build_settings["num_conditions"]      ,
-                                                             num_observables_in = i                                     ,
-                                                             verbose            = verbose                               ,
-                                                             condition_limits   = self.condition_limits                 ,
-                                                             range_min          = range_min                             ,
-                                                             range_max          = range_max                             ,
-                                                             transform_min      = self.transform_min                    ,
-                                                             transform_max      = self.transform_max                    ,
-                                                             kernel_initializer = self.kernel_initializer               ,
-                                                             bias_initializer   = self.bias_initializer                 ,
-                                                             optimiser          = self.optimiser                        ,
-                                                             learning_rate      = self.learning_rate                    ,
-                                                             activation         = self.activation                       ,
-                                                             A1                 = self.A1                               ,
-                                                             A2                 = self.A2                               ,
-                                                             B1                 = self.B1                               ,
-                                                             B2                 = self.B2                               ,
-                                                             C                  = self.C                                ,
-                                                             D2                 = self.D2                               ,
-                                                             gauss_frac_scale   = self.gauss_frac_scale                 ,
-                                                             gauss_mean_scale   = self.gauss_mean_scale                 ,
-                                                             gauss_sigma_scale  = self.gauss_sigma_scale                ,
-                                                             min_gauss_amplitude_frac = self.min_gauss_amplitude_frac   )
+                                                             num_gaussians      = build_settings["num_gaussians" ] ,
+                                                             num_conditions_in  = build_settings["num_conditions"] ,
+                                                             num_observables_in = i                                ,
+                                                             verbose            = verbose                          ,
+                                                             range_min          = range_min                        ,
+                                                             range_max          = range_max                        ,
+                                                             kernel_initializer = self.kernel_initializer          ,
+                                                             bias_initializer   = self.bias_initializer            )
             elif self.types[i] == int :
                 density_model = DiscreteDensityModel        (model_segment_name,
-                                                             minimum            = build_settings["int_limits"][i][0]     ,
-                                                             maximum            = build_settings["int_limits"][i][1]     ,
-                                                             num_conditions_in  = build_settings["num_conditions"]       ,
-                                                             num_observables_in = i                                      ,
-                                                             verbose            = verbose                                ,
-                                                             kernel_initializer = self.kernel_initializer                ,
-                                                             bias_initializer   = self.bias_initializer                  )
+                                                             minimum            = build_settings["int_limits"][i][0],
+                                                             maximum            = build_settings["int_limits"][i][1],
+                                                             num_conditions_in  = build_settings["num_conditions"]  ,
+                                                             num_observables_in = i                                 ,
+                                                             verbose            = verbose                           ,
+                                                             kernel_initializer = self.kernel_initializer           ,
+                                                             bias_initializer   = self.bias_initializer             )
             else :
                 raise TypeError(f"Observable index {i} requested an unrecognised type {self.types[i]}")
             likelihood_models.append(density_model)
         if verbose : print("INFO".ljust(8) + "   " + "DensityModel.build".ljust(25) + "   " + f"{len(likelihood_models)} partial density models constructed")
         self.build_settings    = build_settings
         self.likelihood_models = likelihood_models
-        create_evaluator_model_for_density_models (build_settings["name"]+"_evaluator", self, build_settings["num_gaussians"])
+        #create_evaluator_model_for_density_models (build_settings["name"]+"_evaluator", self, build_settings["num_gaussians"])
     def construct (self, **kwargs) :
-        name               = kwargs.get("name"              , None  )
-        num_gaussians      = kwargs.get("num_gaussians"     , None  )
-        num_conditions     = kwargs.get("num_conditions"    , None  )
-        num_observables    = kwargs.get("num_observables"   , None  )
-        types              = kwargs.get("types"             , None  )
-        int_limits         = kwargs.get("int_limits"        , {}    )
-        range_limits       = kwargs.get("range_limits"      , {}    )
-        condition_limits   = kwargs.get("condition_limits"  , None  )   
-        verbose            = kwargs.get("verbose"           , True  ) 
-        do_build           = kwargs.get("build"             , True  )  
-        learning_rate      = kwargs.get("learning_rate"     , 0.001 )   
-        optimiser          = kwargs.get("optimiser"         , "adam")   
+        name               = kwargs.get("name"           , None )
+        num_gaussians      = kwargs.get("num_gaussians"  , None )
+        num_conditions     = kwargs.get("num_conditions" , None )
+        num_observables    = kwargs.get("num_observables", None )
+        types              = kwargs.get("types"          , None )
+        int_limits         = kwargs.get("int_limits"     , {}   )
+        range_limits       = kwargs.get("range_limits"   , {}   )   
+        verbose            = kwargs.get("verbose"        , True ) 
+        do_build           = kwargs.get("build"          , True )   
         kernel_initializer = kwargs.get("kernel_initializer", "glorot_uniform")
         bias_initializer   = kwargs.get("bias_initializer"  , "zeros"         )
-        activation         = kwargs.get("activation"        , "leakyrelu"     )
-        min_gauss_amplitude_frac = float(kwargs.get("min_gauss_amplitude_frac", 0.2))
         if (type(name)            == type(None)) and (hasattr(self, "name"           )) :
             if verbose      : print(f"No name argument provided - using stored value")
             name            = self.name
@@ -684,44 +537,22 @@ class DensityModel :
         if num_gaussians   < 1 : raise ValueError(f"num_gaussians must be > 0, but {num_gaussians} provided")
         if num_conditions  < 1 : raise ValueError(f"num_conditions must be > 0, but {num_conditions} provided")
         if num_observables < 1 : raise ValueError(f"num_observables must be > 0, but {num_observables} provided")
-        if min_gauss_amplitude_frac < 0. : raise ValueError(f"min_gauss_amplitude_frac must be >= 0, but {min_gauss_amplitude_frac} provided")
-        if min_gauss_amplitude_frac > 1. : raise ValueError(f"min_gauss_amplitude_frac must be <= 1, but {min_gauss_amplitude_frac} provided")
-        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model name              : {name}"           )
-        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_gaussians     : {num_gaussians}"  )
-        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_conditions    : {num_conditions}" )
-        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_observables   : {num_observables}")
-        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set observable types        : {types}")
-        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set kernel_initializer      : {kernel_initializer}")
-        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set bias_initializer        : {bias_initializer}")
-        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set learning_rate           : {learning_rate}")
-        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set optimiser               : {optimiser}")
-        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set activation              : {activation}")
-        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set min_gauss_amplitude_frac: {min_gauss_amplitude_frac}")
-        self.name               = name
-        self.num_gaussians      = num_gaussians
-        self.num_conditions     = num_conditions
-        self.num_observables    = num_observables
-        self.int_limits         = int_limits
-        self.range_limits       = range_limits
-        self.condition_limits   = condition_limits
-        self.types              = types
+        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model name           : {name}"           )
+        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_gaussians  : {num_gaussians}"  )
+        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_conditions : {num_conditions}" )
+        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_observables: {num_observables}")
+        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set observable types     : {types}")
+        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set kernel_initializer   : {kernel_initializer}")
+        print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set bias_initializer     : {bias_initializer}")
+        self.name            = name
+        self.num_gaussians   = num_gaussians
+        self.num_conditions  = num_conditions
+        self.num_observables = num_observables
+        self.int_limits      = int_limits
+        self.range_limits    = range_limits
+        self.types           = types
         self.kernel_initializer = kernel_initializer
         self.bias_initializer   = bias_initializer
-        self.learning_rate      = learning_rate
-        self.optimiser          = optimiser
-        self.activation         = activation
-        self.A1                 = int(kwargs.get("A1", 5))
-        self.A2                 = int(kwargs.get("A2", 2))
-        self.B1                 = int(kwargs.get("B1", 0))
-        self.B2                 = int(kwargs.get("B2", 3))
-        self.C                  = int(kwargs.get("C" , 2))
-        self.D2                 = int(kwargs.get("D2", 2))
-        self.gauss_frac_scale   = float(kwargs.get("gauss_frac_scale" , 1./16.))
-        self.gauss_mean_scale   = float(kwargs.get("gauss_mean_scale" , 1./16.))
-        self.gauss_sigma_scale  = float(kwargs.get("gauss_sigma_scale", 1./16.))
-        self.transform_min      = float(kwargs.get("transform_min", -2.))
-        self.transform_max      = float(kwargs.get("transform_maz",  2.))
-        self.min_gauss_amplitude_frac = min_gauss_amplitude_frac
         if do_build is False : return
         self.build(verbose=verbose)
     def evaluate (self, conditions, observables) :
