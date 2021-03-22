@@ -32,6 +32,24 @@ def filter_data (events, weights, keys, key, minimum, maximum) :
     return np.array(new_events), np.array(new_weights)
 
 
+#  Convert histogram values to a plottable outline
+#
+def histo_to_line (bins, values, errors=None) :
+    X, Z, EZ = [], [], []
+    for i in range(len(bins)-1) :
+        X .append(bins[i])
+        X .append(bins[i+1])
+    for zp in values :
+        Z .append(zp)
+        Z .append(zp)
+    if type(errors) is type(None) :
+    	return np.array(X), np.array(Z)
+    for ezp in errors :
+        EZ.append(ezp)
+        EZ.append(ezp)
+    return np.array(X), np.array(Z), np.array(EZ)
+
+
 #  Plot the datapoints provided
 #
 def plot_data (observables, weights=None, keys=None, cuts=[], save="", lims=True, bins=20) :
