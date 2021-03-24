@@ -17,7 +17,7 @@ from   keras.activations import softplus
 from   keras.layers      import BatchNormalization, Dense, Dropout, Input, LeakyReLU, Concatenate, Lambda, Reshape, Softmax
 from   keras.models      import Model
 from   keras.optimizers  import Adam, SGD, Adadelta
-from   keras.callbacks   import EarlyStopping
+from   keras.callbacks   import Callback, EarlyStopping
 import keras.backend     as     K
 
 from .utils import joint_shuffle, make_sure_dir_exists_for_filename
@@ -797,7 +797,7 @@ class DiscreteDensityModel :
     def sample (self, n_points, conditional_params, conditional_observables=[], n_processes=1) :
         """draw n_points samples from the probability distribution evaluated with the given inputs"""
         if n_processes > 1 :
-        	print(f"Warning - n_processes={n_processes} requested but multiprocessing not implemented for DiscreteDensityModel.sample()")
+            print(f"Warning - n_processes={n_processes} requested but multiprocessing not implemented for DiscreteDensityModel.sample()")
         probs_list = self.get_categorical_probabilities(conditional_params, conditional_observables)
         return np.array([np.random.choice(np.arange(self.minimum, self.maximum+1), n_points, p=probs/np.sum(probs)) for probs in probs_list])
     #
@@ -821,6 +821,63 @@ class DiscreteDensityModel :
         row_length = 1 + self.maximum - self.minimum
         rows       = [onehot(row_length, idx) for idx in indices]
         return np.array(rows)
+
+ 
+#  Class EvolvingLearningRate
+#
+class EvolvingLearningRate (Callback) :
+    """Reduce the learning rate when the monitoring metric stops improving.
+
+  Arguments:
+      factor: Factor by which the lr is multiplied at each update.
+      min_delta: Smallest tolerated improvement in the monitor.
+      monitor: Metric to be monitored for improvement.
+      patience: Number of epochs the monitor must improve over.
+  """
+
+    def __init__(self, factor=0.5, min_delta=0, min_lr=0, monitor="none", patience=0) :
+        super(EvolvingLearningRate, self).__init__()
+        self.factor    = factor
+        self.min_delta = min_delta
+        self.min_lr    = min_lr
+        self.monitor   = monitor
+        self.patience  = patience
+
+    def on_train_begin(self, logs=None) :
+        self.epochs_since_min = 0
+        self.monitor_best_val = np.inf
+        self.learning_rate    = self.model.optimizer.learning_rate
+        self.initial_lr       = self.learning_rate.eval(session=tf.compat.v1.keras.backend.get_session())
+        self.model.lr_record  = [(0, self.learning_rate)]
+
+    def on_epoch_end(self, epoch, logs=None) :
+        if self.monitor == "none" :
+            if "val_loss" in logs :
+                print(" - no monitor metric set, defaulting to val_loss")
+                self.monitor = "val_loss"
+            elif "loss" in logs : 
+                print(" - no monitor metric set, defaulting to loss as val_loss is not available")
+                self.monitor = "loss"
+            else :
+                raise ValueError(f"No monitor metric set")
+        monitor_val = logs.get(self.monitor)
+        if monitor_val < self.monitor_best_val :
+            self.monitor_best_val = monitor_val
+            self.epochs_since_min = 0
+        else:
+            self.epochs_since_min += 1
+            if self.epochs_since_min >= self.patience :
+                session    = tf.compat.v1.keras.backend.get_session()
+                current_lr = self.learning_rate.eval(session=session)
+                new_lr     = np.max([self.factor*current_lr, self.min_lr])
+                session.run(self.learning_rate.assign(new_lr))
+                self.monitor_best_val = monitor_val
+                self.epochs_since_min = 0
+                self.model.lr_record.append((epoch, new_lr))
+
+    def on_train_end(self, logs=None) :
+        session = tf.compat.v1.keras.backend.get_session()
+        session.run(self.learning_rate.assign(self.initial_lr))
     
 
 #  Class DensityModel
@@ -854,6 +911,7 @@ class DensityModel :
                               "bias_initializer"         : self.bias_initializer         ,
                               "optimiser"                : self.optimiser                ,
                               "learning_rate"            : self.learning_rate            ,
+                              "learning_rate_evo_factor" : self.learning_rate_evo_factor ,
                               "activation"               : self.activation               ,
                               "A1"                       : self.A1                       ,
                               "A2"                       : self.A2                       ,
@@ -873,6 +931,7 @@ class DensityModel :
             observables_limits = build_settings["observables_limits"][:obs_idx] if obs_idx > 0 else None
             if self.types[obs_idx] == float :
                 range_min, range_max = build_settings["observables_limits"][obs_idx]
+                learning_rate = build_settings["learning_rate"] * (build_settings["learning_rate_evo_factor"] ** obs_idx)
                 density_model = ContinuousDensityModel      (model_segment_name,
                                                              num_gaussians            = build_settings["num_gaussians" ]          ,
                                                              num_conditions_in        = build_settings["num_conditions"]          ,
@@ -886,7 +945,7 @@ class DensityModel :
                                                              transform_max            = build_settings["transform_max"]           ,
                                                              bias_initializer         = build_settings["bias_initializer"]        ,
                                                              optimiser                = build_settings["optimiser"]               ,
-                                                             learning_rate            = build_settings["learning_rate"]           ,
+                                                             learning_rate            = learning_rate                             ,
                                                              activation               = build_settings["activation"]              ,
                                                              A1                       = build_settings["A1"]                      ,
                                                              A2                       = build_settings["A2"]                      ,
@@ -912,7 +971,7 @@ class DensityModel :
                                                              transform_max      = build_settings["transform_max"]         ,
                                                              bias_initializer   = build_settings["bias_initializer"]      ,
                                                              optimiser          = build_settings["optimiser"]             ,
-                                                             learning_rate      = build_settings["learning_rate"]         ,
+                                                             learning_rate      = learning_rate                           ,
                                                              activation         = build_settings["activation"]            ,
                                                              A1                 = build_settings["A1"]                    ,
                                                              A2                 = build_settings["A2"]                    ,
@@ -926,6 +985,7 @@ class DensityModel :
         if verbose : print("INFO".ljust(8) + "   " + "DensityModel.build".ljust(25) + "   " + f"{len(likelihood_models)} partial density models constructed")
         self.build_settings    = build_settings
         self.likelihood_models = likelihood_models
+        self.fit_record        = {}
         self.create_evaluator_model_for_density_models (build_settings["name"]+"_evaluator")
     #
     #  construct
@@ -944,7 +1004,8 @@ class DensityModel :
         observables_limits       = kwargs.get("observables_limits", None       )   
         verbose                  = kwargs.get("verbose"           , True       ) 
         do_build                 = kwargs.get("build"             , True       )  
-        learning_rate            = kwargs.get("learning_rate"     , 0.001      )   
+        learning_rate            = kwargs.get("learning_rate"     , 0.001      ) 
+        learning_rate_evo_factor = kwargs.get("learning_rate_evo_factor", 1.   )   
         optimiser                = kwargs.get("optimiser"         , "adam"     )   
         bias_initializer         = kwargs.get("bias_initializer"  , "zeros"    )
         activation               = kwargs.get("activation"        , "leakyrelu")
@@ -996,6 +1057,7 @@ class DensityModel :
             print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set observable types        : {types}")
             print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set bias_initializer        : {bias_initializer}")
             print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set learning_rate           : {learning_rate}")
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set learning_rate_evo_factor: {learning_rate_evo_factor}")
             print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set optimiser               : {optimiser}")
             print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set activation              : {activation}")
             print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set min_gauss_amplitude_frac: {min_gauss_amplitude_frac}")
@@ -1011,6 +1073,7 @@ class DensityModel :
         self.types                    = types
         self.bias_initializer         = bias_initializer
         self.learning_rate            = learning_rate
+        self.learning_rate_evo_factor = learning_rate_evo_factor
         self.optimiser                = optimiser
         self.activation               = activation
         self.A1                       = A1
@@ -1135,15 +1198,17 @@ class DensityModel :
         """fit density models to the dataset provided"""                                  
         #  Parse settings
         #
-        observable_idx            = kwargs.get("observable"               , None )
-        max_epochs_per_observable = kwargs.get("max_epochs_per_observable", 2000 )
-        early_stopping_patience   = kwargs.get("early_stopping_patience"  , 100  )
-        early_stopping_min_delta  = kwargs.get("early_stopping_min_delta" , 0    )
-        batch_size_per_observable = kwargs.get("batch_size_per_observable", -1   )
-        validation_split          = kwargs.get("validation_split"         , 0.3  )
-        do_build                  = kwargs.get("build"                    , False)
-        verbose                   = kwargs.get("verbose"                  , True )
-        tf_verbose                = kwargs.get("tf_verbose"               , 1    )
+        observable_idx             = kwargs.get("observable"                , None )
+        max_epochs_per_observable  = kwargs.get("max_epochs_per_observable" , 2000 )
+        early_stopping_patience    = kwargs.get("early_stopping_patience"   , 100  )
+        early_stopping_min_delta   = kwargs.get("early_stopping_min_delta"  , 0    )
+        batch_size_per_observable  = kwargs.get("batch_size_per_observable" , -1   )
+        validation_split           = kwargs.get("validation_split"          , 0.3  )
+        do_build                   = kwargs.get("build"                     , False)
+        verbose                    = kwargs.get("verbose"                   , True )
+        tf_verbose                 = kwargs.get("tf_verbose"                , 1    )
+        learning_rate_evo_factor   = kwargs.get("learning_rate_evo_factor"  , 1    )
+        learning_rate_evo_patience = kwargs.get("learning_rate_evo_patience", 0    )
         monitor = "val_loss"
         if validation_split <= 0 : monitor = "loss"
         #                                                        
@@ -1198,7 +1263,7 @@ class DensityModel :
         train_data_cond, train_data_obs = np.array(train_data_cond), np.array(train_data_obs)
         #
         #  Loop over target observables
-        #  
+        # 
         for observable_idx in observable_indices :
             if verbose :
                 print("INFO".ljust(8) + "   " + "DensityModel.fit".ljust(25) + "   " + f"Training observable index {observable_idx}")
@@ -1221,15 +1286,20 @@ class DensityModel :
                 batch_size = n_data
             else : batch_size = batch_size_per_observable
             train_data_Y = train_data_obs[:,observable_idx]
+            callbacks = [EarlyStopping(patience=early_stopping_patience, restore_best_weights=True, monitor=monitor, min_delta=early_stopping_min_delta)]
+            if learning_rate_evo_factor != 1 :
+                callbacks.append(EvolvingLearningRate(factor=learning_rate_evo_factor, monitor=monitor, patience=learning_rate_evo_patience))
             start_time = time.time()
-            self.likelihood_models[observable_idx].fit(train_data_X,
+            fit_record = self.likelihood_models[observable_idx].fit(
+                                                       train_data_X,
                                                        train_data_Y,
                                                        sample_weight    = train_data_weights,
                                                        validation_split = validation_split,
                                                        epochs           = max_epochs_per_observable,
                                                        shuffle          = True,
                                                        batch_size       = batch_size,
-                                                       callbacks        = [EarlyStopping(patience=early_stopping_patience, restore_best_weights=True, monitor=monitor, min_delta=early_stopping_min_delta)])
+                                                       callbacks        = callbacks)
+            self.fit_record[observable_idx] = fit_record
             print(f"Fit completed in {int(time.time() - start_time):.0f}s")
     #  
     #  from_dir
@@ -1263,6 +1333,7 @@ class DensityModel :
         self.types                    = get_from_dictionary (to_load, "types")
         self.bias_initializer         = get_from_dictionary (to_load, "bias_initializer")
         self.learning_rate            = get_from_dictionary (to_load, "learning_rate")
+        self.learning_rate_evo_factor = get_from_dictionary (to_load, "learning_rate_evo_factor")
         self.optimiser                = get_from_dictionary (to_load, "optimiser")
         self.activation               = get_from_dictionary (to_load, "activation")
         self.A1                       = get_from_dictionary (to_load, "A1")
@@ -1278,6 +1349,8 @@ class DensityModel :
         self.transform_min            = get_from_dictionary (to_load, "transform_min")
         self.transform_max            = get_from_dictionary (to_load, "transform_max")
         self.min_gauss_amplitude_frac = get_from_dictionary (to_load, "min_gauss_amplitude_frac")
+        if "fit_record" in to_load :
+            self.fit_record           = get_from_dictionary (to_load, "fit_record")
         #  Build a set of likelihood models using these settings
         self.build (build_settings=build_settings, verbose=False)
         #  Load the model weights
@@ -1326,6 +1399,7 @@ class DensityModel :
         to_pickle ["types"]                    = self.types
         to_pickle ["bias_initializer"]         = self.bias_initializer
         to_pickle ["learning_rate"]            = self.learning_rate
+        to_pickle ["learning_rate_evo_factor"] = self.learning_rate_evo_factor
         to_pickle ["optimiser"]                = self.optimiser
         to_pickle ["activation"]               = self.activation
         to_pickle ["A1"]                       = self.A1
@@ -1341,5 +1415,7 @@ class DensityModel :
         to_pickle ["transform_min"]            = self.transform_min
         to_pickle ["transform_max"]            = self.transform_max
         to_pickle ["min_gauss_amplitude_frac"] = self.min_gauss_amplitude_frac
+        to_pickle ["fit_record"]               = self.fit_record
         pickle.dump(to_pickle, open(pfile_name, "wb"))
 
+        

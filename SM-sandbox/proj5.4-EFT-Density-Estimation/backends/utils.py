@@ -22,6 +22,21 @@ def get_flat_copy_of_data (x) :
     raise TypeError(f"Could not flatten object of type {type(x)}")
 
 
+#  Print INFO message
+#
+def INFO (location, msg, max_location_length=20) :
+    MESSAGE("INFO", location, msg, max_location_length=max_location_length)
+
+
+#  Print message
+#
+def MESSAGE (preamble, location, msg, max_preamble_length=10, max_location_length=20) :
+    preamble = preamble[:min([len(preamble), max_preamble_length])].ljust(max_preamble_length)
+    location = location[max([0, len(location)-max_location_length]):].ljust(max_location_length)
+    print(f"{preamble}  {location}  {msg}")
+
+
+
 #  Shuffle rows of a numpy array
 #
 def joint_shuffle (*v) :
