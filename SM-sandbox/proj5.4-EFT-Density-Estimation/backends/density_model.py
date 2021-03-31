@@ -657,7 +657,7 @@ class ContinuousDensityModel () :
     #
     def fit (self, *argv, **kwargs) :
         """pass arguments on to the keras fit method"""
-        self.model.fit(*argv, **kwargs)
+        return self.model.fit(*argv, **kwargs)
     #
     #  get_gauss_params
     #
@@ -760,7 +760,7 @@ class DiscreteDensityModel :
     def fit (self, X, Y, *argv, **kwargs) :
         """fit probability model to where X are inputs and Y are datapoints with shape [?, num_categories]"""
         Y = self._x_to_onehot(Y)
-        self.model.fit(X, Y, *argv, **kwargs)
+        return self.model.fit(X, Y, *argv, **kwargs)
     #
     #  get_categorical_probabilities
     #
@@ -1299,7 +1299,7 @@ class DensityModel :
                                                        shuffle          = True,
                                                        batch_size       = batch_size,
                                                        callbacks        = callbacks)
-            self.fit_record[observable_idx] = fit_record
+            self.fit_record[observable_idx] = fit_record.history
             print(f"Fit completed in {int(time.time() - start_time):.0f}s")
     #  
     #  from_dir
@@ -1418,4 +1418,4 @@ class DensityModel :
         to_pickle ["fit_record"]               = self.fit_record
         pickle.dump(to_pickle, open(pfile_name, "wb"))
 
-        
+
