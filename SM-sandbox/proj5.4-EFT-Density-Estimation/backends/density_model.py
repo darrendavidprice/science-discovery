@@ -160,6 +160,7 @@ def create_continuous_density_keras_model (name, **kwargs) :
         print(f"  - gauss_frac_scale         is {gauss_frac_scale}")
         print(f"  - gauss_mean_scale         is {gauss_mean_scale}")
         print(f"  - gauss_sigma_scale        is {gauss_sigma_scale}")
+        print(f"  - gauss_width_factor       is {gauss_width_factor}")
         print(f"  - adding hidden layer of size {A1 + A2*num_conditions_in} to pre-process condition inputs")
         if num_observables_in > 0 :
             print(f"  - adding hidden layer of size {B1 + B2*num_observables_in} to pre-process observables inputs")
