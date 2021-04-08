@@ -57,13 +57,13 @@ optimiser          = "adam"
 gauss_mean_scale   = 1./100.
 gauss_frac_scale   = 1./100.
 gauss_sigma_scale  = 1./100.
-A1                 = 200
+A1                 = 400
 A2                 = 0
-B1                 = 200
+B1                 = 300
 B2                 = 50
-C_float            = 2
+C_float            = 3
 C_int              = [32]
-D2                 = 3
+D2                 = 10
 
 #  Projection config
 
