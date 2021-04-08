@@ -29,11 +29,6 @@ from tensorflow.python.framework.ops import disable_eager_execution
 disable_eager_execution()
 
 
-#  Configurable constants
-#
-Gauss_width_reduction_factor = 8.
-
-
 #  Non-configurable constants
 #
 sqrt_2pi = np.sqrt(2*np.pi)
@@ -84,6 +79,9 @@ def create_continuous_density_keras_model (name, **kwargs) :
     transform_min            = float(kwargs.get("transform_min"     , -2.             ))
     transform_max            = float(kwargs.get("transform_max"     , 2.              ))
     min_gauss_amplitude_frac = float(kwargs.get("min_gauss_amplitude_frac", 0.        ))
+    batch_norm               = bool (kwargs.get("batch_norm"        , False           ))
+    dropout                  = float(kwargs.get("dropout"           , -1.             ))
+    gauss_width_factor       = float(kwargs.get("gauss_width_factor", 1.              ))
     bias_initializer         = kwargs.get("bias_initializer"        , "zeros"         )
     condition_limits         = kwargs.get("condition_limits"        , None            )
     observables_limits       = kwargs.get("observables_limits"      , None            )
@@ -157,6 +155,8 @@ def create_continuous_density_keras_model (name, **kwargs) :
         print(f"  - transform range          is {transform_min:.4f}  to  {transform_max:.4f}")
         print(f"  - min_gauss_amplitude_frac is {min_gauss_amplitude_frac}")
         print(f"  - bias_initializer         is {bias_initializer}")
+        print(f"  - batch_norm               is {'True' if batch_norm is True else 'False'}")
+        print(f"  - dropout                  is {'False' if dropout <= 0 else dropout}")
         print(f"  - gauss_frac_scale         is {gauss_frac_scale}")
         print(f"  - gauss_mean_scale         is {gauss_mean_scale}")
         print(f"  - gauss_sigma_scale        is {gauss_sigma_scale}")
@@ -186,8 +186,9 @@ def create_continuous_density_keras_model (name, **kwargs) :
     if do_transform_conditions : 
         model_conditions = Lambda(transform_conditions)(model_conditions)
     model_conditions  = Dense (A1 + A2*num_conditions_in, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_conditions) 
-    if use_leaky_relu : 
-        model_conditions  = LeakyReLU (0.2)(model_conditions )
+    if use_leaky_relu : model_conditions = LeakyReLU (0.2)      (model_conditions)
+    if batch_norm     : model_conditions = BatchNormalization() (model_conditions)
+    if dropout > 0.   : model_conditions = Dropout(dropout)     (model_conditions)
     #
     #  If they exist, create an input layer for other input observables
     #  -  if configured, add a layer which transforms these inputs onto the given domain
@@ -201,7 +202,9 @@ def create_continuous_density_keras_model (name, **kwargs) :
         if do_transform_observables : 
             model_observables = Lambda(transform_observables)(model_observables)
         model_observables = Dense      (B1 + B2*num_observables_in, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_observables)    
-        if use_leaky_relu : model_observables = LeakyReLU (0.2)(model_observables)
+        if use_leaky_relu : model_observables = LeakyReLU(0.2)       (model_observables)
+        if batch_norm     : model_observables = BatchNormalization() (model_observables)
+        if dropout > 0.   : model_observables = Dropout(dropout)     (model_observables)
         model             = Concatenate()([model_conditions, model_observables])
     else :
         model = model_conditions
@@ -210,12 +213,16 @@ def create_continuous_density_keras_model (name, **kwargs) :
     #
     for c in range(C) :
         model = Dense (A1 + A2*num_conditions_in + B1 + B2*num_observables_in, kernel_initializer=custom_weight_init_hidden, bias_initializer=bias_initializer, activation=activation)(model)
-        if use_leaky_relu : model = LeakyReLU (0.2)(model)
+        if use_leaky_relu : model = LeakyReLU (0.2)      (model)
+        if batch_norm     : model = BatchNormalization() (model)
+        if dropout > 0.   : model = Dropout(dropout)     (model)
     #
     #  Calculate Gaussian means with two more hidden layers
     #
     gauss_means     = Dense (D2*num_gaussians, kernel_initializer=custom_weight_init_hidden, bias_initializer=bias_initializer, activation=activation)(model)
-    if use_leaky_relu : gauss_means = LeakyReLU (0.2)(gauss_means)
+    if use_leaky_relu : gauss_means = LeakyReLU (0.2)      (gauss_means)
+    if batch_norm     : gauss_means = BatchNormalization() (gauss_means)
+    if dropout > 0.   : gauss_means = Dropout(dropout)     (gauss_means)
     gauss_means     = Dense (num_gaussians, kernel_initializer=custom_weight_init_hidden, bias_initializer=bias_initializer, activation="linear")(gauss_means)
     gauss_means     = Lambda(lambda x : gauss_mean_scale*x)                                            (gauss_means)
     gauss_means     = Lambda(lambda x : add_gauss_mean_offsets(x, num_gaussians, range_min, range_max))(gauss_means)
@@ -223,17 +230,21 @@ def create_continuous_density_keras_model (name, **kwargs) :
     #  Calculate Gaussian widths with two more hidden layers
     #
     gauss_sigmas       = Dense (D2*num_gaussians   , kernel_initializer=custom_weight_init_hidden, bias_initializer=bias_initializer, activation=activation)(model)
-    if use_leaky_relu : gauss_sigmas = LeakyReLU (0.2)(gauss_sigmas )
+    if use_leaky_relu : gauss_sigmas = LeakyReLU (0.2)      (gauss_sigmas)
+    if batch_norm     : gauss_sigmas = BatchNormalization() (gauss_sigmas)
+    if dropout > 0.   : gauss_sigmas = Dropout(dropout)     (gauss_sigmas)
     gauss_sigmas       = Dense (num_gaussians     , kernel_initializer=custom_weight_init_hidden, bias_initializer=bias_initializer, activation=activation)(gauss_sigmas)
-    gauss_sigmas = Lambda (lambda x : gauss_sigma_scale*x )                                            (gauss_sigmas)
-    gauss_sigmas = Lambda (lambda x : set_initial_gauss_sigmas(x, num_gaussians, range_min, range_max))(gauss_sigmas)
-    gauss_sigmas = Lambda (lambda x : K.log(1. + K.exp(x)))                                            (gauss_sigmas)
-    gauss_sigmas = Lambda (lambda x : add_epsilon_to_gauss_sigmas(x, num_gaussians))                   (gauss_sigmas)
+    gauss_sigmas = Lambda (lambda x : gauss_sigma_scale*x )                                                                (gauss_sigmas)
+    gauss_sigmas = Lambda (lambda x : set_initial_gauss_sigmas(x, num_gaussians, range_min, range_max, gauss_width_factor))(gauss_sigmas)
+    gauss_sigmas = Lambda (lambda x : K.log(1. + K.exp(x)))                                                                (gauss_sigmas)
+    gauss_sigmas = Lambda (lambda x : add_epsilon_to_gauss_sigmas(x, num_gaussians))                                       (gauss_sigmas)
     #
     #  Calculate Gaussian fractions with two more hidden layers
     #
     gauss_fractions = Dense      (D2*num_gaussians , kernel_initializer=custom_weight_init_hidden, bias_initializer=bias_initializer, activation=activation)(model)
-    if use_leaky_relu : gauss_fractions = LeakyReLU  (0.2)(gauss_fractions)
+    if use_leaky_relu : gauss_fractions = LeakyReLU (0.2)      (gauss_fractions)
+    if batch_norm     : gauss_fractions = BatchNormalization() (gauss_fractions)
+    if dropout > 0.   : gauss_fractions = Dropout(dropout)     (gauss_fractions)
     gauss_fractions = Dense      (num_gaussians, kernel_initializer=custom_weight_init_hidden, bias_initializer=bias_initializer, activation="linear")(gauss_fractions)
     gauss_fractions = Lambda(lambda x : gauss_frac_scale*x)                                                    (gauss_fractions)
     gauss_fractions = Softmax()                                                                                (gauss_fractions)
@@ -279,6 +290,8 @@ def create_discrete_density_keras_model (name, **kwargs) :
     activation               = str  (kwargs.get("activation"        , "leakyrelu"     ))
     transform_min            = float(kwargs.get("transform_min"     , -2.             ))
     transform_max            = float(kwargs.get("transform_max"     , 2.              ))
+    batch_norm               = bool (kwargs.get("batch_norm"        , False           ))
+    dropout                  = float(kwargs.get("dropout"           , -1.             ))
     bias_initializer         = kwargs.get("bias_initializer"        , "zeros"         )
     condition_limits         = kwargs.get("condition_limits"        , None            )
     observables_limits       = kwargs.get("observables_limits"      , None            )
@@ -348,6 +361,8 @@ def create_discrete_density_keras_model (name, **kwargs) :
         print(f"  - activation               is {activation}")
         print(f"  - transform range          is {transform_min:.4f}  to  {transform_max:.4f}")
         print(f"  - bias_initializer         is {bias_initializer}")
+        print(f"  - batch_norm               is {'True' if batch_norm is True else 'False'}")
+        print(f"  - dropout                  is {'False' if dropout <= 0 else dropout}")
         print(f"  - adding hidden layer of size {A1 + A2*num_conditions_in} to pre-process condition inputs")
         if num_observables_in > 0 :
             print(f"  - adding hidden layer of size {B1 + B2*num_observables_in} to pre-process observables inputs")
@@ -374,8 +389,9 @@ def create_discrete_density_keras_model (name, **kwargs) :
     if do_transform_conditions : 
         model_conditions = Lambda(transform_conditions)(model_conditions)
     model_conditions  = Dense (A1 + A2*num_conditions_in, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_conditions) 
-    if use_leaky_relu : 
-        model_conditions  = LeakyReLU (0.2)(model_conditions )
+    if use_leaky_relu : model_conditions = LeakyReLU(0.2)       (model_conditions)
+    if batch_norm     : model_conditions = BatchNormalization() (model_conditions)
+    if dropout > 0.   : model_conditions = Dropout(dropout)     (model_conditions)
     #
     #  If they exist, create an input layer for other input observables
     #  -  if configured, add a layer which transforms these inputs onto the given domain
@@ -389,7 +405,9 @@ def create_discrete_density_keras_model (name, **kwargs) :
         if do_transform_observables : 
             model_observables = Lambda(transform_observables)(model_observables)
         model_observables = Dense      (B1 + B2*num_observables_in, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_observables)    
-        if use_leaky_relu : model_observables = LeakyReLU (0.2)(model_observables)
+        if use_leaky_relu : model_observables = LeakyReLU(0.2)       (model_observables)
+        if batch_norm     : model_observables = BatchNormalization() (model_observables)
+        if dropout > 0.   : model_observables = Dropout(dropout)     (model_observables)
         model             = Concatenate()([model_conditions, model_observables])
     else :
         model = model_conditions
@@ -398,7 +416,9 @@ def create_discrete_density_keras_model (name, **kwargs) :
     #
     for c in C_layers :
         model = Dense (c, kernel_initializer=custom_weight_init_hidden, bias_initializer=bias_initializer, activation=activation)(model)
-        if use_leaky_relu : model = LeakyReLU (0.2)(model)
+        if use_leaky_relu : model = LeakyReLU(0.2)       (model)
+        if batch_norm     : model = BatchNormalization() (model)
+        if dropout > 0.   : model = Dropout(dropout)     (model)
     #
     #  Add final layer of size num_outputs, with softmax activation to represent multinomial prob distribution
     #
@@ -586,11 +606,10 @@ def sample_sum_gaussians (n_points, params) :
 
 #  Brief: tf function for initialising the Gaussian widths (as a fraction of the initial range)
 # 
-def set_initial_gauss_sigmas (x, num_gauss, offset_min, offset_max) :
-    """TF method: for input x of size [?, num_gauss], add a constant factor which sets initial Gaussian widths as (offset_max-offset_min) / num_gauss / Gauss_width_reduction_factor
+def set_initial_gauss_sigmas (x, num_gauss, offset_min, offset_max, gauss_width_factor) :
+    """TF method: for input x of size [?, num_gauss], add a constant factor which sets initial Gaussian widths as gauss_width_factor * (offset_max-offset_min) / num_gauss
        - to be applied before a Softmax function, so offset addition is performed in a logarithmic basis"""
-    offset_range = float(offset_max - offset_min)
-    target_width = offset_range / num_gauss / Gauss_width_reduction_factor
+    target_width = gauss_width_factor * float(offset_max - offset_min) / num_gauss
     offset       = float(np.log(np.exp(target_width) - 1))
     c = tf.convert_to_tensor([offset for i in range(num_gauss)])
     return x + c
@@ -844,11 +863,12 @@ class EvolvingLearningRate (Callback) :
         self.patience  = patience
 
     def on_train_begin(self, logs=None) :
-        self.epochs_since_min = 0
-        self.monitor_best_val = np.inf
-        self.learning_rate    = self.model.optimizer.learning_rate
-        self.initial_lr       = self.learning_rate.eval(session=tf.compat.v1.keras.backend.get_session())
-        self.model.lr_record  = [(0, self.learning_rate)]
+        self.epochs_since_min      = 0
+        self.monitor_best_val      = np.inf
+        self.learning_rate         = self.model.optimizer.learning_rate
+        self.initial_lr            = self.learning_rate.eval(session=tf.compat.v1.keras.backend.get_session())
+        self.model.lr_record       = [(0, self.learning_rate)]
+        self.model.monitor_record  = []
 
     def on_epoch_end(self, epoch, logs=None) :
         if self.monitor == "none" :
@@ -861,6 +881,7 @@ class EvolvingLearningRate (Callback) :
             else :
                 raise ValueError(f"No monitor metric set")
         monitor_val = logs.get(self.monitor)
+        self.model.monitor_record.append(monitor_val)
         if monitor_val < self.monitor_best_val :
             self.monitor_best_val = monitor_val
             self.epochs_since_min = 0
@@ -920,10 +941,13 @@ class DensityModel :
                               "C_float"                  : self.C_float                  ,
                               "C_int"                    : self.C_int                    ,
                               "D2"                       : self.D2                       ,
+                              "gauss_width_factor"       : self.gauss_width_factor       ,
                               "gauss_frac_scale"         : self.gauss_frac_scale         ,
                               "gauss_mean_scale"         : self.gauss_mean_scale         ,
                               "gauss_sigma_scale"        : self.gauss_sigma_scale        ,
-                              "min_gauss_amplitude_frac" : self.min_gauss_amplitude_frac }
+                              "min_gauss_amplitude_frac" : self.min_gauss_amplitude_frac ,
+                              "batch_norm"               : self.batch_norm               ,
+                              "dropout"                  : self.dropout                  }
         likelihood_models = []
         for obs_idx in range(build_settings["num_observables"]) :
             model_segment_name = build_settings["name"]+f"_observable{obs_idx}"
@@ -953,10 +977,13 @@ class DensityModel :
                                                              B2                       = build_settings["B2"]                      ,
                                                              C                        = build_settings["C_float"]                 ,
                                                              D2                       = build_settings["D2"]                      ,
+                                                             gauss_width_factor       = build_settings["gauss_width_factor"]      ,
                                                              gauss_frac_scale         = build_settings["gauss_frac_scale"]        ,
                                                              gauss_mean_scale         = build_settings["gauss_mean_scale"]        ,
                                                              gauss_sigma_scale        = build_settings["gauss_sigma_scale"]       ,
-                                                             min_gauss_amplitude_frac = build_settings["min_gauss_amplitude_frac"])
+                                                             min_gauss_amplitude_frac = build_settings["min_gauss_amplitude_frac"],
+                                                             batch_norm               = build_settings["batch_norm"]              ,
+                                                             dropout                  = build_settings["dropout"]                 )
             elif self.types[obs_idx] == int :
                 range_min, range_max = build_settings["observables_limits"][obs_idx]
                 density_model = DiscreteDensityModel        (model_segment_name,
@@ -978,7 +1005,9 @@ class DensityModel :
                                                              B1                 = build_settings["B1"]                    ,
                                                              B2                 = build_settings["B2"]                    ,
                                                              C_layers           = build_settings["C_int"]                 ,
-                                                             D2                 = build_settings["D2"]                    )
+                                                             D2                 = build_settings["D2"]                    ,
+                                                             batch_norm         = build_settings["batch_norm"]            ,
+                                                             dropout            = build_settings["dropout"]               )
             else :
                 raise TypeError(f"Observable index {obs_idx} requested an unrecognised type {self.types[obs_idx]}")
             likelihood_models.append(density_model)
@@ -1018,10 +1047,13 @@ class DensityModel :
         C_float                  = int(kwargs.get("C_float"       , 0))
         C_int                    = kwargs.get("C_int"             , [32])
         D2                       = int(kwargs.get("D2"            , 2))
-        gauss_frac_scale         = float(kwargs.get("gauss_frac_scale" , 1./8.))
-        gauss_mean_scale         = float(kwargs.get("gauss_mean_scale" , 1./8.))
-        gauss_sigma_scale        = float(kwargs.get("gauss_sigma_scale", 1./8.))
+        gauss_width_factor       = float(kwargs.get("gauss_width_factor", 1./4.))
+        gauss_frac_scale         = float(kwargs.get("gauss_frac_scale"  , 1./8.))
+        gauss_mean_scale         = float(kwargs.get("gauss_mean_scale"  , 1./8.))
+        gauss_sigma_scale        = float(kwargs.get("gauss_sigma_scale" , 1./8.))
         min_gauss_amplitude_frac = float(kwargs.get("min_gauss_amplitude_frac", 0.))
+        dropout                  = float(kwargs.get("dropout", -1.))
+        batch_norm               = bool(kwargs.get("batch_norm", False))
         #
         #  Check inputs are sensible
         #
@@ -1046,21 +1078,26 @@ class DensityModel :
         if num_observables < 1 : raise ValueError(f"num_observables must be > 0, but {num_observables} provided")
         if min_gauss_amplitude_frac < 0. : raise ValueError(f"min_gauss_amplitude_frac must be >= 0, but {min_gauss_amplitude_frac} provided")
         if min_gauss_amplitude_frac > 1. : raise ValueError(f"min_gauss_amplitude_frac must be <= 1, but {min_gauss_amplitude_frac} provided")
+        if dropout > 1. : raise ValueError(f"dropout must be <= 1 (with 0 or lower interpreted as no dropout), but {dropout} provided")
         #
         #  Print configuration
         #
         if verbose :
-            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model name              : {name}"           )
-            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_gaussians     : {num_gaussians}"  )
-            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_conditions    : {num_conditions}" )
-            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_observables   : {num_observables}")
-            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set observable types        : {types}")
-            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set bias_initializer        : {bias_initializer}")
-            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set learning_rate           : {learning_rate}")
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model name              : {name}"                    )
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_gaussians     : {num_gaussians}"           )
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_conditions    : {num_conditions}"          )
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set model num_observables   : {num_observables}"         )
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set observable types        : {types}"                   )
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set bias_initializer        : {bias_initializer}"        )
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set learning_rate           : {learning_rate}"           )
             print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set learning_rate_evo_factor: {learning_rate_evo_factor}")
-            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set optimiser               : {optimiser}")
-            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set activation              : {activation}")
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set optimiser               : {optimiser}"               )
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set activation              : {activation}"              )
             print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set min_gauss_amplitude_frac: {min_gauss_amplitude_frac}")
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set gauss_width_factor      : {gauss_width_factor}"      )
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set gauss_frac_scale        : {gauss_frac_scale}"        )
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set gauss_mean_scale        : {gauss_mean_scale}"        )
+            print("INFO".ljust(8) + "   " + "DensityModel.construct".ljust(25) + "   " + f"Set gauss_sigma_scale       : {gauss_sigma_scale}"       )
         #
         #  Save configuration
         #
@@ -1083,12 +1120,15 @@ class DensityModel :
         self.C_float                  = C_float
         self.C_int                    = C_int
         self.D2                       = D2
+        self.gauss_width_factor       = gauss_width_factor
         self.gauss_frac_scale         = gauss_frac_scale
         self.gauss_mean_scale         = gauss_mean_scale
         self.gauss_sigma_scale        = gauss_sigma_scale
         self.transform_min            = transform_min
         self.transform_max            = transform_max
         self.min_gauss_amplitude_frac = min_gauss_amplitude_frac
+        self.batch_norm               = batch_norm
+        self.dropout                  = dropout
         self.build_settings           = None
         #
         #  Build the Keras models associated with these settings
@@ -1209,6 +1249,7 @@ class DensityModel :
         tf_verbose                 = kwargs.get("tf_verbose"                , 1    )
         learning_rate_evo_factor   = kwargs.get("learning_rate_evo_factor"  , 1    )
         learning_rate_evo_patience = kwargs.get("learning_rate_evo_patience", 0    )
+        extra_callbacks            = kwargs.get("callbacks"                 , []   )
         monitor = "val_loss"
         if validation_split <= 0 : monitor = "loss"
         #                                                        
@@ -1220,7 +1261,7 @@ class DensityModel :
         #                                     
         if hasattr(self, "build_settings") is False : raise RuntimeError(f"self.build_settings does not exist - you must call self.build() before self.fit(), or specify self.fit(build=True)")
         build_settings = {"name":self.name, "num_gaussians":self.num_gaussians, "num_conditions":self.num_conditions, "num_observables":self.num_observables, "types":self.types, 
-                          "condition_limits":self.condition_limits, "observables_limits":self.observables_limits, 
+                          "condition_limits":self.condition_limits, "observables_limits":self.observables_limits, "batch_norm":self.batch_norm, "dropout":self.dropout,
                           "transform_min":self.transform_min, "transform_max":self.transform_max, "bias_initializer":self.bias_initializer, "optimiser":self.optimiser, "learning_rate":self.learning_rate,
                           "activation":self.activation, "A1":self.A1, "A2":self.A2, "B1":self.B1, "B2":self.B2, "C_float":self.C_float, "C_int":self.C_int, "D2":self.D2, 
                           "gauss_frac_scale":self.gauss_frac_scale, "gauss_mean_scale":self.gauss_mean_scale, "gauss_sigma_scale":self.gauss_sigma_scale, "min_gauss_amplitude_frac":self.min_gauss_amplitude_frac}
@@ -1286,9 +1327,17 @@ class DensityModel :
                 batch_size = n_data
             else : batch_size = batch_size_per_observable
             train_data_Y = train_data_obs[:,observable_idx]
+            #  
+            #  Set up callbacks
+            #  
             callbacks = [EarlyStopping(patience=early_stopping_patience, restore_best_weights=True, monitor=monitor, min_delta=early_stopping_min_delta)]
             if learning_rate_evo_factor != 1 :
                 callbacks.append(EvolvingLearningRate(factor=learning_rate_evo_factor, monitor=monitor, patience=learning_rate_evo_patience))
+            for callback in extra_callbacks :
+                callbacks.append(callback)
+            #  
+            #  Fit
+            #  
             start_time = time.time()
             fit_record = self.likelihood_models[observable_idx].fit(
                                                        train_data_X,
@@ -1343,14 +1392,20 @@ class DensityModel :
         self.C_float                  = get_from_dictionary (to_load, "C_float")
         self.C_int                    = get_from_dictionary (to_load, "C_int")
         self.D2                       = get_from_dictionary (to_load, "D2")
+        self.gauss_width_factor       = get_from_dictionary (to_load, "gauss_width_factor")
         self.gauss_frac_scale         = get_from_dictionary (to_load, "gauss_frac_scale")
         self.gauss_mean_scale         = get_from_dictionary (to_load, "gauss_mean_scale")
         self.gauss_sigma_scale        = get_from_dictionary (to_load, "gauss_sigma_scale")
         self.transform_min            = get_from_dictionary (to_load, "transform_min")
         self.transform_max            = get_from_dictionary (to_load, "transform_max")
         self.min_gauss_amplitude_frac = get_from_dictionary (to_load, "min_gauss_amplitude_frac")
+        self.batch_norm               = get_from_dictionary (to_load, "batch_norm")
+        self.dropout                  = get_from_dictionary (to_load, "dropout")
         if "fit_record" in to_load :
             self.fit_record           = get_from_dictionary (to_load, "fit_record")
+        for idx, likelihood_model in enumerate(self.likelihood_models) :
+            if f"lr_record_model{idx}"      in to_load : likelihood_model.lr_record = to_load[f"lr_record_model{idx}"     ]
+            if f"monitor_record_model{idx}" in to_load : likelihood_model.lr_record = to_load[f"monitor_record_model{idx}"]
         #  Build a set of likelihood models using these settings
         self.build (build_settings=build_settings, verbose=False)
         #  Load the model weights
@@ -1409,13 +1464,19 @@ class DensityModel :
         to_pickle ["C_float"]                  = self.C_float
         to_pickle ["C_int"]                    = self.C_int
         to_pickle ["D2"]                       = self.D2
+        to_pickle ["gauss_width_factor"]       = self.gauss_width_factor
         to_pickle ["gauss_frac_scale"]         = self.gauss_frac_scale
         to_pickle ["gauss_mean_scale"]         = self.gauss_mean_scale
         to_pickle ["gauss_sigma_scale"]        = self.gauss_sigma_scale
         to_pickle ["transform_min"]            = self.transform_min
         to_pickle ["transform_max"]            = self.transform_max
+        to_pickle ["batch_norm"]               = self.batch_norm
+        to_pickle ["dropout"]                  = self.dropout
         to_pickle ["min_gauss_amplitude_frac"] = self.min_gauss_amplitude_frac
         to_pickle ["fit_record"]               = self.fit_record
+        for idx, likelihood_model in enumerate(self.likelihood_models) :
+            if hasattr(likelihood_model, "lr_record"     ) : to_pickle [f"lr_record_model{idx}"     ] = likelihood_model.lr_record
+            if hasattr(likelihood_model, "monitor_record") : to_pickle [f"monitor_record_model{idx}"] = likelihood_model.monitor_record
         pickle.dump(to_pickle, open(pfile_name, "wb"))
 
 
