@@ -749,6 +749,11 @@ class ContinuousDensityModel () :
         for tup in sorted(output_pipe.output) :
             for sampled_datapoint in tup[1] :
                 sampled_datapoints_list.append(sampled_datapoint)
+        #  Make sure threads working on the Queue objects are joined before we continue
+        gauss_params_queue.close()
+        gauss_params_queue.join_thread()
+        sampled_datapoints_queue.close()
+        sampled_datapoints_queue.join_thread()
         #  Return as array
         return np.array(sampled_datapoints_list)
 
