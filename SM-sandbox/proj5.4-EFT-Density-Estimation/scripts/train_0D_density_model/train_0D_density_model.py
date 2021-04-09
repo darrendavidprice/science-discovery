@@ -98,10 +98,11 @@ remove_observables = ["pT_jj", "N_jets", "N_gap_jets", "m_ll", "Dy_j_j"]
 
 
 
-def load_settings () :
-	sys_args = sys.argv
-	assert len(sys_args) == 2, f"Expected command line 'python3 program args_file' but '{' '.join(sys_args)}' provided"
-	config_fname = sys.argv[1]
+def load_settings (config_fname="") :
+	if len(config_fname) == 0 :
+		sys_args = sys.argv
+		assert len(sys_args) == 2, f"Expected command line 'python3 program args_file' but '{' '.join(sys_args)}' provided"
+		config_fname = sys.argv[1]
 	cfg = configparser.ConfigParser()
 	cfg.read(config_fname)
 	assert "SETTINGS" in cfg.sections(), f"[SETTINGS] header not found in config file {config_fname}"
