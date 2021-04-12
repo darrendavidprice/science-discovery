@@ -121,7 +121,7 @@ def configure (remove_more_observables) :
     if "theta_ll" not in remove_observables : remove_observables.append("theta_ll")
     if "theta_jj" not in remove_observables : remove_observables.append("theta_jj")
     global observables, num_observables, observable_types
-    observables      = sorted([obs for obs in observable_limits if obs not in remove_observables])[::-1]
+    observables      = sorted([obs for obs in observable_limits if obs not in remove_observables])#[::-1]
     num_observables  = len(observables)
     observable_types = [float if obs not in int_observables else int for obs in observables]
 
