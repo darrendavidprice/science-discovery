@@ -743,17 +743,19 @@ class ContinuousDensityModel () :
         for process in processes : process.join()
         output_pipe.complete()
         output_pipe.join()
+        #  Make sure threads working on the Queue objects are joined before we continue
+        '''time.sleep(0.5)
+        gauss_params_queue.close()
+        gauss_params_queue.join_thread()
+        sampled_datapoints_queue.close()
+        sampled_datapoints_queue.join_thread()
+        time.sleep(0.5)'''
         #  Pull results from output pipe
         #  -  sorted() command sorts by the first index in the tuples, which are the batch indices, to ensure datapoints are ordered consistently with inputs
         sampled_datapoints_list = []
         for tup in sorted(output_pipe.output) :
             for sampled_datapoint in tup[1] :
                 sampled_datapoints_list.append(sampled_datapoint)
-        #  Make sure threads working on the Queue objects are joined before we continue
-        gauss_params_queue.close()
-        gauss_params_queue.join_thread()
-        sampled_datapoints_queue.close()
-        sampled_datapoints_queue.join_thread()
         #  Return as array
         return np.array(sampled_datapoints_list)
 
@@ -1410,8 +1412,8 @@ class DensityModel :
         if "fit_record" in to_load :
             self.fit_record           = get_from_dictionary (to_load, "fit_record")
         for idx, likelihood_model in enumerate(self.likelihood_models) :
-            if f"lr_record_model{idx}"      in to_load : likelihood_model.lr_record = to_load[f"lr_record_model{idx}"     ]
-            if f"monitor_record_model{idx}" in to_load : likelihood_model.lr_record = to_load[f"monitor_record_model{idx}"]
+            if f"lr_record_model{idx}"      in to_load : likelihood_model.model.lr_record      = to_load[f"lr_record_model{idx}"     ]
+            if f"monitor_record_model{idx}" in to_load : likelihood_model.model.monitor_record = to_load[f"monitor_record_model{idx}"]
         #  Build a set of likelihood models using these settings
         self.build (build_settings=build_settings, verbose=False)
         #  Load the model weights
@@ -1481,8 +1483,8 @@ class DensityModel :
         to_pickle ["min_gauss_amplitude_frac"] = self.min_gauss_amplitude_frac
         to_pickle ["fit_record"]               = self.fit_record
         for idx, likelihood_model in enumerate(self.likelihood_models) :
-            if hasattr(likelihood_model, "lr_record"     ) : to_pickle [f"lr_record_model{idx}"     ] = likelihood_model.lr_record
-            if hasattr(likelihood_model, "monitor_record") : to_pickle [f"monitor_record_model{idx}"] = likelihood_model.monitor_record
+            if hasattr(likelihood_model.model, "lr_record"     ) : to_pickle [f"lr_record_model{idx}"     ] = likelihood_model.model.lr_record
+            if hasattr(likelihood_model.model, "monitor_record") : to_pickle [f"monitor_record_model{idx}"] = likelihood_model.model.monitor_record
         pickle.dump(to_pickle, open(pfile_name, "wb"))
 
 
