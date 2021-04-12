@@ -43,6 +43,7 @@ import train_0D_density_model
 
 config_fname = ""
 num_evts     = int(-1)
+num_proc     = int(8)
 
 log_observables = "pT_j1", "pT_j2", "pT_jj", "pT_ll", "m_jj", "rap_jj"
 
@@ -124,33 +125,35 @@ def get_obs_for_2D_plot (observables) :
 
 
 def parse_args () :
-	parser = argparse.ArgumentParser()
-	parser.add_argument('config_fname', type=str, help='Name of the config file used to run train_0D_density_model.')
-	parser.add_argument('--nevt'      , type=int, default=-1, help='Number of events to generate with the density model. Default and values <= 0 mean to match the number of MG5 events.')
-	args = parser.parse_args()
-	global config_fname, num_evts
-	config_fname, num_evts = args.config_fname, args.nevt
+    parser = argparse.ArgumentParser()
+    parser.add_argument('config_fname', type=str, help='Name of the config file used to run train_0D_density_model.')
+    parser.add_argument('--nevt'      , type=int, default=-1, help='Number of events to generate with the density model. Default and values <= 0 mean to match the number of MG5 events.')
+    parser.add_argument('--nproc'     , type=int, default=-1, help='Number of processes used to generate events.')
+    args = parser.parse_args()
+    global config_fname, num_evts, num_proc
+    config_fname, num_evts, num_proc = args.config_fname, args.nevt, args.nproc
 
 
 def load_model (load_model_dir) :
-	print(f"Loading density model from file {load_model_dir}")
-	model = DensityModel.from_dir(load_model_dir)
-	return model
+    print(f"Loading density model from file {load_model_dir}")
+    model = DensityModel.from_dir(load_model_dir)
+    return model
 
 
-def generate (model, num_evts, data_table, whitening_funcs) :
-	print(f"Generating {num_evts} fake datapoints")
-	start = time.time()
-	fake_white_datapoints = model.sample(num_evts, [1.], n_processes=8)
-	end = time.time()
-	print(f"{num_evts} datapoints generated in {int(end-start):.0f}s")
-	print("Unwhitening fake datapoints")
-	start = time.time()
-	fake_transformed_datapoints = unwhiten_axes(fake_white_datapoints, whitening_funcs)
-	fake_datapoints = VBFZ.transform_observables_back(fake_transformed_datapoints, data_table.keys)
-	end = time.time()
-	print(f"{num_evts} datapoints unwhitened in {int(end-start):.0f}s")
-	return fake_white_datapoints, fake_transformed_datapoints, fake_datapoints
+def generate (model, num_evts, data_table, whitening_funcs, num_proc=8) :
+    num_evts = num_evts if num_evts > 0 else data_table.get_num_events()
+    print(f"Generating {num_evts} fake datapoints")
+    start = time.time()
+    fake_white_datapoints = model.sample(num_evts, [1.], n_processes=num_proc)
+    end = time.time()
+    print(f"{num_evts} datapoints generated in {int(end-start):.0f}s")
+    print("Unwhitening fake datapoints")
+    start = time.time()
+    fake_transformed_datapoints = unwhiten_axes(fake_white_datapoints, whitening_funcs)
+    fake_datapoints = VBFZ.transform_observables_back(fake_transformed_datapoints, data_table.keys)
+    end = time.time()
+    print(f"{num_evts} datapoints unwhitened in {int(end-start):.0f}s")
+    return fake_white_datapoints, fake_transformed_datapoints, fake_datapoints
 
 
 def plot_2D_projections (datapoints, weights=None, label="", savefig="", is_latent=False, num_bins=20, vmin=1e-5) :
@@ -459,9 +462,54 @@ def plot_1D_projections (datapoints_num, datapoints_den, weights_num=None, weigh
         plt.show()
 
 
-def plot_model_training_curves (model) :
-	return
-
+def plot_model_training_curves (model, savefig="", max_cols=7) :
+    observables, num_observables = VBFZ.observables, VBFZ.num_observables
+    #
+    num_cols = np.min([max_cols, num_observables])
+    num_rows = math.ceil(num_observables/num_cols)
+    fig = plt.figure(figsize=(3*num_cols, 4*num_rows))
+    #
+    #  Loop over subplots
+    #
+    axes = []
+    for row_idx in range(num_rows) :
+        for col_idx in range(num_cols) :
+            obs_idx = num_cols*row_idx + col_idx
+            if obs_idx >= num_observables : continue
+            observable = observables[obs_idx]
+            #
+            #  Get axis co-ordinates
+            #
+            xlo, xwidth  = col_idx/num_cols, 1./num_cols
+            ylo, yheight = 1. - (1+row_idx)/num_rows, 1./num_rows
+            #   
+            #  Set axis labels
+            #   
+            ax = fig.add_axes([xlo+0.2*xwidth, ylo, 0.75*xwidth, yheight])
+            ax.set_xlabel(get_obs_label(observable), fontsize=19, labelpad=20)
+            if col_idx == 0 : 
+                ax.set_ylabel(r"$- \log \mathcal{L}(\vec x)$", fontsize=19, labelpad=75, rotation=0, va="center")
+            ax.set_yscale("log")
+            axes.append(ax)
+            #
+            #  Plot curve
+            #
+            if hasattr(model.likelihood_models[obs_idx], "monitor_record") is False : continue
+            training_profile = model.likelihood_models[obs_idx].monitor_record
+            ax.plot(training_profile, c="blue", lw=2, alpha=0.8, label="Training profile")
+            if hasattr(model.likelihood_models[obs_idx], "lr_record") is False : continue
+            is_first = True
+            for (epoch, new_lr) in model.likelihood_models[obs_idx].lr_record :
+                ax.axvline(epoch, ls="--", c="k")
+                label = r"L.R. $\times = 0.5$" if is_first else None
+                is_first = False
+    axes[0].legend(loc=(0, 1.05), frameon=True, edgecolor="white", facecolor="white", ncol=2, fontsize=17)
+    #
+    #  Save and show figure
+    #
+    if len(savefig) > 0 :
+        plt.savefig(savefig, bbox_inches="tight")
+    plt.show()
 
 
 #====================================#
@@ -469,47 +517,50 @@ def plot_model_training_curves (model) :
 #====================================#
 
 if __name__ == "__main__" :
-	parse_args ()
-	train_0D_density_model.load_settings(config_fname)
-	train_0D_density_model.print_settings()
-	train_0D_density_model.VBFZ_setup()
-	data_table = VBFZ.load_table(train_0D_density_model.input_fname)
-	whitening_funcs, true_data, true_data_weights, transformed_data, white_data = train_0D_density_model.get_original_and_projected_data_as_dict (data_table)
-	true_data, true_data_weights, transformed_data, white_data = true_data[1.], true_data_weights[1.], transformed_data[1.], white_data[1.]
-	model = load_model(train_0D_density_model.save_model_dir)
-	fake_white_datapoints, fake_transformed_datapoints, fake_datapoints = generate(model, num_evts=num_evts if num_evts > 0 else len(true_data), data_table=data_table, whitening_funcs=whitening_funcs)
+    parse_args ()
+    train_0D_density_model.load_settings(config_fname)
+    train_0D_density_model.print_settings()
+    train_0D_density_model.VBFZ_setup()
 
-	plot_2D_ratios(fake_white_datapoints, white_data, weights_den=true_data_weights, is_latent=True, 
-	               label="Samples from density model / MG5 events (latent space)",
-	               savefig=f"{train_0D_density_model.save_model_dir}/2D_ratios_latent.pdf")
+    data_table = VBFZ.load_table(train_0D_density_model.input_fname)
+    whitening_funcs, true_data, true_data_weights, transformed_data, white_data = train_0D_density_model.get_original_and_projected_data_as_dict (data_table)
+    whitening_funcs = pickle.load(open(train_0D_density_model.load_whitening_funcs, "rb"))
+    true_data, true_data_weights, transformed_data, white_data = true_data[1.], true_data_weights[1.], transformed_data[1.], white_data[1.]
 
-	plot_2D_projections(white_data, weights=true_data_weights, is_latent=True, 
-	                    label="MG5 events (latent space)",
-	                    savefig=f"{train_0D_density_model.save_model_dir}/2D_dist_MG5_latent.pdf")
+    model = load_model(train_0D_density_model.save_model_dir)
+    plot_model_training_curves(model, savefig=f"{train_0D_density_model.save_model_dir}/Training_curves.pdf")
 
-	plot_2D_projections(fake_white_datapoints, is_latent=True, 
-	                    label="Samples from density model (latent space)",
-	                    savefig=f"{train_0D_density_model.save_model_dir}/2D_dist_model_latent.pdf")
+    fake_white_datapoints, fake_transformed_datapoints, fake_datapoints = generate(model, num_evts=num_evts, data_table=data_table, whitening_funcs=whitening_funcs, num_proc=num_proc)
 
-	plot_2D_ratios(fake_datapoints, true_data, weights_den=true_data_weights, is_latent=False, 
-	               label="Samples from density model / MG5 events (physical space)",
-	               savefig=f"{train_0D_density_model.save_model_dir}/2D_ratios_physical.pdf")
+    plot_2D_ratios(fake_white_datapoints, white_data, weights_den=true_data_weights, is_latent=True, 
+                               label="Samples from density model / MG5 events (latent space)",
+                               savefig=f"{train_0D_density_model.save_model_dir}/2D_ratios_latent.pdf")
 
-	plot_2D_projections(true_data, weights=true_data_weights, is_latent=False, 
-	                    label="MG5 events (physical space)",
-	                    savefig=f"{train_0D_density_model.save_model_dir}/2D_dist_MG5_physical.pdf",
-	                    vmin=1e-4)
+    plot_2D_projections(white_data, weights=true_data_weights, is_latent=True, 
+                        label="MG5 events (latent space)",
+                        savefig=f"{train_0D_density_model.save_model_dir}/2D_dist_MG5_latent.pdf")
 
-	plot_2D_projections(fake_datapoints, is_latent=False, 
-	                    label="Samples from density model (physical space)",
-	                    savefig=f"{train_0D_density_model.save_model_dir}/2D_dist_model_physical.pdf",
-	                    vmin=1e-4)
+    plot_2D_projections(fake_white_datapoints, is_latent=True, 
+                        label="Samples from density model (latent space)",
+                        savefig=f"{train_0D_density_model.save_model_dir}/2D_dist_model_latent.pdf")
 
-	plot_1D_projections(true_data, fake_datapoints, weights_num=true_data_weights, is_latent=False,
-	                    savefig=f"{train_0D_density_model.save_model_dir}/1D_dist_physical.pdf")
+    plot_2D_ratios(fake_datapoints, true_data, weights_den=true_data_weights, is_latent=False, 
+                   label="Samples from density model / MG5 events (physical space)",
+                   savefig=f"{train_0D_density_model.save_model_dir}/2D_ratios_physical.pdf")
 
-	plot_1D_projections(white_data, fake_white_datapoints, weights_num=true_data_weights, is_latent=True,
-	                    savefig=f"{train_0D_density_model.save_model_dir}/1D_dist_latent.pdf")
+    plot_2D_projections(true_data, weights=true_data_weights, is_latent=False, 
+                        label="MG5 events (physical space)",
+                        savefig=f"{train_0D_density_model.save_model_dir}/2D_dist_MG5_physical.pdf",
+                        vmin=1e-4)
 
-	plot_model_training_curves(model)
+    plot_2D_projections(fake_datapoints, is_latent=False, 
+                        label="Samples from density model (physical space)",
+                        savefig=f"{train_0D_density_model.save_model_dir}/2D_dist_model_physical.pdf",
+                        vmin=1e-4)
+
+    plot_1D_projections(true_data, fake_datapoints, weights_num=true_data_weights, is_latent=False,
+                        savefig=f"{train_0D_density_model.save_model_dir}/1D_dist_physical.pdf")
+
+    plot_1D_projections(white_data, fake_white_datapoints, weights_num=true_data_weights, is_latent=True,
+                        savefig=f"{train_0D_density_model.save_model_dir}/1D_dist_latent.pdf")
 
