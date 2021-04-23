@@ -874,9 +874,9 @@ class EvolvingLearningRate (Callback) :
         self.epochs_since_min      = 0
         self.monitor_best_val      = np.inf
         self.learning_rate         = self.model.optimizer.learning_rate
-        self.initial_lr            = self.learning_rate.eval(session=tf.compat.v1.keras.backend.get_session())
-        self.model.lr_record       = [(0, self.learning_rate)]
-        self.model.monitor_record  = []
+        self.initial_lr            = float(self.learning_rate.eval(session=tf.compat.v1.keras.backend.get_session()))
+        if not hasattr(self.model, "lr_record"     ) : self.model.lr_record       = [(0, self.initial_lr)]
+        if not hasattr(self.model, "monitor_record") : self.model.monitor_record  = []
 
     def on_epoch_end(self, epoch, logs=None) :
         if self.monitor == "none" :
@@ -888,7 +888,7 @@ class EvolvingLearningRate (Callback) :
                 self.monitor = "loss"
             else :
                 raise ValueError(f"No monitor metric set")
-        monitor_val = logs.get(self.monitor)
+        monitor_val = float(logs.get(self.monitor))
         self.model.monitor_record.append(monitor_val)
         if monitor_val < self.monitor_best_val :
             self.monitor_best_val = monitor_val
@@ -898,7 +898,7 @@ class EvolvingLearningRate (Callback) :
             if self.epochs_since_min >= self.patience :
                 session    = tf.compat.v1.keras.backend.get_session()
                 current_lr = self.learning_rate.eval(session=session)
-                new_lr     = np.max([self.factor*current_lr, self.min_lr])
+                new_lr     = float(np.max([self.factor*current_lr, self.min_lr]))
                 session.run(self.learning_rate.assign(new_lr))
                 self.monitor_best_val = monitor_val
                 self.epochs_since_min = 0

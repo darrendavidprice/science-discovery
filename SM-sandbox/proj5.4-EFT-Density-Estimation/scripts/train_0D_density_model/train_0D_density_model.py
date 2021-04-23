@@ -46,9 +46,10 @@ num_gaussians_per_continuous_observable = 25
 max_epochs                              = 500
 batch_size                              = 1000
 early_stopping_patience                 = 20
-early_stopping_min_delta                = 5e-10
+early_stopping_min_delta                = 1e-9
 validation_split                        = -1
 gauss_width_factor                      = 1./4.
+observables                             = []
 
 learning_rate      = 1e-3
 learning_rate_evo_factor   = 0.5
@@ -62,7 +63,7 @@ A2                 = 0
 B1                 = 300
 B2                 = 50
 C_float            = 3
-C_int              = [32]
+C_int              = [500, 200]
 D2                 = 10
 
 #  Projection config
@@ -111,7 +112,7 @@ def load_settings (config_fname="") :
 		INFO("load_settings", f"Found configuration {key} = {val}")
 	global input_fname, num_gaussians_per_continuous_observable, max_epochs, batch_size, early_stopping_patience, early_stopping_min_delta, validation_split, learning_rate
 	global optimiser, gauss_mean_scale, gauss_frac_scale, gauss_sigma_scale, A1, A2, B1, B2, C_float, C_int, D2, white_linear_fraction_gauss, whitening_num_points
-	global whitening_func_form, whitening_alpha, whitening_beta, whitening_gamma, load_whitening_funcs, save_whitening_funcs, load_model_dir, save_model_dir
+	global whitening_func_form, whitening_alpha, whitening_beta, whitening_gamma, load_whitening_funcs, save_whitening_funcs, load_model_dir, save_model_dir, observables
 	global obs_white_linear_fraction_data_space, remove_observables, gauss_width_factor, learning_rate_evo_factor, learning_rate_evo_factor, learning_rate_evo_patience
 	run_tag                      = str(settings.get("run_tag", "untagged"))
 	input_fname                  = str(settings.get("input_fname", input_fname)).replace("<TAG>", run_tag)
@@ -125,6 +126,7 @@ def load_settings (config_fname="") :
 	learning_rate_evo_factor     = float(settings.get("learning_rate_evo_factor", learning_rate_evo_factor))
 	learning_rate_evo_patience   = float(settings.get("learning_rate_evo_patience", learning_rate_evo_patience))
 	optimiser                    = str(settings.get("optimiser", optimiser))
+	if "observables" in settings : observables = [int(s) for s in settings["observables"].split(" ")]
 	gauss_mean_scale             = float(settings.get("gauss_mean_scale", gauss_mean_scale))
 	gauss_frac_scale             = float(settings.get("gauss_frac_scale", gauss_frac_scale))
 	gauss_sigma_scale            = float(settings.get("gauss_sigma_scale", gauss_sigma_scale))
@@ -169,6 +171,7 @@ def print_settings () :
 	INFO("print_settings", f"Using learning_rate_evo_factor = {learning_rate_evo_factor}")
 	INFO("print_settings", f"Using learning_rate_evo_patience = {learning_rate_evo_patience}")
 	INFO("print_settings", f"Using optimiser = {optimiser}")
+	INFO("print_settings", f"Training observables = {', '.join([str(s) for s in observables])}")
 	INFO("print_settings", f"Using gauss_mean_scale = {gauss_mean_scale:.3f}")
 	INFO("print_settings", f"Using gauss_frac_scale = {gauss_frac_scale:.3f}")
 	INFO("print_settings", f"Using gauss_sigma_scale = {gauss_sigma_scale:.3f}")
@@ -196,12 +199,13 @@ def print_settings () :
 
 
 def VBFZ_setup () :
-	global white_linear_fraction_data
+	global white_linear_fraction_data, observables
 	VBFZ.configure(remove_observables)
 	INFO("VBFZ_setup", f"Configured with {VBFZ.num_observables} observables: " + ", ".join(VBFZ.observables))
 	white_linear_fraction_data = [obs_white_linear_fraction_data_space[obs] if obs in obs_white_linear_fraction_data_space else 0. for obs in VBFZ.observables]
 	plot.int_observables   = VBFZ.int_observables
 	plot.observable_limits = VBFZ.transformed_observable_limits
+	if len(observables) == 0 : observables = [i for i in range(VBFZ.num_observables)]
 
 
 def get_original_and_projected_data_as_dict (data_table) :
@@ -247,65 +251,66 @@ def get_original_and_projected_data_as_dict (data_table) :
 
 
 
-def load_build_fit_model (white_data, true_data_weights) :
+def load_build_fit_model (white_data, true_data_weights, observables) :
 	#
 	#  Load model if requested, otherwise build and fit
 	#
 	if type(load_model_dir) != type(None) :
 	    density_model = DensityModel.from_dir(load_model_dir)
 	else :
-	    #
-	    #   Figure out the limits of the observables
-	    #
-	    white_observables_limits = []
-	    for obs_idx, (obs_name, obs_type) in enumerate(zip(VBFZ.observables, VBFZ.observable_types)) :
-	        if obs_type is int :
-	            white_observables_limits.append([float(x) for x in VBFZ.transformed_observable_limits[obs_name]])
-	            continue        
-	        all_data = np.concatenate([item[:,obs_idx] for c,item in white_data.items()])
-	        min_dp, max_dp = np.min(all_data), np.max(all_data)
-	        range_dp_per_gauss = (max_dp - min_dp) / num_gaussians_per_continuous_observable
-	        white_observables_limits.append([min_dp + 0.5*range_dp_per_gauss, max_dp - 0.5*range_dp_per_gauss])
-	    #
-	    #   Build model
-	    #
-	    density_model = DensityModel(name               = "EWK_Zjj_density_model_0D"              , 
-	                                 num_gaussians      = num_gaussians_per_continuous_observable , 
-	                                 num_conditions     = 1                                       , 
-	                                 num_observables    = VBFZ.num_observables                    , 
-	                                 types              = VBFZ.observable_types                   ,
-	                                 observables_limits = white_observables_limits                ,
-	                                 verbose            = True                                    , 
-	                                 gauss_mean_scale   = gauss_mean_scale                        ,
-	                                 gauss_frac_scale   = gauss_frac_scale                        ,
-	                                 gauss_sigma_scale  = gauss_sigma_scale                       ,
-	                                 gauss_width_factor = gauss_width_factor                      ,
-	                                 optimiser          = optimiser                               ,
-	                                 learning_rate      = learning_rate                           ,
-	                                 learning_rate_evo_factor = 1                                 ,  #  instead evolve learning rate during training using callback
-	                                 A1                 = A1                                      ,
-	                                 A2                 = A2                                      ,
-	                                 B1                 = B1                                      ,
-	                                 B2                 = B2                                      ,
-	                                 C_float            = C_float                                 ,
-	                                 C_int              = C_int                                   ,
-	                                 D2                 = D2                                      )
-	    #
-	    #   Make sure initial state has no NaN/Inf loss
-	    #
-	    density_model.ensure_valid_over_dataset (white_data, true_data_weights)
-	    #
-	    #   Fit density model
-	    #
-	    density_model.fit(white_data                                             , 
-	                      true_data_weights                                      ,
-	                      max_epochs_per_observable  = max_epochs                ,
-	                      early_stopping_patience    = early_stopping_patience   ,
-	                      early_stopping_min_delta   = early_stopping_min_delta  ,
-	                      validation_split           = validation_split          ,
-	                      batch_size_per_observable  = batch_size                ,
-	                      learning_rate_evo_factor   = learning_rate_evo_factor  ,
-	                      learning_rate_evo_patience = learning_rate_evo_patience)
+		#
+		#   Figure out the limits of the observables
+		#
+		white_observables_limits = []
+		for obs_idx, (obs_name, obs_type) in enumerate(zip(VBFZ.observables, VBFZ.observable_types)) :
+		    if obs_type is int :
+		        white_observables_limits.append([float(x) for x in VBFZ.transformed_observable_limits[obs_name]])
+		        continue        
+		    all_data = np.concatenate([item[:,obs_idx] for c,item in white_data.items()])
+		    min_dp, max_dp = np.min(all_data), np.max(all_data)
+		    range_dp_per_gauss = (max_dp - min_dp) / num_gaussians_per_continuous_observable
+		    white_observables_limits.append([min_dp + 0.5*range_dp_per_gauss, max_dp - 0.5*range_dp_per_gauss])
+		#
+		#   Build model
+		#
+		density_model = DensityModel(name               = "EWK_Zjj_density_model_0D"              , 
+		                             num_gaussians      = num_gaussians_per_continuous_observable , 
+		                             num_conditions     = 1                                       , 
+		                             num_observables    = VBFZ.num_observables                    , 
+		                             types              = VBFZ.observable_types                   ,
+		                             observables_limits = white_observables_limits                ,
+		                             verbose            = True                                    , 
+		                             gauss_mean_scale   = gauss_mean_scale                        ,
+		                             gauss_frac_scale   = gauss_frac_scale                        ,
+		                             gauss_sigma_scale  = gauss_sigma_scale                       ,
+		                             gauss_width_factor = gauss_width_factor                      ,
+		                             optimiser          = optimiser                               ,
+		                             learning_rate      = learning_rate                           ,
+		                             learning_rate_evo_factor = 1                                 ,  #  instead evolve learning rate during training using callback
+		                             A1                 = A1                                      ,
+		                             A2                 = A2                                      ,
+		                             B1                 = B1                                      ,
+		                             B2                 = B2                                      ,
+		                             C_float            = C_float                                 ,
+		                             C_int              = C_int                                   ,
+		                             D2                 = D2                                      )
+	#
+	#   Make sure initial state has no NaN/Inf loss
+	#
+	density_model.ensure_valid_over_dataset (white_data, true_data_weights)
+	#
+	#   Fit density model
+	#
+	density_model.fit(white_data                                             , 
+	                  true_data_weights                                      ,
+	                  observable                 = observables               ,
+	                  max_epochs_per_observable  = max_epochs                ,
+	                  early_stopping_patience    = early_stopping_patience   ,
+	                  early_stopping_min_delta   = early_stopping_min_delta  ,
+	                  validation_split           = validation_split          ,
+	                  batch_size_per_observable  = batch_size                ,
+	                  learning_rate_evo_factor   = learning_rate_evo_factor  ,
+	                  learning_rate_evo_patience = learning_rate_evo_patience)
 	#
 	#   Return density model
 	#
@@ -324,6 +329,6 @@ if __name__ == "__main__" :
 	data_table = VBFZ.load_table(input_fname)
 	whitening_funcs, true_data, true_data_weights, transformed_data, white_data = get_original_and_projected_data_as_dict (data_table)
 	true_data[1.], transformed_data[1.], white_data[1.], true_data_weights[1.] = joint_shuffle(true_data[1.], transformed_data[1.], white_data[1.], true_data_weights[1.])
-	density_model = load_build_fit_model (white_data, true_data_weights)
+	density_model = load_build_fit_model (white_data, true_data_weights, observables)
 	if type(save_model_dir) != type(None) :
 	    density_model.save_to_dir(save_model_dir)
