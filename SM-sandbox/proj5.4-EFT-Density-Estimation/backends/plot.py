@@ -155,13 +155,13 @@ def bin_data_2D (data_x, data_y, bins_x, bins_y, weights=None, normed=True) :
 
 #  Get 1D ratio between two histograms
 #
-def get_ratio_1D (data1, data2, bins, weights1=None, weights2=None, as_lines=False, normed=True) :
+def get_ratio_1D (data1, data2, bins, weights1=None, weights2=None, as_lines=False, normed=True, rogue=0.) :
     X, Z1, EZ1 = bin_data_1D(data1, bins, weights1, as_lines=as_lines, normed=normed)
     X, Z2, EZ2 = bin_data_1D(data2, bins, weights2, as_lines=as_lines, normed=normed)
-    frac_EZ1  = EZ1 / Z1
-    frac_EZ2  = EZ2 / Z2
-    ratio     = Z2 / Z1
-    ratio_err = ratio * np.sqrt(frac_EZ1*frac_EZ1 + frac_EZ2*frac_EZ2)
+    frac_EZ1   = safe_divide(EZ1, Z1, rogue)
+    frac_EZ2   = safe_divide(EZ2, Z2, rogue)
+    ratio      = safe_divide(Z2 , Z1, rogue)
+    ratio_err  = ratio * np.sqrt(frac_EZ1*frac_EZ1 + frac_EZ2*frac_EZ2)
     return X, ratio, ratio_err
 
 
@@ -177,12 +177,12 @@ def get_pull_1D (data_x1, data_x2, bins_x, weights1=None, weights2=None, as_line
 
 #  Get 2D ratio between two histograms
 #
-def get_ratio_2D (data_x1, data_y1, data_x2, data_y2, bins_x, bins_y, weights1=None, weights2=None) :
+def get_ratio_2D (data_x1, data_y1, data_x2, data_y2, bins_x, bins_y, weights1=None, weights2=None, rogue=0.) :
     X, Y, Z1, EZ1 = bin_data_2D(data_x1, data_y1, bins_x, bins_y, weights1)
     X, Y, Z2, EZ2 = bin_data_2D(data_x2, data_y2, bins_x, bins_y, weights2)
-    frac_EZ1 = EZ1 / Z1
-    frac_EZ2 = EZ2 / Z2
-    ratio     = Z2 / Z1
+    frac_EZ1  = safe_divide(EZ1, Z1, rogue)
+    frac_EZ2  = safe_divide(EZ2, Z2, rogue)
+    ratio     = safe_divide(Z2 , Z1, rogue)
     ratio_err = ratio * np.sqrt(frac_EZ1*frac_EZ1 + frac_EZ2*frac_EZ2)
     return X, Y, ratio, ratio_err
 
@@ -321,3 +321,11 @@ def plot_pull (data_num, data_den, weights_num=None, weights_den=None, keys=None
     if len(save) > 0 :
         plt.savefig(save, bbox_inches="tight")
     plt.show()
+
+
+#  Divide two vectors without numpy warnings
+#
+def safe_divide (num, den, rogue=0.) :
+    assert len(num) == len(den), f"len(num) ({len(num)}) != len(den) ({len(den)})"
+    return np.array([x/y if yAbs>0 else rogue for x,y,yAbs in zip(num, den, np.fabs(den))])
+

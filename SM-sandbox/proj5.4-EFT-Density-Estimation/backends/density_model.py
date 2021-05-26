@@ -92,6 +92,8 @@ def create_continuous_density_keras_model (name, **kwargs) :
     B1, B2 = int(kwargs.get("B1", 5)), int(kwargs.get("B2", 5))
     C      = int(kwargs.get("C" , 1))
     D2     = int(kwargs.get("D2", 2))
+    N1     = A1 + A2 * num_conditions_in
+    N2     = B1 + B2 * num_observables_in if num_observables_in > 0 else 0
     #
     #  Parse arguments to configure what constants to scale the output layers by (smaller numbers = smaller initial perturbations on Gaussian means, widths and fractions)
     #
@@ -161,11 +163,11 @@ def create_continuous_density_keras_model (name, **kwargs) :
         print(f"  - gauss_mean_scale         is {gauss_mean_scale}")
         print(f"  - gauss_sigma_scale        is {gauss_sigma_scale}")
         print(f"  - gauss_width_factor       is {gauss_width_factor}")
-        print(f"  - adding hidden layer of size {A1 + A2*num_conditions_in} to pre-process condition inputs")
+        print(f"  - adding hidden layer of size {N1} to pre-process condition inputs")
         if num_observables_in > 0 :
-            print(f"  - adding hidden layer of size {B1 + B2*num_observables_in} to pre-process observables inputs")
+            print(f"  - adding hidden layer of size {N2} to pre-process observables inputs")
         for c in range(C) :
-            print(f"  - adding hidden layer of size {A1 + A2*num_conditions_in + B1 + B2*num_observables_in}")
+            print(f"  - adding hidden layer of size {N1 + N2}")
     #
     #  If LeakyReLU used as activation function, set activation of Dense layers to "linear", then LeakyReLU will be applied as a separate layer
     #
@@ -186,7 +188,7 @@ def create_continuous_density_keras_model (name, **kwargs) :
     model_conditions  = conditions_input
     if do_transform_conditions : 
         model_conditions = Lambda(transform_conditions)(model_conditions)
-    model_conditions  = Dense (A1 + A2*num_conditions_in, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_conditions) 
+    model_conditions  = Dense (N1, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_conditions) 
     if use_leaky_relu : model_conditions = LeakyReLU (0.2)      (model_conditions)
     if batch_norm     : model_conditions = BatchNormalization() (model_conditions)
     if dropout > 0.   : model_conditions = Dropout(dropout)     (model_conditions)
@@ -202,7 +204,7 @@ def create_continuous_density_keras_model (name, **kwargs) :
         model_observables = observables_input
         if do_transform_observables : 
             model_observables = Lambda(transform_observables)(model_observables)
-        model_observables = Dense      (B1 + B2*num_observables_in, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_observables)    
+        model_observables = Dense      (N2, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_observables)    
         if use_leaky_relu : model_observables = LeakyReLU(0.2)       (model_observables)
         if batch_norm     : model_observables = BatchNormalization() (model_observables)
         if dropout > 0.   : model_observables = Dropout(dropout)     (model_observables)
@@ -213,7 +215,7 @@ def create_continuous_density_keras_model (name, **kwargs) :
     #  Add the configured number of additional hidden layers
     #
     for c in range(C) :
-        model = Dense (A1 + A2*num_conditions_in + B1 + B2*num_observables_in, kernel_initializer=custom_weight_init_hidden, bias_initializer=bias_initializer, activation=activation)(model)
+        model = Dense (N1 + N2, kernel_initializer=custom_weight_init_hidden, bias_initializer=bias_initializer, activation=activation)(model)
         if use_leaky_relu : model = LeakyReLU (0.2)      (model)
         if batch_norm     : model = BatchNormalization() (model)
         if dropout > 0.   : model = Dropout(dropout)     (model)
@@ -307,6 +309,8 @@ def create_discrete_density_keras_model (name, **kwargs) :
     A1, A2   = int(kwargs.get("A1", 5)), int(kwargs.get("A2", 5))
     B1, B2   = int(kwargs.get("B1", 5)), int(kwargs.get("B2", 5))
     C_layers = kwargs.get("C_layers" , [10 + 3*num_outputs, 10 + 2*num_outputs])
+    N1       = A1 + A2 * num_conditions_in
+    N2       = B1 + B2 * num_observables_in if num_observables_in > 0 else 0
     #
     #  If condition_limits provided, we want to transform the condition inputs, so we should make sure the input has the correct format
     #
@@ -364,9 +368,9 @@ def create_discrete_density_keras_model (name, **kwargs) :
         print(f"  - bias_initializer         is {bias_initializer}")
         print(f"  - batch_norm               is {'True' if batch_norm is True else 'False'}")
         print(f"  - dropout                  is {'False' if dropout <= 0 else dropout}")
-        print(f"  - adding hidden layer of size {A1 + A2*num_conditions_in} to pre-process condition inputs")
+        print(f"  - adding hidden layer of size {N1} to pre-process condition inputs")
         if num_observables_in > 0 :
-            print(f"  - adding hidden layer of size {B1 + B2*num_observables_in} to pre-process observables inputs")
+            print(f"  - adding hidden layer of size {N2} to pre-process observables inputs")
         for c in C_layers :
             print(f"  - adding hidden layer of size {c}")
     #
@@ -389,7 +393,7 @@ def create_discrete_density_keras_model (name, **kwargs) :
     model_conditions  = conditions_input
     if do_transform_conditions : 
         model_conditions = Lambda(transform_conditions)(model_conditions)
-    model_conditions  = Dense (A1 + A2*num_conditions_in, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_conditions) 
+    model_conditions  = Dense (N1, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_conditions) 
     if use_leaky_relu : model_conditions = LeakyReLU(0.2)       (model_conditions)
     if batch_norm     : model_conditions = BatchNormalization() (model_conditions)
     if dropout > 0.   : model_conditions = Dropout(dropout)     (model_conditions)
@@ -405,7 +409,7 @@ def create_discrete_density_keras_model (name, **kwargs) :
         model_observables = observables_input
         if do_transform_observables : 
             model_observables = Lambda(transform_observables)(model_observables)
-        model_observables = Dense      (B1 + B2*num_observables_in, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_observables)    
+        model_observables = Dense      (N2, kernel_initializer=custom_weight_init_initial, bias_initializer=bias_initializer, activation=activation)(model_observables)    
         if use_leaky_relu : model_observables = LeakyReLU(0.2)       (model_observables)
         if batch_norm     : model_observables = BatchNormalization() (model_observables)
         if dropout > 0.   : model_observables = Dropout(dropout)     (model_observables)
@@ -875,8 +879,8 @@ class EvolvingLearningRate (Callback) :
         self.monitor_best_val      = np.inf
         self.learning_rate         = self.model.optimizer.learning_rate
         self.initial_lr            = float(self.learning_rate.eval(session=tf.compat.v1.keras.backend.get_session()))
-        if not hasattr(self.model, "lr_record"     ) : self.model.lr_record       = [(0, self.initial_lr)]
         if not hasattr(self.model, "monitor_record") : self.model.monitor_record  = []
+        if not hasattr(self.model, "lr_record"     ) : self.model.lr_record       = [(len(self.model.monitor_record), self.initial_lr)]
 
     def on_epoch_end(self, epoch, logs=None) :
         if self.monitor == "none" :
@@ -902,7 +906,7 @@ class EvolvingLearningRate (Callback) :
                 session.run(self.learning_rate.assign(new_lr))
                 self.monitor_best_val = monitor_val
                 self.epochs_since_min = 0
-                self.model.lr_record.append((epoch, new_lr))
+                self.model.lr_record.append((len(self.model.monitor_record), new_lr))
 
     def on_train_end(self, logs=None) :
         session = tf.compat.v1.keras.backend.get_session()
@@ -1232,11 +1236,12 @@ class DensityModel :
     #  evaluate
     #
     def evaluate_over_dataset (self, data, weights) :
-        fit_X = np.concatenate([np.full(fill_value=c, shape=(len(d),self.num_conditions)) for c,d in data.items()])
-        fit_Y = np.concatenate([d for c,d in data   .items()])
-        fit_W = np.concatenate([d for c,d in weights.items()])
+        conds = [c for c in data]
+        fit_X = np.concatenate([np.full(fill_value=c, shape=(len(data[c]),self.num_conditions)) for c in conds])
+        fit_Y = np.concatenate([data   [c] for c in conds])
+        fit_W = np.concatenate([weights[c] for c in conds])
         losses = self.split_evaluator.predict([fit_X, fit_Y])
-        losses = np.multiply(fit_W[:, np.newaxis], losses)
+        losses = np.multiply(fit_W.flatten()[:, np.newaxis], losses)
         losses = np.sum(losses, axis=0)
         return losses
     #
