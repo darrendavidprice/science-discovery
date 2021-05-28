@@ -36,9 +36,9 @@ observable_limits ["N_jets"    ] = [2     , 5    ]
 observable_limits ["N_gap_jets"] = [0     , 2    ]
 
 transformed_observable_limits = {k:[x[0], x[1]] for k,x in observable_limits.items()}
-transformed_observable_limits ["N_jets" ] = [0, 5]
-transformed_observable_limits ["pT_j1"  ] = [0, 1200]
-transformed_observable_limits ["pT_jj"  ] = [0, 1]
+#transformed_observable_limits ["N_jets" ] = [0, 5]
+#transformed_observable_limits ["pT_j1"  ] = [0, 1200]
+#transformed_observable_limits ["pT_jj"  ] = [0, 1]
 #transformed_observable_limits ["Dy_j_j" ] = [0, 1.5]
 
 all_observables  = sorted([obs for obs in observable_limits])      #  Persistent record of all observables available
