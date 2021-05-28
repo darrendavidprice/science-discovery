@@ -1419,20 +1419,11 @@ class DensityModel :
         #  Load the model weights
         for idx, (likelihood_model, model_fname) in enumerate(zip(self.likelihood_models, to_load["model_files"])) :
             likelihood_model.model.load_weights(model_fname)
-        print(dir(to_load))
         if "fit_record" in to_load :
             self.fit_record           = get_from_dictionary (to_load, "fit_record")
         for idx, likelihood_model in enumerate(self.likelihood_models) :
-            if f"lr_record_model{idx}"      in to_load :
-            	print(f"Loading lr_record, {idx}")
-            	likelihood_model.model.lr_record      = to_load[f"lr_record_model{idx}"     ]
-            else :
-            	print(f"Not loading lr_record, {idx}")
-            if f"monitor_record_model{idx}" in to_load : 
-            	print(f"Loading monitor_record, {idx}")
-            	likelihood_model.model.monitor_record = to_load[f"monitor_record_model{idx}"]
-            else :
-            	print(f"Not loading monitor_record, {idx}")
+            if f"lr_record_model{idx}"      in to_load : likelihood_model.model.lr_record      = to_load[f"lr_record_model{idx}"     ]
+            if f"monitor_record_model{idx}" in to_load : likelihood_model.model.monitor_record = to_load[f"monitor_record_model{idx}"]
     #
     #  sample
     #
