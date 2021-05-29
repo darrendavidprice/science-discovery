@@ -1263,6 +1263,7 @@ class DensityModel :
         learning_rate_evo_factor   = kwargs.get("learning_rate_evo_factor"  , 1    )
         learning_rate_evo_patience = kwargs.get("learning_rate_evo_patience", 0    )
         extra_callbacks            = kwargs.get("callbacks"                 , []   )
+        save_to_dir                = str(kwargs.get("save_to_dir"           , ""   ))
         monitor = "val_loss"
         if validation_split <= 0 : monitor = "loss"
         #                                                        
@@ -1363,6 +1364,9 @@ class DensityModel :
                                                        callbacks        = callbacks)
             self.fit_record[observable_idx] = fit_record.history
             print(f"Fit completed in {int(time.time() - start_time):.0f}s")
+            if (type(save_to_dir) is str) and (len(save_to_dir) > 0) :
+            	print(f"Saving model after fit ({save_to_dir})")
+            	self.save_to_dir(save_to_dir)
     #  
     #  from_dir
     #  

@@ -251,7 +251,7 @@ def get_original_and_projected_data_as_dict (data_table) :
 
 
 
-def load_build_fit_model (white_data, true_data_weights, observables) :
+def load_build_fit_model (white_data, true_data_weights, observables, save_model_dir=None) :
 	#
 	#  Load model if requested, otherwise build and fit
 	#
@@ -310,7 +310,8 @@ def load_build_fit_model (white_data, true_data_weights, observables) :
 	                  validation_split           = validation_split          ,
 	                  batch_size_per_observable  = batch_size                ,
 	                  learning_rate_evo_factor   = learning_rate_evo_factor  ,
-	                  learning_rate_evo_patience = learning_rate_evo_patience)
+	                  learning_rate_evo_patience = learning_rate_evo_patience,
+	                  save_to_dir                = save_model_dir            )
 	#
 	#   Return density model
 	#
@@ -329,6 +330,6 @@ if __name__ == "__main__" :
 	data_table = VBFZ.load_table(input_fname)
 	whitening_funcs, true_data, true_data_weights, transformed_data, white_data = get_original_and_projected_data_as_dict (data_table)
 	true_data[1.], transformed_data[1.], white_data[1.], true_data_weights[1.] = joint_shuffle(true_data[1.], transformed_data[1.], white_data[1.], true_data_weights[1.])
-	density_model = load_build_fit_model (white_data, true_data_weights, observables)
+	density_model = load_build_fit_model (white_data, true_data_weights, observables, save_model_dir)
 	if type(save_model_dir) != type(None) :
 	    density_model.save_to_dir(save_model_dir)
