@@ -96,6 +96,7 @@ white_linear_fraction_data = None
 #  Choose observables
 #
 remove_observables = ["pT_jj", "N_jets", "N_gap_jets", "m_ll", "Dy_j_j"]
+observables_order  = []
 
 
 
@@ -112,7 +113,7 @@ def load_settings (config_fname="") :
 		INFO("load_settings", f"Found configuration {key} = {val}")
 	global input_fname, num_gaussians_per_continuous_observable, max_epochs, batch_size, early_stopping_patience, early_stopping_min_delta, validation_split, learning_rate
 	global optimiser, gauss_mean_scale, gauss_frac_scale, gauss_sigma_scale, A1, A2, B1, B2, C_float, C_int, D2, white_linear_fraction_gauss, whitening_num_points
-	global whitening_func_form, whitening_alpha, whitening_beta, whitening_gamma, load_whitening_funcs, save_whitening_funcs, load_model_dir, save_model_dir, observables
+	global whitening_func_form, whitening_alpha, whitening_beta, whitening_gamma, load_whitening_funcs, save_whitening_funcs, load_model_dir, save_model_dir, observables, observables_order
 	global obs_white_linear_fraction_data_space, remove_observables, gauss_width_factor, learning_rate_evo_factor, learning_rate_evo_factor, learning_rate_evo_patience
 	run_tag                      = str(settings.get("run_tag", "untagged"))
 	input_fname                  = str(settings.get("input_fname", input_fname)).replace("<TAG>", run_tag)
@@ -126,7 +127,8 @@ def load_settings (config_fname="") :
 	learning_rate_evo_factor     = float(settings.get("learning_rate_evo_factor", learning_rate_evo_factor))
 	learning_rate_evo_patience   = float(settings.get("learning_rate_evo_patience", learning_rate_evo_patience))
 	optimiser                    = str(settings.get("optimiser", optimiser))
-	if "observables" in settings : observables = [int(s) for s in settings["observables"].split(" ")]
+	if "observables" in settings : observables = [int(s) for s in settings["observables"].split(" ") if len(s) > 0]
+	if observables_order in settings : observables_order = [str(s) for s in settings["observables_order"].split(" ") if len(s) > 0]
 	gauss_mean_scale             = float(settings.get("gauss_mean_scale", gauss_mean_scale))
 	gauss_frac_scale             = float(settings.get("gauss_frac_scale", gauss_frac_scale))
 	gauss_sigma_scale            = float(settings.get("gauss_sigma_scale", gauss_sigma_scale))
@@ -136,7 +138,7 @@ def load_settings (config_fname="") :
 	B1                           = int(settings.get("B1", B1))
 	B2                           = int(settings.get("B2", B2))
 	C_float                      = int(settings.get("C_float", C_float))
-	if "C_int" in settings : C_int = [int(s) for s in settings["C_int"].split(" ")]
+	if "C_int" in settings : C_int = [int(s) for s in settings["C_int"].split(" ") if len(s) > 0]
 	D2                           = int(settings.get("D2", D2))
 	white_linear_fraction_gauss  = float(settings.get("white_linear_fraction_gauss", white_linear_fraction_gauss))
 	whitening_num_points         = int(settings.get("whitening_num_points", whitening_num_points))
@@ -194,13 +196,14 @@ def print_settings () :
 	INFO("print_settings", f"Using load_model_dir = {load_model_dir}")
 	INFO("print_settings", f"Using save_model_dir = {save_model_dir}")
 	INFO("print_settings", f"Using remove_observables = {remove_observables}")
+	INFO("print_settings", f"Using observables order = {observables_order}")
 	for obs, frac in obs_white_linear_fraction_data_space.items() :
 		INFO("print_settings", f"Using obs_white_linear_fraction_data_space[{obs}] = {frac:.3f}")
 
 
 def VBFZ_setup () :
-	global white_linear_fraction_data, observables
-	VBFZ.configure(remove_observables)
+	global white_linear_fraction_data, observables, observables_order
+	VBFZ.configure(remove_observables, order=observables_order)
 	INFO("VBFZ_setup", f"Configured with {VBFZ.num_observables} observables: " + ", ".join(VBFZ.observables))
 	white_linear_fraction_data = [obs_white_linear_fraction_data_space[obs] if obs in obs_white_linear_fraction_data_space else 0. for obs in VBFZ.observables]
 	plot.int_observables   = VBFZ.int_observables

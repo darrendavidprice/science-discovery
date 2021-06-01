@@ -114,15 +114,18 @@ transformed_obs_ticklabels ["pT_j1" ] = None
 transformed_obs_ticklabels ["pT_jj" ] = ["0.2", "0.5", "0.8"]
 
 
-def configure (remove_more_observables, reverse=False) :
+def configure (remove_more_observables, reverse=False, order=[]) :
     """Select observables for analysis by configuring global variables observables, num_observables and observable_types"""
     global remove_observables
     remove_observables = remove_more_observables
     if "theta_ll" not in remove_observables : remove_observables.append("theta_ll")
     if "theta_jj" not in remove_observables : remove_observables.append("theta_jj")
     global observables, num_observables, observable_types
-    observables = sorted([obs for obs in observable_limits if obs not in remove_observables])
-    if reverse : observables = observables[::-1]
+    if len(order) > 0 :
+        for obs in order : assert obs in all_observables, f"observable {obs} is not recognised"
+        observables = order
+    else              : observables = sorted([obs for obs in observable_limits if obs not in remove_observables])
+    if reverse        : observables = observables[::-1]
     num_observables  = len(observables)
     observable_types = [float if obs not in int_observables else int for obs in observables]
 
