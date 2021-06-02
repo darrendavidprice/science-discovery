@@ -79,6 +79,8 @@ save_whitening_funcs = None
 load_model_dir = None
 save_model_dir = ".EWK_density_model_paper_0D_<TAG>"
 
+skip_initial_density_estimation = False
+
 obs_white_linear_fraction_data_space = {}
 obs_white_linear_fraction_data_space ["Dphi_j_j"] = 0.8
 obs_white_linear_fraction_data_space ["Dy_j_j"  ] = 0.8
@@ -114,42 +116,43 @@ def load_settings (config_fname="") :
 	global input_fname, num_gaussians_per_continuous_observable, max_epochs, batch_size, early_stopping_patience, early_stopping_min_delta, validation_split, learning_rate
 	global optimiser, gauss_mean_scale, gauss_frac_scale, gauss_sigma_scale, A1, A2, B1, B2, C_float, C_int, D2, white_linear_fraction_gauss, whitening_num_points
 	global whitening_func_form, whitening_alpha, whitening_beta, whitening_gamma, load_whitening_funcs, save_whitening_funcs, load_model_dir, save_model_dir, observables, observables_order
-	global obs_white_linear_fraction_data_space, remove_observables, gauss_width_factor, learning_rate_evo_factor, learning_rate_evo_factor, learning_rate_evo_patience
-	run_tag                      = str(settings.get("run_tag", "untagged"))
-	input_fname                  = str(settings.get("input_fname", input_fname)).replace("<TAG>", run_tag)
+	global obs_white_linear_fraction_data_space, remove_observables, gauss_width_factor, learning_rate_evo_factor, learning_rate_evo_factor, learning_rate_evo_patience, skip_initial_density_estimation
+	run_tag                         = str(settings.get("run_tag", "untagged"))
+	input_fname                     = str(settings.get("input_fname", input_fname)).replace("<TAG>", run_tag)
 	num_gaussians_per_continuous_observable = int(settings.get("num_gaussians_per_continuous_observable", num_gaussians_per_continuous_observable))
-	max_epochs                   = int(settings.get("max_epochs", max_epochs))
-	batch_size                   = int(settings.get("batch_size", batch_size))
-	early_stopping_patience      = int(settings.get("early_stopping_patience", early_stopping_patience))
-	early_stopping_min_delta     = float(settings.get("early_stopping_min_delta", early_stopping_min_delta))
-	validation_split             = float(settings.get("validation_split", validation_split))
-	learning_rate                = float(settings.get("learning_rate", learning_rate))
-	learning_rate_evo_factor     = float(settings.get("learning_rate_evo_factor", learning_rate_evo_factor))
-	learning_rate_evo_patience   = float(settings.get("learning_rate_evo_patience", learning_rate_evo_patience))
-	optimiser                    = str(settings.get("optimiser", optimiser))
+	max_epochs                      = int(settings.get("max_epochs", max_epochs))
+	batch_size                      = int(settings.get("batch_size", batch_size))
+	early_stopping_patience         = int(settings.get("early_stopping_patience", early_stopping_patience))
+	early_stopping_min_delta        = float(settings.get("early_stopping_min_delta", early_stopping_min_delta))
+	validation_split                = float(settings.get("validation_split", validation_split))
+	learning_rate                   = float(settings.get("learning_rate", learning_rate))
+	learning_rate_evo_factor        = float(settings.get("learning_rate_evo_factor", learning_rate_evo_factor))
+	learning_rate_evo_patience      = float(settings.get("learning_rate_evo_patience", learning_rate_evo_patience))
+	optimiser                       = str(settings.get("optimiser", optimiser))
 	if "observables"       in settings : observables       = [int(s) for s in settings["observables"      ].split(" ") if len(s) > 0]
 	if "observables_order" in settings : observables_order = [str(s) for s in settings["observables_order"].split(" ") if len(s) > 0]
-	gauss_mean_scale             = float(settings.get("gauss_mean_scale", gauss_mean_scale))
-	gauss_frac_scale             = float(settings.get("gauss_frac_scale", gauss_frac_scale))
-	gauss_sigma_scale            = float(settings.get("gauss_sigma_scale", gauss_sigma_scale))
-	gauss_width_factor           = float(settings.get("gauss_width_factor", gauss_width_factor))
-	A1                           = int(settings.get("A1", A1))
-	A2                           = int(settings.get("A2", A2))
-	B1                           = int(settings.get("B1", B1))
-	B2                           = int(settings.get("B2", B2))
-	C_float                      = int(settings.get("C_float", C_float))
-	if "C_int" in settings : C_int = [int(s) for s in settings["C_int"].split(" ") if len(s) > 0]
-	D2                           = int(settings.get("D2", D2))
-	white_linear_fraction_gauss  = float(settings.get("white_linear_fraction_gauss", white_linear_fraction_gauss))
-	whitening_num_points         = int(settings.get("whitening_num_points", whitening_num_points))
-	whitening_func_form          = str(settings.get("whitening_func_form", whitening_func_form))
-	whitening_alpha              = float(settings.get("whitening_alpha", whitening_alpha))
-	whitening_beta               = float(settings.get("whitening_beta", whitening_beta))
-	whitening_gamma              = float(settings.get("whitening_gamma", whitening_gamma))
-	load_whitening_funcs         = settings.get("load_whitening_funcs", load_whitening_funcs)
-	save_whitening_funcs         = settings.get("save_whitening_funcs", save_whitening_funcs)
-	load_model_dir               = settings.get("load_model_dir", load_model_dir)
-	save_model_dir               = settings.get("save_model_dir", save_model_dir)
+	gauss_mean_scale                = float(settings.get("gauss_mean_scale", gauss_mean_scale))
+	gauss_frac_scale                = float(settings.get("gauss_frac_scale", gauss_frac_scale))
+	gauss_sigma_scale               = float(settings.get("gauss_sigma_scale", gauss_sigma_scale))
+	gauss_width_factor              = float(settings.get("gauss_width_factor", gauss_width_factor))
+	A1                              = int(settings.get("A1", A1))
+	A2                              = int(settings.get("A2", A2))
+	B1                              = int(settings.get("B1", B1))
+	B2                              = int(settings.get("B2", B2))
+	C_float                         = int(settings.get("C_float", C_float))
+	if "C_int" in settings : C_int  = [int(s) for s in settings["C_int"].split(" ") if len(s) > 0]
+	D2                              = int(settings.get("D2", D2))
+	white_linear_fraction_gauss     = float(settings.get("white_linear_fraction_gauss", white_linear_fraction_gauss))
+	whitening_num_points            = int(settings.get("whitening_num_points", whitening_num_points))
+	whitening_func_form             = str(settings.get("whitening_func_form", whitening_func_form))
+	whitening_alpha                 = float(settings.get("whitening_alpha", whitening_alpha))
+	whitening_beta                  = float(settings.get("whitening_beta", whitening_beta))
+	whitening_gamma                 = float(settings.get("whitening_gamma", whitening_gamma))
+	load_whitening_funcs            = settings.get("load_whitening_funcs", load_whitening_funcs)
+	save_whitening_funcs            = settings.get("save_whitening_funcs", save_whitening_funcs)
+	load_model_dir                  = settings.get("load_model_dir", load_model_dir)
+	save_model_dir                  = settings.get("save_model_dir", save_model_dir)
+	skip_initial_density_estimation = bool(settings.get("skip_initial_density_estimation", skip_initial_density_estimation))
 	if type(load_whitening_funcs) is str : load_whitening_funcs = load_whitening_funcs.replace("<TAG>", run_tag)
 	if type(save_whitening_funcs) is str : save_whitening_funcs = save_whitening_funcs.replace("<TAG>", run_tag)
 	if type(load_model_dir) is str : load_model_dir = load_model_dir.replace("<TAG>", run_tag)
@@ -197,6 +200,7 @@ def print_settings () :
 	INFO("print_settings", f"Using save_model_dir = {save_model_dir}")
 	INFO("print_settings", f"Using remove_observables = {remove_observables}")
 	INFO("print_settings", f"Using observables order = {observables_order}")
+	INFO("print_settings", f"Using skip_initial_density_estimation = {skip_initial_density_estimation}")
 	for obs, frac in obs_white_linear_fraction_data_space.items() :
 		INFO("print_settings", f"Using obs_white_linear_fraction_data_space[{obs}] = {frac:.3f}")
 
@@ -300,6 +304,9 @@ def load_build_fit_model (white_data, true_data_weights, observables, save_model
 	#
 	#   Make sure initial state has no NaN/Inf loss
 	#
+	if skip_initial_density_estimation :
+		INFO("load_build_fit_model", "Skipping initial density estimation (caution: we have not ensured that initial likelihoods evaluate to something real)")
+
 	density_model.ensure_valid_over_dataset (white_data, true_data_weights)
 	#
 	#   Fit density model
