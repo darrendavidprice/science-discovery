@@ -306,8 +306,8 @@ def load_build_fit_model (white_data, true_data_weights, observables, save_model
 	#
 	if skip_initial_density_estimation :
 		INFO("load_build_fit_model", "Skipping initial density estimation (caution: we have not ensured that initial likelihoods evaluate to something real)")
-
-	density_model.ensure_valid_over_dataset (white_data, true_data_weights)
+	else :
+		density_model.ensure_valid_over_dataset (white_data, true_data_weights)
 	#
 	#   Fit density model
 	#
