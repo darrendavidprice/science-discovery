@@ -99,6 +99,7 @@ white_linear_fraction_data = None
 #
 remove_observables = ["pT_jj", "N_jets", "N_gap_jets", "m_ll", "Dy_j_j"]
 observables_order  = []
+reset_observables  = []
 
 
 
@@ -114,7 +115,7 @@ def load_settings (config_fname="") :
 	for key, val in settings.items() :
 		INFO("load_settings", f"Found configuration {key} = {val}")
 	global input_fname, num_gaussians_per_continuous_observable, max_epochs, batch_size, early_stopping_patience, early_stopping_min_delta, validation_split, learning_rate
-	global optimiser, gauss_mean_scale, gauss_frac_scale, gauss_sigma_scale, A1, A2, B1, B2, C_float, C_int, D2, white_linear_fraction_gauss, whitening_num_points
+	global optimiser, gauss_mean_scale, gauss_frac_scale, gauss_sigma_scale, A1, A2, B1, B2, C_float, C_int, D2, white_linear_fraction_gauss, whitening_num_points, reset_observables
 	global whitening_func_form, whitening_alpha, whitening_beta, whitening_gamma, load_whitening_funcs, save_whitening_funcs, load_model_dir, save_model_dir, observables, observables_order
 	global obs_white_linear_fraction_data_space, remove_observables, gauss_width_factor, learning_rate_evo_factor, learning_rate_evo_factor, learning_rate_evo_patience, skip_initial_density_estimation
 	run_tag                         = str(settings.get("run_tag", "untagged"))
@@ -131,6 +132,7 @@ def load_settings (config_fname="") :
 	optimiser                       = str(settings.get("optimiser", optimiser))
 	if "observables"       in settings : observables       = [int(s) for s in settings["observables"      ].split(" ") if len(s) > 0]
 	if "observables_order" in settings : observables_order = [str(s) for s in settings["observables_order"].split(" ") if len(s) > 0]
+	if "reset_observables" in settings : reset_observables = [int(s) for s in settings["reset_observables"].split(" ") if len(s) > 0]
 	gauss_mean_scale                = float(settings.get("gauss_mean_scale", gauss_mean_scale))
 	gauss_frac_scale                = float(settings.get("gauss_frac_scale", gauss_frac_scale))
 	gauss_sigma_scale               = float(settings.get("gauss_sigma_scale", gauss_sigma_scale))
@@ -200,6 +202,7 @@ def print_settings () :
 	INFO("print_settings", f"Using save_model_dir = {save_model_dir}")
 	INFO("print_settings", f"Using remove_observables = {remove_observables}")
 	INFO("print_settings", f"Using observables order = {observables_order}")
+	INFO("print_settings", f"Using reset_observables = {reset_observables}")
 	INFO("print_settings", f"Using skip_initial_density_estimation = {skip_initial_density_estimation}")
 	for obs, frac in obs_white_linear_fraction_data_space.items() :
 		INFO("print_settings", f"Using obs_white_linear_fraction_data_space[{obs}] = {frac:.3f}")
@@ -301,6 +304,12 @@ def load_build_fit_model (white_data, true_data_weights, observables, save_model
 		                             C_float            = C_float                                 ,
 		                             C_int              = C_int                                   ,
 		                             D2                 = D2                                      )
+	#
+	#
+	#
+	for index in reset_observables :
+		assert index < len(density_model.likelihood_models), f"Observable index {index} out of bounds"
+		density_model.likelihood_models[index].reset_weights()
 	#
 	#   Make sure initial state has no NaN/Inf loss
 	#
