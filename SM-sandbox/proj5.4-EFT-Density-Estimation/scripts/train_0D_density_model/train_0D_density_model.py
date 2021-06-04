@@ -309,6 +309,7 @@ def load_build_fit_model (white_data, true_data_weights, observables, save_model
 	#
 	for index in reset_observables :
 		assert index < len(density_model.likelihood_models), f"Observable index {index} out of bounds"
+		INFO("load_build_fit_model", f"Resetting observable at index {index}")
 		density_model.likelihood_models[index].reset_weights()
 	#
 	#   Make sure initial state has no NaN/Inf loss
