@@ -161,7 +161,7 @@ def load_settings (config_fname="") :
 	if type(save_model_dir) is str : save_model_dir = save_model_dir.replace("<TAG>", run_tag)
 	for obs in VBFZ.all_observables :
 		key = f"obs_white_linear_fraction_data_space_{obs}"
-		if key in settings : obs_white_linear_fraction_data_space[obs] = settings[key]
+		if key in settings : obs_white_linear_fraction_data_space[obs] = float(settings[key])
 	if "remove_observables" in settings :
 		remove_observables = [str(s) for s in settings["remove_observables"].split(" ") if len(s) > 0]
 
