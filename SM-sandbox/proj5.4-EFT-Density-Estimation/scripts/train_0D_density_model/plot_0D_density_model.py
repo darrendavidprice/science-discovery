@@ -26,7 +26,7 @@ sys.path.append(path)
 
 print("Importing custom backends")
 from backends.density_model    import DensityModel, get_sum_gauss_density
-from backends.plot             import histo_to_line, plot_data, plot_ratio, plot_pull, get_ratio_1D
+from backends.plot             import histo_to_line, plot_data, plot_ratio, plot_pull, get_ratio_1D, safe_divide
 from backends.stats            import whiten_axes, unwhiten_axes
 from backends.utils            import INFO, make_sure_dir_exists_for_filename, joint_shuffle
 
