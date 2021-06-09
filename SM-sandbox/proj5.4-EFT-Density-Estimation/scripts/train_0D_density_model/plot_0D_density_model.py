@@ -58,6 +58,39 @@ newcolors [math.ceil(256*2/6)-1:math.floor(256*4/6)-1] = np.array([68/256, 223/2
 custom_colormap = ListedColormap(newcolors, name='BlueToRed')
 
 
+def get_adaptive_bins(data, weights=None, obs=None, num_increments=100, max_err=0.05, is_latent=False) :
+    if not is_latent :
+        if (type(obs) != type(None)) and (obs == "N_gap_jets") : return np.array([-0.5, 0.5, 2.5])
+        if (type(obs) != type(None)) and (obs == "N_jets")     : return np.array([1.5, 2.5, 5.5])
+        if obs : limits = VBFZ.observable_limits[obs]
+        else   : limits = [np.min(data), np.max(data)]
+    elif (obs == "N_gap_jets") : return np.array([-0.5, 0.5, 2.5])
+    elif (obs == "N_jets")     : return np.array([1.5, 2.5, 5.5]) - 2.
+    else : limits = [-5, 5]
+    if type(weights) == type(None) : weights   = np.ones(shape=(len(data),))
+    bins = [x for x in np.linspace(limits[0], limits[1], 1+num_increments)]
+    keep_merging = True
+    while keep_merging :
+        vals, _   = np.histogram(data, bins=bins)
+        errs      = np.sqrt(vals)
+        frac_errs = [x for x in plot.safe_divide(errs, vals)]
+        curr_err  = np.max(frac_errs)
+        if len(bins) == 2 :
+            keep_merging = False
+        elif 0 in frac_errs :
+            idx = len(frac_errs) - frac_errs[::-1].index(0) - 1
+            del bins[idx]
+        elif curr_err < max_err :
+            keep_merging = False
+        else :
+            idx = frac_errs.index(curr_err)
+            if   idx == 0             : del bins[1]
+            elif idx == len(bins) - 2 : del bins[-2]
+            elif frac_errs[idx-1] > frac_errs[idx>1] : del bins[idx]
+            else : del bins[idx+1]
+    return np.array(bins)
+
+
 def get_bins_latent (obs, num_bins=20) :
     #global int_observables, transformed_observable_limits  #  VBFZ-tag
     transformed_observable_limits = VBFZ.transformed_observable_limits  #  NB-tag
@@ -327,7 +360,7 @@ def plot_2D_ratios (datapoints_num, datapoints_den, weights_num=None, weights_de
         plt.show()
 
 
-def plot_1D_projections (datapoints_num, datapoints_den, weights_num=None, weights_den=None, savefig="", is_latent=False, num_bins=20, max_cols=7) :
+def plot_1D_projections (datapoints_num, datapoints_den, weights_num=None, weights_den=None, savefig="", is_latent=False, num_bins=20, max_cols=6) :
     """plot the 1D projections of the datapoints provided"""
     
     #global observables, num_observables, observable_limits, transformed_observable_limits, int_observables, log_observables   # VBFZ-tag
@@ -365,17 +398,21 @@ def plot_1D_projections (datapoints_num, datapoints_den, weights_num=None, weigh
             #  Get values of distributions
             #
             #  get binning
-            bins = get_bins(observable, is_latent=is_latent, num_bins=num_bins)
+            bins       = get_adaptive_bins(datapoints_num[:,obs_idx], weights_num, obs=observable, num_increments=30, max_err=0.02, is_latent=is_latent)
+            bin_widths = bins[1:] - bins[:-1]
             #  numerator histo values
             hvals_num, _ = np.histogram(datapoints_num[:,obs_idx], bins=bins, weights=weights_num            )
             herrs_num, _ = np.histogram(datapoints_num[:,obs_idx], bins=bins, weights=weights_num*weights_num)
             herrs_num    = np.sqrt(herrs_num)
-            hvals_num, herrs_num = hvals_num/np.sum(weights_num), herrs_num/np.sum(weights_num)
+            hvals_num, herrs_num = hvals_num/np.sum(weights_num)/bin_widths, herrs_num/np.sum(weights_num)/bin_widths
+            norm_vals    = np.max(hvals_num)
+            hvals_num, herrs_num = hvals_num / norm_vals, herrs_num / norm_vals
             #  denominator histo values
             hvals_den, _ = np.histogram(datapoints_den[:,obs_idx], bins=bins, weights=weights_den            )
             herrs_den, _ = np.histogram(datapoints_den[:,obs_idx], bins=bins, weights=weights_den*weights_den)
             herrs_den    = np.sqrt(herrs_den)
-            hvals_den, herrs_den = hvals_den/np.sum(weights_den), herrs_den/np.sum(weights_den)
+            hvals_den, herrs_den = hvals_den/np.sum(weights_den)/bin_widths, herrs_den/np.sum(weights_den)/bin_widths
+            hvals_den, herrs_den = hvals_den / norm_vals, herrs_den / norm_vals
             #  histograms expressed as lines
             plot_x, plot_y_num, plot_ey_num = plot.histo_to_line(bins, hvals_num, herrs_num)
             _     , plot_y_den, plot_ey_den = plot.histo_to_line(bins, hvals_den, herrs_den)
@@ -398,11 +435,12 @@ def plot_1D_projections (datapoints_num, datapoints_den, weights_num=None, weigh
             #
             #  Create ratio plot (bottom panel of each observable) and save it
             #
+            plot_ey_diff = np.sqrt(plot_ey_num*plot_ey_num + plot_ey_den*plot_ey_den)
             ax2 = fig.add_axes([xlo, ylo+0.2*yheight, 0.95*xwidth, 0.38*yheight])
             ax2.axhline(0, c="darkred", linewidth=2)
-            ax2.fill_between(plot_x, -plot_ey_den/plot_y_den, plot_ey_den/plot_y_den, color="red", alpha=0.2)
-            ax2.plot(plot_x, (plot_y_num-plot_y_den)/plot_y_den, c="k", linewidth=2)
-            ax2.fill_between(plot_x, (plot_y_num-plot_ey_num-plot_y_den)/plot_y_num, (plot_y_num+plot_ey_num-plot_y_den)/plot_y_num, color="lightgrey", alpha=0.5)
+            ax2.fill_between(plot_x, -safe_divide(plot_ey_den, plot_y_den), safe_divide(plot_ey_den, plot_y_den), color="red", alpha=0.2)
+            ax2.plot(plot_x, safe_divide(plot_y_num-plot_y_den, plot_y_den), c="k", linewidth=2)
+            ax2.fill_between(plot_x, safe_divide(plot_y_num-plot_ey_diff-plot_y_den, plot_y_den), safe_divide(plot_y_num+plot_ey_diff-plot_y_den, plot_y_den), color="lightgrey", alpha=0.5)
             axes2.append(ax2)
             #
             #  Set ylim and draw horizontal reference lines
@@ -413,6 +451,7 @@ def plot_1D_projections (datapoints_num, datapoints_den, weights_num=None, weigh
             #  
             #  Set x limits and scale
             #  
+            print(observable, bins[0], bins[-1])
             ax1.set_xlim([bins[0], bins[-1]])
             ax2.set_xlim([bins[0], bins[-1]])
             if not is_latent :
@@ -462,12 +501,12 @@ def plot_1D_projections (datapoints_num, datapoints_den, weights_num=None, weigh
         plt.show()
 
 
-def plot_model_training_curves (model, savefig="", max_cols=7) :
+def plot_model_training_curves (model, savefig="", max_cols=6) :
     observables, num_observables = VBFZ.observables, VBFZ.num_observables
     #
     num_cols = np.min([max_cols, num_observables])
     num_rows = math.ceil(num_observables/num_cols)
-    fig = plt.figure(figsize=(3*num_cols, 4*num_rows))
+    fig = plt.figure(figsize=(3*num_cols, 5*num_rows))
     #
     #  Loop over subplots
     #
@@ -485,24 +524,27 @@ def plot_model_training_curves (model, savefig="", max_cols=7) :
             #   
             #  Set axis labels
             #   
-            ax = fig.add_axes([xlo+0.2*xwidth, ylo, 0.75*xwidth, yheight])
+            ax = fig.add_axes([xlo+0.2*xwidth, ylo, 0.75*xwidth, .7*yheight])
             ax.set_xlabel(get_obs_label(observable), fontsize=19, labelpad=20)
             if col_idx == 0 : 
                 ax.set_ylabel(r"$- \log \mathcal{L}(\vec x)$", fontsize=19, labelpad=75, rotation=0, va="center")
-            ax.set_yscale("log")
             axes.append(ax)
             #
             #  Plot curve
             #
-            if hasattr(model.likelihood_models[obs_idx], "monitor_record") is False : continue
-            training_profile = model.likelihood_models[obs_idx].monitor_record
+            if hasattr(model.likelihood_models[obs_idx].model, "monitor_record") is False : continue
+            training_profile = model.likelihood_models[obs_idx].model.monitor_record
             ax.plot(training_profile, c="blue", lw=2, alpha=0.8, label="Training profile")
-            if hasattr(model.likelihood_models[obs_idx], "lr_record") is False : continue
+            print(obs_idx, observable, "-logL = ", np.min(training_profile))
+            if hasattr(model.likelihood_models[obs_idx].model, "lr_record") is False : continue
             is_first = True
-            for (epoch, new_lr) in model.likelihood_models[obs_idx].lr_record :
+            for (epoch, new_lr) in model.likelihood_models[obs_idx].model.lr_record :
                 ax.axvline(epoch, ls="--", c="k")
                 label = r"L.R. $\times = 0.5$" if is_first else None
                 is_first = False
+            ax.set_yscale("symlog", linthresh=1e-11)
+            print(observable, [np.min(training_profile), np.max(training_profile[-int(0.2*len(training_profile)):])])
+            ax.set_ylim([np.min(training_profile), np.max(training_profile[-int(0.2*len(training_profile)):])])
     axes[0].legend(loc=(0, 1.05), frameon=True, edgecolor="white", facecolor="white", ncol=2, fontsize=17)
     #
     #  Save and show figure
