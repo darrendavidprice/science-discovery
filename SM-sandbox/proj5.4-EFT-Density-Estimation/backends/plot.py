@@ -327,5 +327,7 @@ def plot_pull (data_num, data_den, weights_num=None, weights_den=None, keys=None
 #
 def safe_divide (num, den, rogue=0.) :
     assert len(num) == len(den), f"len(num) ({len(num)}) != len(den) ({len(den)})"
+    if type(num[0]) in [np.ndarray, list] :
+        return np.array([safe_divide(row_num, row_den, rogue=rogue) for row_num, row_den in zip(num, den)])
     return np.array([x/y if yAbs>0 else rogue for x,y,yAbs in zip(num, den, np.fabs(den))])
 
